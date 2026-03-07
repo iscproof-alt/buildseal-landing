@@ -1,43 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>BuildSeal</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BuildSeal — Verifiable Release Integrity</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0a0a0a; color: #e0e0e0; line-height: 1.6; }
+    header { padding: 60px 24px 40px; text-align: center; border-bottom: 1px solid #1e1e1e; }
+    header h1 { font-size: 2rem; color: #fff; letter-spacing: -0.5px; }
+    header p { margin-top: 12px; color: #888; font-size: 1.05rem; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .tagline { margin-top: 24px; font-size: 0.95rem; color: #4caf50; font-family: monospace; }
+    .cta { margin-top: 32px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .cta a { padding: 10px 24px; border-radius: 6px; text-decoration: none; font-size: 0.95rem; }
+    .cta .primary { background: #4caf50; color: #000; font-weight: 600; }
+    .cta .secondary { border: 1px solid #333; color: #ccc; }
+    section { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
+    h2 { font-size: 1.4rem; color: #fff; margin-bottom: 24px; }
+    .how { display: flex; flex-direction: column; gap: 16px; }
+    .step { background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 16px 20px; }
+    .step code { color: #4caf50; font-size: 0.9rem; display: block; margin-top: 6px; }
+    .faq { display: flex; flex-direction: column; gap: 20px; }
+    .faq-item { border-left: 2px solid #333; padding-left: 16px; }
+    .faq-item h3 { color: #fff; font-size: 1rem; margin-bottom: 6px; }
+    .faq-item p { color: #888; font-size: 0.95rem; }
+    .principles { display: flex; flex-direction: column; gap: 12px; }
+    .principle { background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 14px 18px; color: #ccc; font-size: 0.95rem; }
+    .principle strong { color: #4caf50; }
+    footer { text-align: center; padding: 32px 24px; border-top: 1px solid #1e1e1e; color: #555; font-size: 0.85rem; }
+    footer a { color: #4caf50; text-decoration: none; }
+  </style>
 </head>
+<body>
 
-<body style="background:#0b0f14;color:white;font-family:sans-serif">
+<header>
+  <h1>BuildSeal</h1>
+  <p>Tamper-evident, independently verifiable proof for every release.</p>
+  <div class="tagline">Logs are claims. Evidence packs are proof.</div>
+  <div class="cta">
+    <a href="https://verify.buildseal.io" class="primary">Verify a Release</a>
+    <a href="https://github.com/hakannbjk55-afk/Isc-Core" class="secondary">ISC Core Spec</a>
+    <a href="https://github.com/hakannbjk55-afk/buildseal-action" class="secondary">GitHub Action</a>
+  </div>
+</header>
 
-<h1>BuildSeal</h1>
+<section>
+  <h2>How it works</h2>
+  <div class="how">
+    <div class="step">
+      <strong>1. Seal your release</strong>
+      <code>uses: hakannbjk55-afk/buildseal-action@v1</code>
+      Add to your CI workflow. BuildSeal produces an evidence pack on every release.
+    </div>
+    <div class="step">
+      <strong>2. Share the verification link</strong>
+      <code>verify.buildseal.io/release/&lt;seal_id&gt;</code>
+      Anyone can open the link and see the verification report.
+    </div>
+    <div class="step">
+      <strong>3. Verify independently</strong>
+      <code>./isc_verify evidence_pack.tar</code>
+      Download the pack and binary. Verify offline — no BuildSeal required.
+    </div>
+  </div>
+</section>
 
-<h2>How do you verify release integrity?</h2>
+<section>
+  <h2>Design Principles</h2>
+  <div class="principles">
+    <div class="principle"><strong>1.</strong> Verification is always offline — no BuildSeal, no internet required.</div>
+    <div class="principle"><strong>2.</strong> Pack format is open — anyone can implement a verifier.</div>
+    <div class="principle"><strong>3.</strong> Production is paid, verification is free — forever.</div>
+  </div>
+</section>
 
-<p>
-BuildSeal turns every CI release into signed, immutable evidence.
-</p>
-
-
-<h2>FAQ</h2>
-
-<h3>What is BuildSeal?</h3>
-<p>BuildSeal creates a portable proof for every release.</p>
-
-<h3>Why not logs?</h3>
-<p>Logs require servers. Servers disappear. Packs stay.</p>
-
-<h3>Can I verify offline?</h3>
-<p>Yes. Download the pack, run the verifier, get the result.</p>
-
-<h3>What does BuildSeal NOT guarantee?</h3>
-<p>BuildSeal proves integrity after sealing. It does not prove the build environment was honest.</p>
-
-<h3>Is this open?</h3>
-<p>Yes. ISC Core defines the format. Anyone can verify.</p>
-
+<section>
+  <h2>FAQ</h2>
+  <div class="faq">
+    <div class="faq-item">
+      <h3>What does BuildSeal do?</h3>
+      <p>Signs your CI release and produces a portable evidence pack. Answers "was this release clean?" months later.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Why not logs?</h3>
+      <p>Logs disappear when services shut down. A pack stays with you — no internet, no account, no BuildSeal needed.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Why not Sigstore?</h3>
+      <p>Sigstore requires the Rekor log to verify. BuildSeal packs work offline. No external dependency.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What does offline verify mean?</h3>
+      <p>Download the binary and the pack. Run locally. No internet required, no need to trust BuildSeal.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What does it prove? What doesn't it prove?</h3>
+      <p>Proves: artifact unchanged, authorized key signed, derived from this commit. Does not prove: build environment was not manipulated.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How does key management work?</h3>
+      <p>Ed25519 key stored in CI secrets. Governance — including rotation and revocation — is embedded in the pack itself.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What if BuildSeal shuts down?</h3>
+      <p>Your pack and the isc_verify binary stay with you. You can verify forever.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is this enough for SOC2 audit?</h3>
+      <p>BuildSeal provides evidence. The auditor downloads the pack and verifies independently. The audit decision is yours.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Does it work outside GitHub Actions?</h3>
+      <p>GitHub Action is available now. Jenkins, GitLab, and Azure DevOps are on the roadmap.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is it free?</h3>
+      <p>Verification is free forever. Pack production via BuildSeal API — pricing coming soon.</p>
+    </div>
+  </div>
+</section>
 
 <footer>
-BuildSeal ·
-<a href="https://verify.buildseal.io/verify.html">Verifier</a> ·
-<a href="https://github.com/hakannbjk55-afk/buildseal-action">GitHub</a>
+  <a href="https://verify.buildseal.io">verify.buildseal.io</a> &nbsp;·&nbsp;
+  <a href="https://github.com/hakannbjk55-afk/Isc-Core">Open source verifier</a> &nbsp;·&nbsp;
+  Independently verifiable
 </footer>
 
 </body>
