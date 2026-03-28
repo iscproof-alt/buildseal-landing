@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/seal", "destination": "/seal.html" },
+    { "source": "/verify", "destination": "/verify.html" }
+  ]
+}
