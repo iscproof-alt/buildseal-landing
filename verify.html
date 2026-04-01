@@ -27,7 +27,7 @@
 </div>
 <script>
 const id = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop();
-fetch('https://buildseal-api.onrender.com/verify/' + id)
+fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id)
   .then(r => r.json())
   .then(d => {
     const status = d.status || 'queued';
