@@ -111,7 +111,7 @@
   </div>
 </div>
 <script>
-const API_URL = 'https://buildseal-api-1.onrender.com/upload-and-seal';
+const API_URL = 'https://buildseal-api-1.onrender.com/seal';
 const REQUEST_TIMEOUT_MS = 90000;
 const MAX_RETRIES = 3;
 let sealData = null;
@@ -179,7 +179,8 @@ function normalizeApiData(data) {
   const sealTimestamp = data?.timestamp || data?.sealed_at || data?.created_at || data?.tsa_time || null;
   const tsaToken = data?.tsa || data?.tsa_token || null;
   const tsaStatus = data?.tsa_status || (tsaToken ? 'present' : 'missing');
-  return { raw: data, seal_id: sealId, verify_url: verifyUrl, seal_timestamp: sealTimestamp, tsa_token: tsaToken, tsa_status: tsaStatus };
+  const root = data?.root || null;
+  return { raw: data, seal_id: sealId, verify_url: verifyUrl, seal_timestamp: sealTimestamp, tsa_token: tsaToken, tsa_status: tsaStatus, root: root };
 }
 
 async function handleFile(file) {
@@ -255,6 +256,7 @@ async function handleFile(file) {
   document.getElementById('fileName').textContent = file.name;
   document.getElementById('hashVal').textContent = hash;
   document.getElementById('sealTime').textContent = n.seal_timestamp || '⚠️ Backend seal zamanı dönmedi';
+  document.getElementById('rootHash').textContent = n.root || '—';
   document.getElementById('tsaStatus').textContent = n.tsa_status === 'present' ? 'Bağımsız TSA bilgisi mevcut' : 'Bağımsız TSA bilgisi dönmedi';
 
   const verifyUrl = n.verify_url || '#';
