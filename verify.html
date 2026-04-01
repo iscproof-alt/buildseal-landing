@@ -31,7 +31,7 @@ fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id)
   .then(r => r.json())
   .then(d => {
     const status = d.status || 'queued';
-    const badge = status === 'verified' ? '✅' : '⏳';
+    const badge = (status === 'verified' || status === 'completed') ? '✅' : '⏳';
     document.getElementById('main').innerHTML = `
       <div class="badge">${badge}</div>
       <div class="label">Seal ID</div>
