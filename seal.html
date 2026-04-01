@@ -44,7 +44,7 @@ async function handleFile(file) {
   const buf = await file.arrayBuffer();
   const hashBuf = await crypto.subtle.digest('SHA-256', buf);
   const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
-  const res = await fetch('https://buildseal-api-1.onrender.com/upload-and-seal', {
+  const res = await fetch('https://buildseal-api-production-3ca5.up.railway.app/seal', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ artifact_hash: hash, repo: 'web-upload', commit: 'direct' })
