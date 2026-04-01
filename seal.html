@@ -251,6 +251,7 @@ async function handleFile(file) {
     seal_timestamp: n.seal_timestamp,
     tsa_status: n.tsa_status,
     tsa_token_present: !!n.tsa_token,
+    root: n.root || null,
     raw_response: n.raw
   };
 
