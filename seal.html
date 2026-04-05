@@ -98,7 +98,7 @@
     <div class="label">Seal Zamanı</div>
     <div class="value" id="sealTime"></div>
     <div class="label">Root Hash</div>
-    <div class="value" id="rootHash"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><div class="value" id="rootHash" style="font-family:monospace;font-size:0.85em;word-break:break-all"></div><button id="copyRootHash" onclick="copyHash()" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:6px;padding:4px 10px;font-size:0.75em;cursor:pointer;white-space:nowrap">📋 Kopyala</button></div>
     <div class="label">TSA Durumu</div>
     <div class="value" id="tsaStatus"></div>
     <div class="label">Verify</div>
@@ -261,7 +261,11 @@ async function handleFile(file) {
   document.getElementById('fileName').textContent = file.name;
   document.getElementById('hashVal').textContent = hash;
   document.getElementById('sealTime').textContent = n.seal_timestamp || '⚠️ Backend seal zamanı dönmedi';
-  document.getElementById('rootHash').textContent = n.root || '—';
+  const fullRoot = n.root || '';
+  const shortRoot = fullRoot.length > 16 ? fullRoot.slice(0,8) + '...' + fullRoot.slice(-8) : fullRoot;
+  document.getElementById('rootHash').textContent = shortRoot || '—';
+  document.getElementById('rootHash').title = fullRoot;
+  document.getElementById('copyRootHash').style.display = fullRoot ? 'inline-block' : 'none';
   const tsaTimeStr = n.tsa_token?.time ? new Date(n.tsa_token.time).toLocaleString('tr-TR', {timeZone:'UTC'}) + ' UTC' : '';
   document.getElementById('tsaStatus').textContent = n.tsa_status === 'present' ? '✅ ' + tsaTimeStr + ' (freetsa.org)' : 'Bağımsız TSA bilgisi dönmedi';
 
@@ -305,6 +309,25 @@ dropZone.addEventListener('drop', e => {
   dropZone.classList.remove('dragover');
   handleFile(e.dataTransfer.files?.[0]);
 });
+
+function copyHash() {
+  const full = document.getElementById('rootHash').title;
+  if (!full) return;
+  navigator.clipboard.writeText(full).then(() => {
+    const btn = document.getElementById('copyRootHash');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Kopyalandı';
+    btn.style.color = '#86efac';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = '#4ade80'; }, 1500);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = full;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
 </script>
 </body>
 </html>
