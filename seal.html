@@ -178,10 +178,11 @@ async function fetchWithTimeout(url, options, timeoutMs) {
 function normalizeApiData(data) {
   const sealId = data?.seal_id || data?.id || null;
   const verifyUrl = data?.verify_url || data?.verifyUrl || null;
-  const sealTimestamp = data?.timestamp || data?.sealed_at || data?.created_at || data?.tsa_time || null;
+  const sealTimestamp = data?.sealed_at || data?.timestamp || data?.created_at || data?.tsa_time || null;
   const tsaToken = data?.tsa || data?.tsa_token || null;
-  const tsaStatus = data?.tsa_status || (tsaToken ? 'present' : 'missing');
-  const root = data?.root || null;
+  const tsaStatus = (tsaToken && tsaToken.present) ? 'present' : (data?.tsa_status || 'missing');
+  const tsaTime = tsaToken?.time || null;
+  const root = data?.root_hash || data?.root || null;
   return { raw: data, seal_id: sealId, verify_url: verifyUrl, seal_timestamp: sealTimestamp, tsa_token: tsaToken, tsa_status: tsaStatus, root: root };
 }
 
@@ -261,7 +262,8 @@ async function handleFile(file) {
   document.getElementById('hashVal').textContent = hash;
   document.getElementById('sealTime').textContent = n.seal_timestamp || '⚠️ Backend seal zamanı dönmedi';
   document.getElementById('rootHash').textContent = n.root || '—';
-  document.getElementById('tsaStatus').textContent = n.tsa_status === 'present' ? 'Bağımsız TSA bilgisi mevcut' : 'Bağımsız TSA bilgisi dönmedi';
+  const tsaTimeStr = n.tsa_token?.time ? new Date(n.tsa_token.time).toLocaleString('tr-TR', {timeZone:'UTC'}) + ' UTC' : '';
+  document.getElementById('tsaStatus').textContent = n.tsa_status === 'present' ? '✅ ' + tsaTimeStr + ' (freetsa.org)' : 'Bağımsız TSA bilgisi dönmedi';
 
   const verifyUrl = n.verify_url || '#';
   document.getElementById('verifyUrl').textContent = n.verify_url || 'Verify URL dönmedi';
