@@ -48,6 +48,12 @@ fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id)
       <div class="value">${d.created_at}</div>
       <div class="label" style="margin-top:16px">Verdict</div>
       <div class="value" style="color:${d.verdict==='VALID'?'#4ade80':'#fbbf24'};font-size:1.3em;font-weight:bold">${d.verdict || 'PENDING'}</div>
+      <div class="label" style="margin-top:16px">Sealed At</div>
+      <div class="value">${d.created_at || '-'}</div>
+      <div class="label" style="margin-top:16px">TSA Zaman Damgası</div>
+      <div class="value" style="color:${(() => { try { const t=JSON.parse(d.tsa_json||'{}'); return t.present?'#4ade80':'#fbbf24'; } catch(e){return '#fbbf24';} })()}">
+        ${(() => { try { const t=JSON.parse(d.tsa_json||'{}'); return t.present ? '✅ ' + t.time + ' (freetsa.org)' : '⚠️ TSA yok'; } catch(e){ return '⚠️ TSA yok'; } })()}
+      </div>
     `;
   })
   .catch(() => {
