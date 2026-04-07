@@ -23,6 +23,30 @@
     box-sizing: border-box;
   }
   h1 { font-size: 2.5em; margin-bottom: 10px; }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    justify-content: center;
+  }
+  .tab-btn {
+    background: #1a1a2e;
+    color: #888;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 10px 28px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: #1e3a2f;
+    color: #4ade80;
+    border-color: #2a5a3a;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
   p { color: #aaa; margin-bottom: 30px; }
   .drop-zone {
     border: 2px dashed #444;
@@ -81,6 +105,11 @@
 <body>
 <div class="container">
   <h1>🔒 BuildSeal</h1>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('seal')">🔒 Mühürle</button>
+    <button class="tab-btn" onclick="switchTab('verify')">🔍 Doğrula</button>
+  </div>
+  <div id="tab-seal" class="tab-content active">
   <p>PDF dosyanı sürükle, tek tuşla seal'le.</p>
   <div class="drop-zone" id="dropZone">
     <input type="file" id="fileInput" accept="application/pdf,.pdf" />
@@ -111,6 +140,20 @@
       <button class="btn secondary" id="downloadBtn" type="button" onclick="downloadSealSummary()">⬇ Seal Summary İndir</button>
     </div>
   </div>
+  </div><!-- /tab-seal -->
+
+  <div id="tab-verify" class="tab-content">
+    <p>Dosyani yukle veya Seal ID gir.</p>
+    <div id="verify-drop" style="border:2px dashed #2a2a4a;border-radius:12px;padding:40px;margin:20px 0;cursor:pointer;transition:border-color 0.2s" onclick="document.getElementById('verifyFileInput').click()">
+      <div id="verifyDropText">📄 Dogrulanacak dosyayi sec</div>
+      <input type="file" id="verifyFileInput" style="display:none" accept=".pdf,.doc,.docx,.txt" />
+    </div>
+    <div style="margin:16px 0;color:#666">— veya —</div>
+    <input id="sealIdInput" type="text" placeholder="Seal ID gir (seal_...)" style="width:100%;padding:12px;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:8px;color:#fff;font-size:0.95em;box-sizing:border-box;margin-bottom:12px" />
+    <button onclick="verifyBySealId()" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:12px 24px;font-size:1em;cursor:pointer;width:100%">🔍 Seal ID ile Dogrula</button>
+    <div id="verifyResult" style="margin-top:24px;display:none;background:#111827;border-radius:12px;padding:24px;text-align:left"></div>
+  </div><!-- /tab-verify -->
+
 </div>
 <script>
 const API_URL = 'https://buildseal-api-production-3ca5.up.railway.app/upload-and-seal';
@@ -328,6 +371,188 @@ function copyHash() {
     document.body.removeChild(ta);
   });
 }
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'verify') {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id) { document.getElementById('sealIdInput').value = id; verifyBySealId(); }
+  }
+  history.replaceState(null, '', '?tab=' + tab);
+}
+
+async function verifyBySealId() {
+  const id = document.getElementById('sealIdInput').value.trim();
+  if (!id) return;
+  const res = document.getElementById('verifyResult');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#888">Sorgulanıyor...</div>';
+  try {
+    const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id);
+    const d = await r.json();
+    showVerifyResult(d);
+  } catch(e) {
+    res.innerHTML = '<div style="color:#f87171">Bağlantı hatası</div>';
+  }
+}
+
+async function verifyByFile(file) {
+  const res = document.getElementById('verifyResult');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#888">Hash hesaplanıyor...</div>';
+  const buf = await file.arrayBuffer();
+  const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+  const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  res.innerHTML = '<div style="color:#888">Kayıt aranıyor...</div>';
+  try {
+    const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify-by-hash', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ artifact_hash: hash })
+    });
+    const d = await r.json();
+    if (!d.found) {
+      res.innerHTML = '<div style="color:#f87171">❌ Bu dosyaya ait seal kaydı bulunamadı.<br><small style="color:#666">Hash: ' + hash + '</small></div>';
+    } else {
+      showVerifyResult({ ...d, artifact_hash: hash });
+    }
+  } catch(e) {
+    res.innerHTML = '<div style="color:#f87171">Bağlantı hatası</div>';
+  }
+}
+
+function showVerifyResult(d) {
+  const res = document.getElementById('verifyResult');
+  const tsa = d.tsa || d.tsa_json ? (typeof d.tsa === 'string' ? JSON.parse(d.tsa) : d.tsa) : null;
+  const tsaStr = tsa && tsa.present ? '✅ ' + tsa.time + ' (' + tsa.provider + ')' : '⚠️ TSA yok';
+  const verdict = d.verdict || d.status || 'DONE';
+  res.innerHTML = `
+    <div style="color:#4ade80;font-size:1.3em;font-weight:bold;margin-bottom:16px">✅ Seal Bulundu</div>
+    <div style="color:#888;font-size:0.8em">SEAL ID</div>
+    <div style="color:#4ade80;font-family:monospace;margin-bottom:12px">${d.seal_id || '-'}</div>
+    <div style="color:#888;font-size:0.8em">ROOT HASH</div>
+    <div style="font-family:monospace;font-size:0.8em;margin-bottom:12px;word-break:break-all">${d.root || '-'}</div>
+    <div style="color:#888;font-size:0.8em">ZAMAN</div>
+    <div style="margin-bottom:12px">${d.timestamp || d.created_at || '-'}</div>
+    <div style="color:#888;font-size:0.8em">TSA</div>
+    <div style="margin-bottom:16px">${tsaStr}</div>
+    <a href="${d.verify_url || '#'}" target="_blank" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;text-decoration:none;font-size:0.9em">🔗 Tam Verify Sayfası</a>
+  `;
+}
+
+// Verify tab dosya yükleme
+document.addEventListener('DOMContentLoaded', () => {
+  const fi = document.getElementById('verifyFileInput');
+  if (fi) fi.addEventListener('change', e => { if (e.target.files[0]) verifyByFile(e.target.files[0]); });
+  const drop = document.getElementById('verify-drop');
+  if (drop) {
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.borderColor = '#4ade80'; });
+    drop.addEventListener('dragleave', () => { drop.style.borderColor = '#2a2a4a'; });
+    drop.addEventListener('drop', e => { e.preventDefault(); drop.style.borderColor = '#2a2a4a'; if (e.dataTransfer.files[0]) verifyByFile(e.dataTransfer.files[0]); });
+  }
+  // URL tab parametresi
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
+  if (tab === 'verify') {
+    document.querySelectorAll('.tab-btn')[1].click();
+  }
+});
+
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'verify') {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id) { document.getElementById('sealIdInput').value = id; verifyBySealId(); }
+  }
+  history.replaceState(null, '', '?tab=' + tab);
+}
+
+async function verifyBySealId() {
+  const id = document.getElementById('sealIdInput').value.trim();
+  if (!id) return;
+  const res = document.getElementById('verifyResult');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#888">Sorgulanıyor...</div>';
+  try {
+    const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id);
+    const d = await r.json();
+    showVerifyResult(d);
+  } catch(e) {
+    res.innerHTML = '<div style="color:#f87171">Bağlantı hatası</div>';
+  }
+}
+
+async function verifyByFile(file) {
+  const res = document.getElementById('verifyResult');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#888">Hash hesaplanıyor...</div>';
+  const buf = await file.arrayBuffer();
+  const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+  const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  res.innerHTML = '<div style="color:#888">Kayıt aranıyor...</div>';
+  try {
+    const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify-by-hash', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ artifact_hash: hash })
+    });
+    const d = await r.json();
+    if (!d.found) {
+      res.innerHTML = '<div style="color:#f87171">❌ Bu dosyaya ait seal kaydı bulunamadı.<br><small style="color:#666">Hash: ' + hash + '</small></div>';
+    } else {
+      showVerifyResult({ ...d, artifact_hash: hash });
+    }
+  } catch(e) {
+    res.innerHTML = '<div style="color:#f87171">Bağlantı hatası</div>';
+  }
+}
+
+function showVerifyResult(d) {
+  const res = document.getElementById('verifyResult');
+  const tsa = d.tsa || d.tsa_json ? (typeof d.tsa === 'string' ? JSON.parse(d.tsa) : d.tsa) : null;
+  const tsaStr = tsa && tsa.present ? '✅ ' + tsa.time + ' (' + tsa.provider + ')' : '⚠️ TSA yok';
+  const verdict = d.verdict || d.status || 'DONE';
+  res.innerHTML = `
+    <div style="color:#4ade80;font-size:1.3em;font-weight:bold;margin-bottom:16px">✅ Seal Bulundu</div>
+    <div style="color:#888;font-size:0.8em">SEAL ID</div>
+    <div style="color:#4ade80;font-family:monospace;margin-bottom:12px">${d.seal_id || '-'}</div>
+    <div style="color:#888;font-size:0.8em">ROOT HASH</div>
+    <div style="font-family:monospace;font-size:0.8em;margin-bottom:12px;word-break:break-all">${d.root || '-'}</div>
+    <div style="color:#888;font-size:0.8em">ZAMAN</div>
+    <div style="margin-bottom:12px">${d.timestamp || d.created_at || '-'}</div>
+    <div style="color:#888;font-size:0.8em">TSA</div>
+    <div style="margin-bottom:16px">${tsaStr}</div>
+    <a href="${d.verify_url || '#'}" target="_blank" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;text-decoration:none;font-size:0.9em">🔗 Tam Verify Sayfası</a>
+  `;
+}
+
+// Verify tab dosya yükleme
+document.addEventListener('DOMContentLoaded', () => {
+  const fi = document.getElementById('verifyFileInput');
+  if (fi) fi.addEventListener('change', e => { if (e.target.files[0]) verifyByFile(e.target.files[0]); });
+  const drop = document.getElementById('verify-drop');
+  if (drop) {
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.borderColor = '#4ade80'; });
+    drop.addEventListener('dragleave', () => { drop.style.borderColor = '#2a2a4a'; });
+    drop.addEventListener('drop', e => { e.preventDefault(); drop.style.borderColor = '#2a2a4a'; if (e.dataTransfer.files[0]) verifyByFile(e.dataTransfer.files[0]); });
+  }
+  // URL tab parametresi
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
+  if (tab === 'verify') {
+    document.querySelectorAll('.tab-btn')[1].click();
+  }
+});
+
 </script>
 </body>
 </html>
