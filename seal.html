@@ -427,7 +427,8 @@ async function verifyByFile(file) {
 
 function showVerifyResult(d) {
   const res = document.getElementById('verifyResult');
-  const tsa = d.tsa || d.tsa_json ? (typeof d.tsa === 'string' ? JSON.parse(d.tsa) : d.tsa) : null;
+  const tsaRaw = d.tsa || (d.tsa_json ? (typeof d.tsa_json === 'string' ? JSON.parse(d.tsa_json) : d.tsa_json) : null);
+  const tsa = tsaRaw && typeof tsaRaw === 'object' ? tsaRaw : null;
   const tsaStr = tsa && tsa.present ? '✅ ' + tsa.time + ' (' + tsa.provider + ')' : '⚠️ TSA yok';
   const verdict = d.verdict || d.status || 'DONE';
   res.innerHTML = `
