@@ -52,7 +52,7 @@ fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id)
       <div class="value">${d.created_at || '-'}</div>
       <div class="label" style="margin-top:16px">TSA Zaman Damgası</div>
       <div class="value" style="color:${(() => { try { const t=JSON.parse(d.tsa_json||'{}'); return t.present?'#4ade80':'#fbbf24'; } catch(e){return '#fbbf24';} })()}">
-        ${(() => { try { const t=JSON.parse(d.tsa_json||'{}'); return t.present ? '✅ ' + t.time + ' (freetsa.org)' : '⚠️ TSA yok'; } catch(e){ return '⚠️ TSA yok'; } })()}
+        ${(() => { try { const t=JSON.parse(d.tsa_json||'{}'); const cryptoVerified = d.verify_output_json && d.verify_output_json.includes('tsa:         VERIFIED'); if (t.present && cryptoVerified) return '✅ VERIFIED | ' + t.time + ' (freetsa.org)'; if (t.present) return '✅ ' + t.time + ' (freetsa.org)'; return '⚠️ TSA yok'; } catch(e){ return '⚠️ TSA yok'; } })()}
       </div>
     `;
   })
