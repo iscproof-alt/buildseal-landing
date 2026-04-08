@@ -296,7 +296,12 @@ async function handleFile(file) {
     seal_timestamp: n.seal_timestamp,
     tsa_status: n.tsa_status,
     tsa_token_present: !!n.tsa_token,
-    root: n.root || null,
+    tsa_time: n.tsa_token?.time || null,
+    tsa_provider: n.tsa_token?.provider || null,
+    tsa_token_b64: n.tsa_token?.token_b64 || null,
+    root_hash: n.root || null,
+    algorithm: 'sha256',
+    pack_version: n.raw?.pack_version || '5.1',
     raw_response: n.raw
   };
 
