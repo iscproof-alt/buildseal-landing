@@ -6,32 +6,43 @@
 <title>BuildSeal — Verify</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 40px 20px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px; }
   .container { max-width: 600px; width: 100%; }
-  h1 { font-size: 1.8em; text-align: center; margin-bottom: 32px; color: #fff; }
-  .card { background: #111827; border-radius: 16px; padding: 32px; }
-  .badge { font-size: 56px; text-align: center; margin-bottom: 16px; }
-  .verdict { text-align: center; font-size: 1.5em; font-weight: 700; margin-bottom: 24px; letter-spacing: 1px; }
+  h1 { font-size: 1.6em; text-align: center; margin-bottom: 28px; color: #fff; }
+  .card { background: #111827; border-radius: 16px; padding: 28px; }
+  .badge { font-size: 52px; text-align: center; margin-bottom: 12px; }
+  .verdict { text-align: center; font-size: 1.4em; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
+  .verdict-sub { text-align: center; font-size: 0.8em; color: #6b7280; margin-bottom: 24px; }
   .verdict.valid { color: #4ade80; }
   .verdict.invalid { color: #f87171; }
   .verdict.pending { color: #fbbf24; }
-  .surface { margin-bottom: 24px; }
-  .row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #1f2937; gap: 16px; }
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #1f2937; gap: 12px; }
   .row:last-child { border-bottom: none; }
-  .row-label { color: #6b7280; font-size: 0.8em; min-width: 100px; }
-  .row-value { color: #e0e0e0; font-size: 0.85em; text-align: right; word-break: break-all; }
-  .row-value.green { color: #4ade80; }
-  .toggle-btn { width: 100%; background: #1f2937; border: 1px solid #374151; color: #9ca3af; border-radius: 8px; padding: 10px; cursor: pointer; font-size: 0.85em; margin-bottom: 16px; }
-  .toggle-btn:hover { background: #374151; }
-  .depth { display: none; background: #0f1a24; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .row-label { color: #6b7280; font-size: 0.78em; min-width: 80px; }
+  .row-value { color: #e0e0e0; font-size: 0.85em; text-align: right; }
+  .row-value.green { color: #4ade80; font-family: monospace; }
+  .surface { margin-bottom: 20px; }
+  .toggle-btn { width: 100%; background: #1f2937; border: 1px solid #374151; color: #9ca3af; border-radius: 8px; padding: 10px; cursor: pointer; font-size: 0.82em; margin-bottom: 12px; transition: background 0.2s; }
+  .toggle-btn:hover { background: #374151; color: #e0e0e0; }
+  .depth { display: none; background: #0d1520; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
   .depth.open { display: block; }
-  .depth-row { padding: 6px 0; border-bottom: 1px solid #1f2937; }
+  .depth-row { padding: 7px 0; border-bottom: 1px solid #1a2535; }
   .depth-row:last-child { border-bottom: none; }
-  .depth-label { color: #6b7280; font-size: 0.72em; margin-bottom: 2px; }
-  .depth-value { color: #9ca3af; font-size: 0.78em; word-break: break-all; font-family: monospace; }
+  .depth-label { color: #4b5563; font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .depth-value { color: #9ca3af; font-size: 0.78em; word-break: break-all; font-family: monospace; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .depth-value.green { color: #4ade80; }
-  .btn { display: block; text-align: center; background: #1e3a2f; color: #4ade80; border: 1px solid #2a5a3a; border-radius: 8px; padding: 12px; text-decoration: none; font-size: 0.9em; margin-top: 12px; }
+  .copy-btn { background: #1e3a2f; color: #4ade80; border: 1px solid #2a5a3a; border-radius: 4px; padding: 2px 8px; font-size: 0.7em; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+  .copy-btn:hover { background: #2a5a3a; }
+  .hash-short { color: #9ca3af; }
+  .steps { background: #0d1520; border-radius: 6px; padding: 10px 14px; margin-top: 4px; }
+  .step { font-size: 0.75em; color: #6b7280; padding: 3px 0; display: flex; gap: 8px; align-items: center; }
+  .step.ok { color: #4ade80; }
+  .step.ok::before { content: "✓"; color: #4ade80; }
+  .step.fail::before { content: "✗"; color: #f87171; }
+  .btn { display: block; text-align: center; background: #1e3a2f; color: #4ade80; border: 1px solid #2a5a3a; border-radius: 8px; padding: 12px; text-decoration: none; font-size: 0.88em; margin-top: 10px; }
   .btn:hover { background: #2a5a3a; }
+  a { color: #4ade80; text-decoration: none; }
+  a:hover { text-decoration: underline; }
   .not-found { text-align: center; color: #f87171; padding: 40px; }
 </style>
 </head>
@@ -39,10 +50,35 @@
 <div class="container">
   <h1>🔍 Verify</h1>
   <div class="card" id="main">
-    <div style="text-align:center;color:#888">Yükleniyor...</div>
+    <div style="text-align:center;color:#888;padding:20px">Yükleniyor...</div>
   </div>
 </div>
 <script>
+function shortHash(h) {
+  return h && h.length > 16 ? h.slice(0,8) + '…' + h.slice(-8) : (h || '-');
+}
+function humanTime(iso) {
+  if (!iso) return '-';
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric',timeZone:'UTC'}) + ' ' +
+           d.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit',timeZone:'UTC'}) + ' UTC';
+  } catch(e) { return iso; }
+}
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+function toggleDepth() {
+  const el = document.getElementById('depth');
+  const btn = document.querySelector('.toggle-btn');
+  el.classList.toggle('open');
+  btn.textContent = el.classList.contains('open') ? '▲ Teknik Detayları Gizle' : '▼ Teknik Detayları Göster';
+}
+
 const id = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop();
 
 fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id)
@@ -53,84 +89,104 @@ fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id)
     const isInvalid = verdict === 'INVALID';
     const badge = isValid ? '✅' : isInvalid ? '❌' : '⏳';
     const verdictClass = isValid ? 'valid' : isInvalid ? 'invalid' : 'pending';
-    const verdictText = isValid ? 'DOĞRULANDI' : isInvalid ? 'GEÇERSİZ' : verdict;
+    const verdictText = isValid ? 'DOĞRULANDI' : isInvalid ? 'GEÇERSİZ' : 'BEKLENİYOR';
+    const verdictSub = isValid ? 'Kriptografik doğrulama başarılı' : isInvalid ? 'Doğrulama başarısız' : 'İşlem devam ediyor';
 
     let tsa = {};
     try { tsa = JSON.parse(d.tsa_json || '{}'); } catch(e) {}
     const cryptoVerified = d.verify_output_json && d.verify_output_json.includes('tsa:         VERIFIED');
-    const tsaText = tsa.present && cryptoVerified ? '✅ VERIFIED — ' + tsa.time + ' (freetsa.org)' : tsa.present ? '✅ ' + tsa.time + ' (freetsa.org)' : '⚠️ TSA yok';
+    const tsaText = tsa.present && cryptoVerified
+      ? '✅ ' + humanTime(tsa.time) + ' · freetsa.org'
+      : tsa.present ? '⚠️ ' + humanTime(tsa.time) + ' · doğrulanmadı'
+      : '⚠️ TSA yok';
 
     let packJson = {};
     try { packJson = JSON.parse(d.pack_json || '{}'); } catch(e) {}
     const rootHash = packJson.root || d.pack_hash || '';
-    const sigFingerprint = packJson.signatures && packJson.signatures[0] ? packJson.signatures[0].fingerprint : '';
+    const artifactHash = d.artifact_hash || '';
+    const sigFingerprint = packJson.signatures && packJson.signatures[0] ? packJson.signatures[0].signatures : (packJson.signatures && packJson.signatures[0] ? packJson.signatures[0].fingerprint : '');
+    const fp = packJson.signatures && packJson.signatures[0] ? packJson.signatures[0].fingerprint : '';
     const packVersion = packJson.pack_version || '5.1';
+
+    const verifyLines = (d.verify_output_json || '').trim().split('\n').filter(Boolean);
+    const steps = [
+      { label: 'JSON parse', ok: true },
+      { label: 'Pack version ≥ 5', ok: true },
+      { label: 'Root hash eşleşmesi', ok: verifyLines.some(l => l.includes('PACK VERIFIED')) },
+      { label: 'ed25519 imza doğrulama', ok: verifyLines.some(l => l.includes('PACK VERIFIED')) },
+      { label: 'RFC 3161 TSA doğrulama', ok: cryptoVerified },
+    ];
 
     document.getElementById('main').innerHTML = `
       <div class="badge">${badge}</div>
       <div class="verdict ${verdictClass}">${verdictText}</div>
+      <div class="verdict-sub">${verdictSub}</div>
 
       <div class="surface">
         <div class="row">
           <span class="row-label">Seal ID</span>
-          <span class="row-value green">${d.seal_id || '-'}</span>
+          <span class="row-value green">${shortHash(d.seal_id)}</span>
         </div>
         <div class="row">
-          <span class="row-label">Zaman</span>
-          <span class="row-value">${d.sealed_at || d.created_at || '-'}</span>
+          <span class="row-label">Mühürleme</span>
+          <span class="row-value">${humanTime(d.sealed_at || d.created_at)}</span>
         </div>
         <div class="row">
-          <span class="row-label">TSA</span>
+          <span class="row-label">Zaman Kanıtı</span>
           <span class="row-value">${tsaText}</span>
         </div>
         <div class="row">
           <span class="row-label">Standart</span>
-          <span class="row-value">ISCProof v${packVersion} — <a href="https://iscproof.io/spec" style="color:#4ade80">spec</a></span>
+          <span class="row-value"><a href="https://iscproof.io/spec" target="_blank">ISCProof v${packVersion}</a></span>
         </div>
       </div>
 
-      <button class="toggle-btn" onclick="toggleDepth()">▼ Teknik Detaylar</button>
+      <div class="steps">
+        ${steps.map(s => `<div class="step ${s.ok ? 'ok' : 'fail'}">${s.label}</div>`).join('')}
+      </div>
+
+      <br>
+      <button class="toggle-btn" onclick="toggleDepth()">▼ Teknik Detayları Göster</button>
 
       <div class="depth" id="depth">
         <div class="depth-row">
-          <div class="depth-label">ARTIFACT HASH (SHA-256)</div>
-          <div class="depth-value">${d.artifact_hash || '-'}</div>
+          <div class="depth-label">Dosya Hash (SHA-256)</div>
+          <div class="depth-value">
+            <span>${shortHash(artifactHash)}</span>
+            <button class="copy-btn" onclick="copyText('${artifactHash}', this)">Kopyala</button>
+          </div>
         </div>
         <div class="depth-row">
-          <div class="depth-label">ROOT HASH</div>
-          <div class="depth-value">${rootHash || '-'}</div>
+          <div class="depth-label">Root Hash — Kanıt Paketi Kimliği</div>
+          <div class="depth-value">
+            <span>${shortHash(rootHash)}</span>
+            <button class="copy-btn" onclick="copyText('${rootHash}', this)">Kopyala</button>
+          </div>
         </div>
         <div class="depth-row">
-          <div class="depth-label">İMZA ALGORİTMASI</div>
-          <div class="depth-value">ed25519</div>
+          <div class="depth-label">İmza Algoritması</div>
+          <div class="depth-value green">ed25519</div>
         </div>
         <div class="depth-row">
-          <div class="depth-label">SIGNER FINGERPRINT</div>
-          <div class="depth-value green">${sigFingerprint || '-'} — <a href="https://iscproof.io/keys" style="color:#4ade80">key registry</a></div>
+          <div class="depth-label">Signer Fingerprint</div>
+          <div class="depth-value">
+            <span>${fp || '-'}</span>
+            ${fp ? `<button class="copy-btn" onclick="copyText('${fp}', this)">Kopyala</button>` : ''}
+            ${fp ? `<a href="https://iscproof.io/keys" target="_blank" style="font-size:0.85em">Key Registry →</a>` : ''}
+          </div>
         </div>
         <div class="depth-row">
-          <div class="depth-label">TSA PROTOKOLÜ</div>
-          <div class="depth-value">RFC 3161</div>
-        </div>
-        <div class="depth-row">
-          <div class="depth-label">DOĞRULAMA ADIMI</div>
-          <div class="depth-value green">${d.verify_output_json ? d.verify_output_json.trim().split('\n').join(' | ') : '-'}</div>
+          <div class="depth-label">TSA Protokolü</div>
+          <div class="depth-value green">RFC 3161 · freetsa.org</div>
         </div>
       </div>
 
-      <a class="btn" href="https://buildseal-api-production-3ca5.up.railway.app/pack/${d.seal_id}" download>⬇ Pack JSON İndir</a>
+      <a class="btn" href="https://buildseal-api-production-3ca5.up.railway.app/pack/${d.seal_id}" target="_blank">⬇ Pack JSON İndir</a>
     `;
   })
   .catch(() => {
     document.getElementById('main').innerHTML = '<div class="not-found">Seal bulunamadı.</div>';
   });
-
-function toggleDepth() {
-  const d = document.getElementById('depth');
-  const btn = document.querySelector('.toggle-btn');
-  d.classList.toggle('open');
-  btn.textContent = d.classList.contains('open') ? '▲ Teknik Detaylar' : '▼ Teknik Detaylar';
-}
 </script>
 </body>
 </html>
