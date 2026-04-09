@@ -533,24 +533,6 @@ async function verifyByFile(file) {
   }
 }
 
-function showVerifyResult(d) {
-  const res = document.getElementById('verifyResult');
-  const tsa = d.tsa || d.tsa_json ? (typeof d.tsa === 'string' ? JSON.parse(d.tsa) : d.tsa) : null;
-  const tsaStr = tsa && tsa.present ? '✅ ' + tsa.time + ' (' + tsa.provider + ')' : '⚠️ TSA yok';
-  const verdict = d.verdict || d.status || 'DONE';
-  res.innerHTML = `
-    <div style="color:#4ade80;font-size:1.3em;font-weight:bold;margin-bottom:16px">✅ Seal Bulundu</div>
-    <div style="color:#888;font-size:0.8em">SEAL ID</div>
-    <div style="color:#4ade80;font-family:monospace;margin-bottom:12px">${d.seal_id || '-'}</div>
-    <div style="color:#888;font-size:0.8em">ROOT HASH</div>
-    <div style="font-family:monospace;font-size:0.8em;margin-bottom:12px;word-break:break-all">${d.root || '-'}</div>
-    <div style="color:#888;font-size:0.8em">ZAMAN</div>
-    <div style="margin-bottom:12px">${d.timestamp || d.created_at || '-'}</div>
-    <div style="color:#888;font-size:0.8em">TSA</div>
-    <div style="margin-bottom:16px">${tsaStr}</div>
-    <a href="${d.verify_url || '#'}" target="_blank" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;text-decoration:none;font-size:0.9em">🔗 Tam Verify Sayfası</a>
-  `;
-}
 
 // Verify tab dosya yükleme
 document.addEventListener('DOMContentLoaded', () => {
