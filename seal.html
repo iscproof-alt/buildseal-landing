@@ -432,21 +432,32 @@ async function verifyByFile(file) {
 
 function showVerifyResult(d) {
   const res = document.getElementById('verifyResult');
-  const tsaRaw = d.tsa || (d.tsa_json ? (typeof d.tsa_json === 'string' ? JSON.parse(d.tsa_json) : d.tsa_json) : null);
-  const tsa = tsaRaw && typeof tsaRaw === 'object' ? tsaRaw : null;
-  const tsaStr = tsa && tsa.present ? '✅ ' + tsa.time + ' (' + tsa.provider + ')' : '⚠️ TSA yok';
-  const verdict = d.verdict || d.status || 'DONE';
+  const tsa = d.tsa || null;
+  const tsaPresent = tsa && tsa.present;
+  const tsaTime = tsaPresent && tsa.time ? new Date(tsa.time).toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric',timeZone:'UTC'}) + ' ' + new Date(tsa.time).toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit',timeZone:'UTC'}) + ' UTC' : null;
+  const tsaStr = tsaPresent ? '✅ ' + tsaTime + ' · ' + (tsa.provider || 'freetsa.org') : '⚠️ Zaman damgası yok (time-anchored değil)';
+  const root = d.root || null;
+  const shortRoot = root ? root.slice(0,8) + '…' + root.slice(-8) : null;
+  const verdict = d.verdict || d.status || '';
+  const isValid = verdict === 'VALID' || verdict === 'DONE';
+  const statusColor = isValid ? '#4ade80' : '#fbbf24';
+  const statusIcon = isValid ? '✅' : '⚠️';
+  const statusText = isValid ? 'Doğrulandı' : 'Kayıt Bulundu';
+  const time = d.timestamp || d.created_at || null;
+  const timeStr = time ? new Date(time).toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric',timeZone:'UTC'}) + ' ' + new Date(time).toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit',timeZone:'UTC'}) + ' UTC' : '-';
   res.innerHTML = `
-    <div style="color:#4ade80;font-size:1.3em;font-weight:bold;margin-bottom:16px">✅ Seal Bulundu</div>
-    <div style="color:#888;font-size:0.8em">SEAL ID</div>
-    <div style="color:#4ade80;font-family:monospace;margin-bottom:12px">${d.seal_id || '-'}</div>
-    <div style="color:#888;font-size:0.8em">ROOT HASH</div>
-    <div style="font-family:monospace;font-size:0.8em;margin-bottom:12px;word-break:break-all">${d.root || '-'}</div>
-    <div style="color:#888;font-size:0.8em">ZAMAN</div>
-    <div style="margin-bottom:12px">${d.timestamp || d.created_at || '-'}</div>
-    <div style="color:#888;font-size:0.8em">TSA</div>
-    <div style="margin-bottom:16px">${tsaStr}</div>
-    <a href="${d.verify_url || '#'}" target="_blank" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;text-decoration:none;font-size:0.9em">🔗 Tam Verify Sayfası</a>
+    <div style="color:${statusColor};font-size:1.2em;font-weight:bold;margin-bottom:16px">${statusIcon} ${statusText}</div>
+    <div style="color:#888;font-size:0.75em;margin-bottom:2px">SEAL ID</div>
+    <div style="color:#4ade80;font-family:monospace;margin-bottom:12px;font-size:0.85em">${d.seal_id || '-'}</div>
+    ${shortRoot ? `
+    <div style="color:#888;font-size:0.75em;margin-bottom:2px">ROOT HASH</div>
+    <div style="font-family:monospace;font-size:0.8em;margin-bottom:12px;color:#9ca3af">${shortRoot}</div>
+    ` : ''}
+    <div style="color:#888;font-size:0.75em;margin-bottom:2px">MÜHÜRLEME ZAMANI</div>
+    <div style="margin-bottom:12px;font-size:0.85em">${timeStr}</div>
+    <div style="color:#888;font-size:0.75em;margin-bottom:2px">ZAMAN KANITI</div>
+    <div style="margin-bottom:16px;font-size:0.85em">${tsaStr}</div>
+    <a href="${d.verify_url || '#'}" target="_blank" style="display:block;text-align:center;background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;text-decoration:none;font-size:0.9em">🔗 Tam Verify Sayfası</a>
   `;
 }
 
