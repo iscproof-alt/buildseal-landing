@@ -1,23 +1,7 @@
 {
   "rewrites": [
-    {
-      "source": "/seal",
-      "destination": "/seal.html"
-    },
-    {
-      "source": "/verify",
-      "destination": "/verify.html"
-    },
-    {
-      "source": "/release/:id",
-      "destination": "/verify.html"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/seal.html",
-      "permanent": false
-    }
+    { "source": "/seal", "destination": "/seal.html" },
+    { "source": "/verify", "destination": "/verify.html" },
+    { "source": "/release/:id", "destination": "/verify.html" }
   ]
 }
