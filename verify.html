@@ -5,17 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BuildSeal — Verify</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #0f1117; color: #fff; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-  .container { max-width: 600px; width: 100%; padding: 40px; }
-  h1 { font-size: 2em; margin-bottom: 30px; text-align: center; }
-  .card { background: #1a1a2e; border-radius: 12px; padding: 24px; margin-bottom: 16px; }
-  .label { color: #888; font-size: 0.8em; margin-bottom: 4px; }
-  .value { font-family: monospace; word-break: break-all; font-size: 0.95em; }
-  .status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold; }
-  .queued { background: #854d0e; color: #fef08a; }
-  .verified { background: #14532d; color: #86efac; }
-  .error { background: #7f1d1d; color: #fca5a5; }
-  .badge { text-align: center; font-size: 3em; margin-bottom: 10px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 40px 20px; }
+  .container { max-width: 600px; width: 100%; }
+  h1 { font-size: 1.8em; text-align: center; margin-bottom: 32px; color: #fff; }
+  .card { background: #111827; border-radius: 16px; padding: 32px; }
+  .badge { font-size: 56px; text-align: center; margin-bottom: 16px; }
+  .verdict { text-align: center; font-size: 1.5em; font-weight: 700; margin-bottom: 24px; letter-spacing: 1px; }
+  .verdict.valid { color: #4ade80; }
+  .verdict.invalid { color: #f87171; }
+  .verdict.pending { color: #fbbf24; }
+  .surface { margin-bottom: 24px; }
+  .row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #1f2937; gap: 16px; }
+  .row:last-child { border-bottom: none; }
+  .row-label { color: #6b7280; font-size: 0.8em; min-width: 100px; }
+  .row-value { color: #e0e0e0; font-size: 0.85em; text-align: right; word-break: break-all; }
+  .row-value.green { color: #4ade80; }
+  .toggle-btn { width: 100%; background: #1f2937; border: 1px solid #374151; color: #9ca3af; border-radius: 8px; padding: 10px; cursor: pointer; font-size: 0.85em; margin-bottom: 16px; }
+  .toggle-btn:hover { background: #374151; }
+  .depth { display: none; background: #0f1a24; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .depth.open { display: block; }
+  .depth-row { padding: 6px 0; border-bottom: 1px solid #1f2937; }
+  .depth-row:last-child { border-bottom: none; }
+  .depth-label { color: #6b7280; font-size: 0.72em; margin-bottom: 2px; }
+  .depth-value { color: #9ca3af; font-size: 0.78em; word-break: break-all; font-family: monospace; }
+  .depth-value.green { color: #4ade80; }
+  .btn { display: block; text-align: center; background: #1e3a2f; color: #4ade80; border: 1px solid #2a5a3a; border-radius: 8px; padding: 12px; text-decoration: none; font-size: 0.9em; margin-top: 12px; }
+  .btn:hover { background: #2a5a3a; }
+  .not-found { text-align: center; color: #f87171; padding: 40px; }
 </style>
 </head>
 <body>
@@ -27,38 +44,93 @@
 </div>
 <script>
 const id = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop();
+
 fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id)
   .then(r => r.json())
   .then(d => {
-    const status = d.status || 'queued';
-    const badge = (status === 'verified' || status === 'completed' || status === 'DONE' || d.verdict === 'VALID') ? '✅' : '⏳';
+    const verdict = d.verdict || 'PENDING';
+    const isValid = verdict === 'VALID';
+    const isInvalid = verdict === 'INVALID';
+    const badge = isValid ? '✅' : isInvalid ? '❌' : '⏳';
+    const verdictClass = isValid ? 'valid' : isInvalid ? 'invalid' : 'pending';
+    const verdictText = isValid ? 'DOĞRULANDI' : isInvalid ? 'GEÇERSİZ' : verdict;
+
+    let tsa = {};
+    try { tsa = JSON.parse(d.tsa_json || '{}'); } catch(e) {}
+    const cryptoVerified = d.verify_output_json && d.verify_output_json.includes('tsa:         VERIFIED');
+    const tsaText = tsa.present && cryptoVerified ? '✅ VERIFIED — ' + tsa.time + ' (freetsa.org)' : tsa.present ? '✅ ' + tsa.time + ' (freetsa.org)' : '⚠️ TSA yok';
+
+    let packJson = {};
+    try { packJson = JSON.parse(d.pack_json || '{}'); } catch(e) {}
+    const rootHash = packJson.root || d.pack_hash || '';
+    const sigFingerprint = packJson.signatures && packJson.signatures[0] ? packJson.signatures[0].fingerprint : '';
+    const packVersion = packJson.pack_version || '5.1';
+
     document.getElementById('main').innerHTML = `
       <div class="badge">${badge}</div>
-      <div class="label">Seal ID</div>
-      <div class="value" style="color:#4ade80;font-size:1.1em;margin-bottom:16px">${d.seal_id}</div>
-      <div class="label">Status</div>
-      <div style="margin-bottom:16px"><span class="status ${status}">${status.toUpperCase()}</span></div>
-      <div class="label">Artifact Hash</div>
-      <div class="value" style="margin-bottom:16px">${d.artifact_hash}</div>
-      <div class="label">Repo</div>
-      <div class="value" style="margin-bottom:16px">${d.repo}</div>
-      <div class="label">Commit</div>
-      <div class="value" style="margin-bottom:16px">${d.commit_hash || d.commit || '-'}</div>
-      <div class="label">Created At</div>
-      <div class="value">${d.created_at}</div>
-      <div class="label" style="margin-top:16px">Verdict</div>
-      <div class="value" style="color:${d.verdict==='VALID'?'#4ade80':'#fbbf24'};font-size:1.3em;font-weight:bold">${d.verdict || 'PENDING'}</div>
-      <div class="label" style="margin-top:16px">Sealed At</div>
-      <div class="value">${d.created_at || '-'}</div>
-      <div class="label" style="margin-top:16px">TSA Zaman Damgası</div>
-      <div class="value" style="color:${(() => { try { const t=JSON.parse(d.tsa_json||'{}'); return t.present?'#4ade80':'#fbbf24'; } catch(e){return '#fbbf24';} })()}">
-        ${(() => { try { const t=JSON.parse(d.tsa_json||'{}'); const cryptoVerified = d.verify_output_json && d.verify_output_json.includes('tsa:         VERIFIED'); if (t.present && cryptoVerified) return '✅ VERIFIED | ' + t.time + ' (freetsa.org)'; if (t.present) return '✅ ' + t.time + ' (freetsa.org)'; return '⚠️ TSA yok'; } catch(e){ return '⚠️ TSA yok'; } })()}
+      <div class="verdict ${verdictClass}">${verdictText}</div>
+
+      <div class="surface">
+        <div class="row">
+          <span class="row-label">Seal ID</span>
+          <span class="row-value green">${d.seal_id || '-'}</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Zaman</span>
+          <span class="row-value">${d.sealed_at || d.created_at || '-'}</span>
+        </div>
+        <div class="row">
+          <span class="row-label">TSA</span>
+          <span class="row-value">${tsaText}</span>
+        </div>
+        <div class="row">
+          <span class="row-label">Standart</span>
+          <span class="row-value">ISCProof v${packVersion} — <a href="https://iscproof.io/spec" style="color:#4ade80">spec</a></span>
+        </div>
       </div>
+
+      <button class="toggle-btn" onclick="toggleDepth()">▼ Teknik Detaylar</button>
+
+      <div class="depth" id="depth">
+        <div class="depth-row">
+          <div class="depth-label">ARTIFACT HASH (SHA-256)</div>
+          <div class="depth-value">${d.artifact_hash || '-'}</div>
+        </div>
+        <div class="depth-row">
+          <div class="depth-label">ROOT HASH</div>
+          <div class="depth-value">${rootHash || '-'}</div>
+        </div>
+        <div class="depth-row">
+          <div class="depth-label">İMZA ALGORİTMASI</div>
+          <div class="depth-value">ed25519</div>
+        </div>
+        <div class="depth-row">
+          <div class="depth-label">SIGNER FINGERPRINT</div>
+          <div class="depth-value green">${sigFingerprint || '-'} — <a href="https://iscproof.io/keys" style="color:#4ade80">key registry</a></div>
+        </div>
+        <div class="depth-row">
+          <div class="depth-label">TSA PROTOKOLÜ</div>
+          <div class="depth-value">RFC 3161</div>
+        </div>
+        <div class="depth-row">
+          <div class="depth-label">DOĞRULAMA ADIMI</div>
+          <div class="depth-value green">${d.verify_output_json ? d.verify_output_json.trim().split('\n').join(' | ') : '-'}</div>
+        </div>
+      </div>
+
+      <a class="btn" href="https://buildseal-api-production-3ca5.up.railway.app/pack/${d.seal_id}" download>⬇ Pack JSON İndir</a>
     `;
   })
   .catch(() => {
-    document.getElementById('main').innerHTML = '<div style="color:#f87171;text-align:center">Seal bulunamadı.</div>';
+    document.getElementById('main').innerHTML = '<div class="not-found">Seal bulunamadı.</div>';
   });
+
+function toggleDepth() {
+  const d = document.getElementById('depth');
+  const btn = document.querySelector('.toggle-btn');
+  d.classList.toggle('open');
+  btn.textContent = d.classList.contains('open') ? '▲ Teknik Detaylar' : '▼ Teknik Detaylar';
+}
 </script>
 </body>
 </html>
