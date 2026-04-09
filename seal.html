@@ -433,7 +433,7 @@ async function verifyByFile(file) {
 function showVerifyResult(d) {
   const res = document.getElementById('verifyResult');
   const tsa = d.tsa || null;
-  const tsaPresent = tsa && (tsa.present === true || tsa.present === undefined && tsa.provider);
+  const tsaPresent = !!(tsa && (tsa.time || tsa.provider));
   const tsaTime = tsaPresent && tsa.time ? new Date(tsa.time).toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric',timeZone:'UTC'}) + ' ' + new Date(tsa.time).toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit',timeZone:'UTC'}) + ' UTC' : null;
   const tsaStr = tsaPresent ? '✅ ' + tsaTime + ' · ' + (tsa.provider || 'freetsa.org') : '⚠️ Zaman damgası yok (time-anchored değil)';
   const root = d.root || null;
