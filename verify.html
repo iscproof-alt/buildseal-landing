@@ -1,192 +1,189 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>BuildSeal — Verify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px; }
-  .container { max-width: 600px; width: 100%; }
-  h1 { font-size: 1.6em; text-align: center; margin-bottom: 28px; color: #fff; }
-  .card { background: #111827; border-radius: 16px; padding: 28px; }
-  .badge { font-size: 52px; text-align: center; margin-bottom: 12px; }
-  .verdict { text-align: center; font-size: 1.4em; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
-  .verdict-sub { text-align: center; font-size: 0.8em; color: #6b7280; margin-bottom: 24px; }
-  .verdict.valid { color: #4ade80; }
-  .verdict.invalid { color: #f87171; }
-  .verdict.pending { color: #fbbf24; }
-  .row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #1f2937; gap: 12px; }
-  .row:last-child { border-bottom: none; }
-  .row-label { color: #6b7280; font-size: 0.78em; min-width: 80px; }
-  .row-value { color: #e0e0e0; font-size: 0.85em; text-align: right; }
-  .row-value.green { color: #4ade80; font-family: monospace; }
-  .surface { margin-bottom: 20px; }
-  .toggle-btn { width: 100%; background: #1f2937; border: 1px solid #374151; color: #9ca3af; border-radius: 8px; padding: 10px; cursor: pointer; font-size: 0.82em; margin-bottom: 12px; transition: background 0.2s; }
-  .toggle-btn:hover { background: #374151; color: #e0e0e0; }
-  .depth { display: none; background: #0d1520; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-  .depth.open { display: block; }
-  .depth-row { padding: 7px 0; border-bottom: 1px solid #1a2535; }
-  .depth-row:last-child { border-bottom: none; }
-  .depth-label { color: #4b5563; font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
-  .depth-value { color: #9ca3af; font-size: 0.78em; word-break: break-all; font-family: monospace; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .depth-value.green { color: #4ade80; }
-  .copy-btn { background: #1e3a2f; color: #4ade80; border: 1px solid #2a5a3a; border-radius: 4px; padding: 2px 8px; font-size: 0.7em; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
-  .copy-btn:hover { background: #2a5a3a; }
-  .hash-short { color: #9ca3af; }
-  .steps { background: #0d1520; border-radius: 6px; padding: 10px 14px; margin-top: 4px; }
-  .step { font-size: 0.75em; color: #6b7280; padding: 3px 0; display: flex; gap: 8px; align-items: center; }
-  .step.ok { color: #4ade80; }
-  .step.ok::before { content: "✓"; color: #4ade80; }
-  .step.fail::before { content: "✗"; color: #f87171; }
-  .btn { display: block; text-align: center; background: #1e3a2f; color: #4ade80; border: 1px solid #2a5a3a; border-radius: 8px; padding: 12px; text-decoration: none; font-size: 0.88em; margin-top: 10px; }
-  .btn:hover { background: #2a5a3a; }
-  a { color: #4ade80; text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .not-found { text-align: center; color: #f87171; padding: 40px; }
+  :root {
+    --bg:#080c10;--bg2:#0d1117;--bg3:#111820;--border:#1e2d3d;--border2:#243040;
+    --green:#00e676;--green-dim:rgba(0,230,118,0.08);--green-dim2:rgba(0,230,118,0.15);
+    --red:#ff5252;--yellow:#ffd740;
+    --text:#e8f0fe;--text2:#8899aa;--text3:#556677;
+    --mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,230,118,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,230,118,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,12,16,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .nav-logo{font-family:var(--mono);font-size:1em;color:var(--green);text-decoration:none}
+  .nav-logo span{color:var(--text2)}
+  .nav-right{display:flex;align-items:center;gap:20px}
+  .nav-link{color:var(--text3);text-decoration:none;font-size:0.85em;transition:color 0.2s}
+  .nav-link:hover{color:var(--text2)}
+  .nav-badge{font-family:var(--mono);font-size:0.68em;color:var(--green);border:1px solid rgba(0,230,118,0.3);padding:3px 9px;border-radius:20px}
+  main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px}
+  .loading{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-text{font-family:var(--mono);font-size:0.78em;color:var(--text3);letter-spacing:1px}
+  .card{width:100%;max-width:640px;opacity:0;animation:fadeUp 0.5s ease forwards}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .verdict-header{background:var(--bg2);border:1px solid var(--border);border-radius:14px 14px 0 0;padding:32px;text-align:center;position:relative;overflow:hidden}
+  .verdict-header::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.4s}
+  .verdict-header.valid::before{background:radial-gradient(ellipse at 50% 0%,rgba(0,230,118,0.08) 0%,transparent 70%);opacity:1}
+  .verdict-header.invalid::before{background:radial-gradient(ellipse at 50% 0%,rgba(255,82,82,0.08) 0%,transparent 70%);opacity:1}
+  .verdict-icon{font-size:2.8em;margin-bottom:12px;display:block}
+  .verdict-label{font-family:var(--mono);font-size:1.4em;font-weight:700;letter-spacing:2px;margin-bottom:6px}
+  .verdict-label.valid{color:var(--green)}
+  .verdict-label.invalid{color:var(--red)}
+  .verdict-label.pending{color:var(--yellow)}
+  .verdict-sub{color:var(--text2);font-size:0.9em;font-weight:300}
+  .seal-id-header{font-family:var(--mono);font-size:0.7em;color:var(--text3);margin-top:12px;word-break:break-all}
+  .seal-info{background:var(--bg2);border:1px solid var(--border);border-top:none;padding:0 32px}
+  .info-row{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);gap:16px}
+  .info-row:last-child{border-bottom:none}
+  .info-label{font-family:var(--mono);font-size:0.65em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;padding-top:2px}
+  .info-value{font-family:var(--mono);font-size:0.78em;color:var(--text);word-break:break-all;text-align:right}
+  .info-value.green{color:var(--green)}
+  .info-value.muted{color:var(--text2)}
+  .steps-section{background:var(--bg2);border:1px solid var(--border);border-top:none;padding:20px 32px}
+  .steps-label{font-family:var(--mono);font-size:0.65em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
+  .steps-grid{display:flex;flex-direction:column;gap:6px}
+  .step{display:flex;align-items:center;gap:10px;font-size:0.82em;color:var(--text2);font-weight:300}
+  .step-icon{font-size:0.9em;flex-shrink:0;width:16px}
+  .step.ok{color:var(--text)}
+  .step.ok .step-icon::before{content:"✓";color:var(--green)}
+  .step.fail{color:var(--red)}
+  .step.fail .step-icon::before{content:"✗";color:var(--red)}
+  .step.warn .step-icon::before{content:"⚠";color:var(--yellow)}
+  .actions-section{background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;padding:20px 32px;display:flex;gap:10px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;font-family:var(--sans);font-size:0.85em;font-weight:600;cursor:pointer;text-decoration:none;border:none;transition:all 0.2s}
+  .btn-primary{background:var(--green-dim2);color:var(--green);border:1px solid rgba(0,230,118,0.25)}
+  .btn-primary:hover{background:rgba(0,230,118,0.25)}
+  .btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+  .btn-secondary:hover{color:var(--text);border-color:var(--text3)}
+  .not-found{text-align:center;padding:60px 24px}
+  .not-found-icon{font-size:3em;margin-bottom:16px}
+  .not-found h2{font-family:var(--mono);font-size:1.1em;color:var(--red);margin-bottom:8px;letter-spacing:1px}
+  .not-found p{color:var(--text3);font-size:0.9em;font-weight:300}
+  .copy-btn{background:transparent;border:1px solid var(--border2);color:var(--text3);border-radius:4px;padding:2px 7px;font-size:0.65em;cursor:pointer;font-family:var(--mono);transition:all 0.2s;margin-left:6px;vertical-align:middle;white-space:nowrap}
+  .copy-btn:hover{color:var(--green);border-color:rgba(0,230,118,0.3)}
+  @media(max-width:600px){nav{padding:14px 20px}.verdict-header,.seal-info,.steps-section,.actions-section{padding-left:20px;padding-right:20px}}
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>🔍 Verify</h1>
-  <div class="card" id="main">
-    <div style="text-align:center;color:#888;padding:20px">Yükleniyor...</div>
+<nav>
+  <a class="nav-logo" href="https://buildseal.io">Build<span>Seal</span></a>
+  <div class="nav-right">
+    <a class="nav-link" href="https://buildseal.io">Seal a document</a>
+    <span class="nav-badge">ISCProof v5</span>
   </div>
-</div>
+</nav>
+<main id="main">
+  <div class="loading"><div class="spinner"></div><div class="loading-text">VERIFYING SEAL...</div></div>
+</main>
 <script>
-function shortHash(h) {
-  return h && h.length > 16 ? h.slice(0,8) + '…' + h.slice(-8) : (h || '-');
+const API='https://buildseal-api-production-3ca5.up.railway.app';
+
+function esc(s){
+  if(!s)return'';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function humanTime(iso) {
-  if (!iso) return '-';
-  try {
-    const d = new Date(iso);
-    return d.toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric',timeZone:'UTC'}) + ' ' +
-           d.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit',timeZone:'UTC'}) + ' UTC';
-  } catch(e) { return iso; }
+
+function humanTime(iso){
+  if(!iso)return null;
+  try{return new Date(iso).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC';}catch(e){return iso;}
 }
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.textContent;
-    btn.textContent = '✓';
-    setTimeout(() => btn.textContent = orig, 1500);
+
+function shortHash(h,n=8){
+  if(!h||h.length<=n*2+1)return esc(h);
+  return '<span style="color:var(--text2)">'+esc(h.slice(0,n))+'&hellip;'+esc(h.slice(-n))+'</span>';
+}
+
+function copyText(text,btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig=btn.textContent;btn.textContent='✓ copied';btn.style.color='var(--green)';
+    setTimeout(()=>{btn.textContent=orig;btn.style.color='';},1500);
   });
 }
-function toggleDepth() {
-  const el = document.getElementById('depth');
-  const btn = document.querySelector('.toggle-btn');
-  el.classList.toggle('open');
-  btn.textContent = el.classList.contains('open') ? '▲ Teknik Detayları Gizle' : '▼ Teknik Detayları Göster';
+
+const id=new URLSearchParams(window.location.search).get('id')||window.location.pathname.split('/').filter(Boolean).pop();
+
+if(!id||id==='release'||id==='verify.html'){
+  document.getElementById('main').innerHTML='<div class="not-found"><div class="not-found-icon">🔍</div><h2>NO SEAL ID</h2><p>No seal ID provided in the URL.</p></div>';
+}else{
+  fetch(API+'/verify/'+encodeURIComponent(id))
+    .then(r=>{if(!r.ok)throw new Error('not_found');return r.json();})
+    .then(d=>{
+      const verdict=d.verdict||'PENDING';
+      const isValid=verdict==='VALID',isInvalid=verdict==='INVALID';
+      const verdictClass=isValid?'valid':isInvalid?'invalid':'pending';
+      const verdictIcon=isValid?'✅':isInvalid?'❌':'⏳';
+      const verdictLabel=isValid?'VERIFIED':isInvalid?'INVALID':'PENDING';
+      const verdictSub=isValid?'Cryptographic verification passed':isInvalid?'Verification failed':'Processing';
+
+      const tsa=d.tsa||null;
+      const tsaPresent=!!(tsa&&tsa.present===true);
+      const tsaTime=tsaPresent&&tsa.time?humanTime(tsa.time):null;
+      const tsaProvider=esc((tsa&&tsa.provider)||'freetsa.org');
+
+      const vd=d.verify_detail||{};
+      // Use backend-derived booleans
+      const rootMatch=vd.root_match===true;
+      const sigValid=vd.sig_valid===true;
+      const tsaVerified=vd.tsa_verified===true;
+      const packVerNum=Number((() => {
+        try{return JSON.parse(d.pack_json||'{}').pack_version||'5';}catch(e){return'5';}
+      })())||5;
+
+      const sealedAt=d.created_at?humanTime(d.created_at):'—';
+      const root=d.root||d.pack_hash||null;
+      const artifactHash=d.artifact_hash||null;
+      const fingerprint=(vd.fields&&vd.fields.fingerprint)||null;
+      const evidenceUrl='https://verify.buildseal.io/pack/'+esc(d.seal_id||id);
+
+      const tsaRow=tsaPresent&&tsaTime
+        ?'✅ '+esc(tsaTime)+' &middot; '+tsaProvider
+        :'⚠️ No trusted timestamp — seal integrity intact, time not anchored';
+
+      document.getElementById('main').innerHTML=
+        '<div class="card">'+
+        '<div class="verdict-header '+verdictClass+'">'+
+        '<span class="verdict-icon">'+verdictIcon+'</span>'+
+        '<div class="verdict-label '+verdictClass+'">'+verdictLabel+'</div>'+
+        '<div class="verdict-sub">'+verdictSub+'</div>'+
+        '<div class="seal-id-header">'+esc(d.seal_id||id)+'</div>'+
+        '</div>'+
+        '<div class="seal-info">'+
+        '<div class="info-row"><div class="info-label">Seal ID</div><div class="info-value green">'+esc(d.seal_id||id)+'</div></div>'+
+        '<div class="info-row"><div class="info-label">Sealed At</div><div class="info-value muted">'+sealedAt+'</div></div>'+
+        '<div class="info-row"><div class="info-label">Timestamp</div><div class="info-value">'+tsaRow+'</div></div>'+
+        '<div class="info-row"><div class="info-label">Standard</div><div class="info-value muted">ISCProof v'+packVerNum+'</div></div>'+
+        (root?'<div class="info-row"><div class="info-label">Root Hash</div><div class="info-value">'+shortHash(root)+'<button class="copy-btn" onclick="copyText(\''+esc(root)+'\',this)">copy</button></div></div>':'')+
+        (artifactHash?'<div class="info-row"><div class="info-label">File Hash (SHA-256)</div><div class="info-value">'+shortHash(artifactHash)+'<button class="copy-btn" onclick="copyText(\''+esc(artifactHash)+'\',this)">copy</button></div></div>':'')+
+        (fingerprint?'<div class="info-row"><div class="info-label">Signer</div><div class="info-value muted"><a href="https://buildseal.io/keys/'+esc(fingerprint)+'" style="color:var(--text2);text-decoration:none" target="_blank">'+esc(fingerprint)+' ↗</a></div></div>':'')+
+        '<div class="info-row"><div class="info-label">TSA Protocol</div><div class="info-value muted">RFC 3161 &middot; '+tsaProvider+'</div></div>'+
+        '</div>'+
+        '<div class="steps-section"><div class="steps-label">Verification checks</div><div class="steps-grid">'+
+        '<div class="step ok"><span class="step-icon"></span>JSON parse</div>'+
+        '<div class="step '+(packVerNum>=5?'ok':'warn')+'"><span class="step-icon"></span>Pack version &ge; 5</div>'+
+        '<div class="step '+(rootMatch?'ok':'fail')+'"><span class="step-icon"></span>Root hash match</div>'+
+        '<div class="step '+(sigValid?'ok':'fail')+'"><span class="step-icon"></span>ed25519 signature</div>'+
+        '<div class="step '+(tsaVerified?'ok':'warn')+'"><span class="step-icon"></span>RFC 3161 TSA '+(tsaVerified?'verified':tsaPresent?'present — not cryptographically verified':'not found')+'</div>'+
+        '</div></div>'+
+        '<div class="actions-section">'+
+        '<a class="btn btn-primary" href="'+evidenceUrl+'" target="_blank">&#11015; Download Pack JSON</a>'+
+        '<a class="btn btn-secondary" href="https://buildseal.io">&#128274; Seal a document</a>'+
+        '<button class="btn btn-secondary" onclick="copyText(window.location.href,this)">&#128279; Copy link</button>'+
+        '</div></div>';
+    })
+    .catch(()=>{
+      document.getElementById('main').innerHTML='<div class="not-found"><div class="not-found-icon">🔍</div><h2>SEAL NOT FOUND</h2><p>No record found for <code style="color:var(--text2);font-family:var(--mono)">'+esc(id)+'</code></p></div>';
+    });
 }
-
-const id = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop();
-
-fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id)
-  .then(r => r.json())
-  .then(d => {
-    const verdict = d.verdict || 'PENDING';
-    const isValid = verdict === 'VALID';
-    const isInvalid = verdict === 'INVALID';
-    const badge = isValid ? '✅' : isInvalid ? '❌' : '⏳';
-    const verdictClass = isValid ? 'valid' : isInvalid ? 'invalid' : 'pending';
-    const verdictText = isValid ? 'DOĞRULANDI' : isInvalid ? 'GEÇERSİZ' : 'BEKLENİYOR';
-    const verdictSub = isValid ? 'Kriptografik doğrulama başarılı' : isInvalid ? 'Doğrulama başarısız' : 'İşlem devam ediyor';
-
-    let tsa = {};
-    try { tsa = JSON.parse(d.tsa_json || '{}'); } catch(e) {}
-    const cryptoVerified = d.verify_output_json && d.verify_output_json.includes('tsa:         VERIFIED');
-    const tsaText = tsa.present && cryptoVerified
-      ? '✅ ' + humanTime(tsa.time) + ' · freetsa.org'
-      : tsa.present ? '⚠️ ' + humanTime(tsa.time) + ' · doğrulanmadı'
-      : '⚠️ TSA yok';
-
-    let packJson = {};
-    try { packJson = JSON.parse(d.pack_json || '{}'); } catch(e) {}
-    const rootHash = packJson.root || d.pack_hash || '';
-    const artifactHash = d.artifact_hash || '';
-    const sigFingerprint = packJson.signatures && packJson.signatures[0] ? packJson.signatures[0].signatures : (packJson.signatures && packJson.signatures[0] ? packJson.signatures[0].fingerprint : '');
-    const fp = packJson.signatures && packJson.signatures[0] ? packJson.signatures[0].fingerprint : '';
-    const packVersion = packJson.pack_version || '5.1';
-
-    const verifyLines = (d.verify_output_json || '').trim().split('\n').filter(Boolean);
-    const steps = [
-      { label: 'JSON parse', ok: true },
-      { label: 'Pack version ≥ 5', ok: true },
-      { label: 'Root hash eşleşmesi', ok: verifyLines.some(l => l.includes('PACK VERIFIED')) },
-      { label: 'ed25519 imza doğrulama', ok: verifyLines.some(l => l.includes('PACK VERIFIED')) },
-      { label: 'RFC 3161 TSA doğrulama', ok: cryptoVerified },
-    ];
-
-    document.getElementById('main').innerHTML = `
-      <div class="badge">${badge}</div>
-      <div class="verdict ${verdictClass}">${verdictText}</div>
-      <div class="verdict-sub">${verdictSub}</div>
-
-      <div class="surface">
-        <div class="row">
-          <span class="row-label">Seal ID</span>
-          <span class="row-value green">${shortHash(d.seal_id)}</span>
-        </div>
-        <div class="row">
-          <span class="row-label">Mühürleme</span>
-          <span class="row-value">${humanTime(d.sealed_at || d.created_at)}</span>
-        </div>
-        <div class="row">
-          <span class="row-label">Zaman Kanıtı</span>
-          <span class="row-value">${tsaText}</span>
-        </div>
-        <div class="row">
-          <span class="row-label">Standart</span>
-          <span class="row-value"><a href="https://iscproof.io/spec" target="_blank">ISCProof v${packVersion}</a></span>
-        </div>
-      </div>
-
-      <div class="steps">
-        ${steps.map(s => `<div class="step ${s.ok ? 'ok' : 'fail'}">${s.label}</div>`).join('')}
-      </div>
-
-      <br>
-      <button class="toggle-btn" onclick="toggleDepth()">▼ Teknik Detayları Göster</button>
-
-      <div class="depth" id="depth">
-        <div class="depth-row">
-          <div class="depth-label">Dosya Hash (SHA-256)</div>
-          <div class="depth-value">
-            <span>${shortHash(artifactHash)}</span>
-            <button class="copy-btn" onclick="copyText('${artifactHash}', this)">Kopyala</button>
-          </div>
-        </div>
-        <div class="depth-row">
-          <div class="depth-label">Root Hash — Kanıt Paketi Kimliği</div>
-          <div class="depth-value">
-            <span>${shortHash(rootHash)}</span>
-            <button class="copy-btn" onclick="copyText('${rootHash}', this)">Kopyala</button>
-          </div>
-        </div>
-        <div class="depth-row">
-          <div class="depth-label">İmza Algoritması</div>
-          <div class="depth-value green">ed25519</div>
-        </div>
-        <div class="depth-row">
-          <div class="depth-label">Signer Fingerprint</div>
-          <div class="depth-value">
-            <span>${fp || '-'}</span>
-            ${fp ? `<button class="copy-btn" onclick="copyText('${fp}', this)">Kopyala</button>` : ''}
-            ${fp ? `<a href="https://iscproof.io/keys" target="_blank" style="font-size:0.85em">Key Registry →</a>` : ''}
-          </div>
-        </div>
-        <div class="depth-row">
-          <div class="depth-label">TSA Protokolü</div>
-          <div class="depth-value green">RFC 3161 · freetsa.org</div>
-        </div>
-      </div>
-
-      <a class="btn" href="https://buildseal-api-production-3ca5.up.railway.app/pack/${d.seal_id}" target="_blank">⬇ Pack JSON İndir</a>
-    `;
-  })
-  .catch(() => {
-    document.getElementById('main').innerHTML = '<div class="not-found">Seal bulunamadı.</div>';
-  });
 </script>
 </body>
 </html>
