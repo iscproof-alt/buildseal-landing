@@ -190,10 +190,14 @@ if(!id||id==='release'||id==='verify.html'){
 
       document.getElementById('main').innerHTML=html;
     })
-    .catch(()=>{
+    .catch((err)=>{ console.error('fetch error:', err);
       document.getElementById('main').innerHTML='<div class="not-found"><div class="not-found-icon">🔍</div><h2>SEAL NOT FOUND</h2><p>No record found for <code style="color:var(--text2);font-family:var(--mono)">'+esc(id)+'</code></p></div>';
     });
 }
+window.onerror=function(msg,src,line,col,err){
+  document.getElementById('main').innerHTML='<div class="not-found"><div class="not-found-icon">⚠️</div><h2>JS ERROR</h2><p>'+msg+' (line '+line+')</p></div>';
+  return true;
+};
 </script>
 </body>
 </html>
