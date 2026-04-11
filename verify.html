@@ -143,7 +143,7 @@ if(!id||id==='release'||id==='verify.html'){
       const packVerNum=Number((vd&&vd.pack_version)||5)||5;
 
       const sealedAt=d.created_at?humanTime(d.created_at):'—';
-      const root=d.root||d.pack_hash||null;
+      const root=(vd&&vd.root)||d.root||d.pack_hash||null;
       const artifactHash=d.artifact_hash||null;
       const fingerprint=(vd.fields&&vd.fields.fingerprint)||null;
       const evidenceUrl='https://verify.buildseal.io/pack/'+esc(d.seal_id||id);
