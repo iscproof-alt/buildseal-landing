@@ -140,7 +140,7 @@ if(!id||id==='release'||id==='verify.html'){
       const rootMatch=vd.root_match===true;
       const sigValid=vd.sig_valid===true;
       const tsaVerified=vd.tsa_verified===true;
-      const packVerNum=Number((()=>{try{return JSON.parse(d.pack_json||'{}').pack_version||5;}catch(e){return 5;}}()))||5;
+      const packVerNum=Number((vd&&vd.pack_version)||5)||5;
 
       const sealedAt=d.created_at?humanTime(d.created_at):'—';
       const root=d.root||d.pack_hash||null;
