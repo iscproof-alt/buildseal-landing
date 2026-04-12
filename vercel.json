@@ -4,6 +4,7 @@
     { "source": "/seal", "destination": "/seal.html" },
     { "source": "/verify", "destination": "/verify.html" },
     { "source": "/release/:id", "destination": "/verify.html" },
+    { "source": "/evidence/:id", "destination": "/evidence.html" },
     { "source": "/pack/:id", "destination": "https://buildseal-api-production-3ca5.up.railway.app/pack/:id" }
   ]
 }
