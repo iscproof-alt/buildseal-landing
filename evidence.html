@@ -84,7 +84,7 @@
 <script>
 const API='https://buildseal-api-production-3ca5.up.railway.app';
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function nl(s){return s?s.replace(/\n/g,"<br>"):"";}function humanTime(iso){if(!iso)return'--';try{return new Date(iso).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC';}catch(e){return iso;}}
+function humanTime(iso){if(!iso)return'--';try{return new Date(iso).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC';}catch(e){return iso;}}
 function shortHash(h,n=12){if(!h)return'';if(h.length<=n*2+1)return esc(h);return esc(h.slice(0,n))+'...'+esc(h.slice(-n));}
 function copyText(text,btn){navigator.clipboard.writeText(text).then(()=>{const o=btn.textContent;btn.textContent='OK';setTimeout(()=>{btn.textContent=o;},1500);});}
 function switchTab(tab){
@@ -97,7 +97,7 @@ function renderDiff(draft,final_body){
   if(!draft||!final_body)return'<span style="color:var(--text3)">No diff available</span>';
   const urlMatch=final_body.match(/https:\/\/verify\.buildseal\.io\/release\/[^\s]+/);
   const url=urlMatch?urlMatch[0]:'';
-  return nl(esc(draft)).replace('[verify_url_pending]',
+  return esc(draft).replace('[verify_url_pending]',
     '<span class="diff-removed">[verify_url_pending]</span> <span class="diff-added">'+esc(url)+'</span>'
   );
 }
@@ -124,12 +124,12 @@ if(!id||id==='evidence'||id==='evidence.html'){
       html+='</div><div class="message-section">';
       html+='<div class="tab-content active" id="tab-final">';
       html+='<div class="message-label">Delivered to recipient <span class="tag tag-final">FINAL</span></div>';
-      html+='<div class="message-body">'+nl(esc(d.final_body||''))+'</div>';
+      html+='<div class="message-body">'+esc(d.final_body||'')+'</div>';
       html+='<div class="hash-row"><span class="hash-label">SHA-256</span><span class="hash-val">'+shortHash(d.final_sha256)+'<button class="copy-btn" onclick="copyText(\''+esc(d.final_sha256||'')+'\',this)">copy</button></span><span class="integrity-ok">'+(finalOk?'OK':'MISMATCH')+'</span></div>';
       html+='</div>';
       html+='<div class="tab-content" id="tab-draft">';
       html+='<div class="message-label">Sealed before sending <span class="tag tag-draft">DRAFT</span></div>';
-      html+='<div class="message-body">'+nl(esc(d.draft_body||''))+'</div>';
+      html+='<div class="message-body">'+esc(d.draft_body||'')+'</div>';
       html+='<div class="hash-row"><span class="hash-label">SHA-256</span><span class="hash-val">'+shortHash(d.draft_sha256)+'<button class="copy-btn" onclick="copyText(\''+esc(d.draft_sha256||'')+'\',this)">copy</button></span><span class="integrity-ok">'+(draftOk?'OK':'MISMATCH')+'</span></div>';
       html+='</div>';
       html+='<div class="tab-content" id="tab-diff">';
