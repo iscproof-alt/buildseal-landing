@@ -229,14 +229,14 @@ if(!id||id==='release'||id==='verify.html'){
       const events = [];
       // EVALUATED
       if(d.decision_summary && d.decision_summary.event_time) {
-        events.push({type:'EVALUATED', time:d.decision_summary.event_time, label:'Decision evaluated', proof:'evaluate_hash: '+esc((d.decision_summary.evaluate_hash||'').slice(0,12))+'...', evidenced:true});
+        events.push({type:'EVALUATED', time:d.decision_summary.event_time, label:'Agent produced decision payload', proof:d.decision_summary.evaluate_hash ? 'payload hash: '+esc(d.decision_summary.evaluate_hash.slice(0,16)) : '', evidenced:true});
       }
       // COMMITTED or ABANDONED
       if(d.decision_summary) {
         if(d.decision_summary.inaction===true) {
           events.push({type:'ABANDONED', time:d.sealed_at||'', label:'No action taken', proof:d.decision_summary.abandon_reason||'No commit issued', evidenced:true});
         } else if(d.decision_summary.inaction===false || d.decision_summary.decision) {
-          events.push({type:'COMMITTED', time:d.sealed_at||'', label:'Decision committed', proof:'seal_id: '+esc(d.seal_id||''), evidenced:true});
+          events.push({type:'COMMITTED', time:d.sealed_at||'', label:'Decision bound into seal', proof:'seal_id: '+esc(d.seal_id||''), evidenced:true});
         }
       }
       // SEALED
@@ -247,24 +247,21 @@ if(!id||id==='release'||id==='verify.html'){
       if(d.tsa && d.tsa.present && d.tsa.time) {
         events.push({type:'TIMESTAMPED', time:d.tsa.time, label:'RFC 3161 timestamp', proof:'freetsa.org', evidenced:true});
       }
-      // VERIFIED (derived)
-      if(d.verify_detail) {
-        const ok = d.verify_detail.verified || (d.verify_detail.root_match && d.verify_detail.sig_valid && d.verify_detail.tsa_verified);
-        events.push({type: ok?'VERIFIED':'UNVERIFIED', time:d.sealed_at||'', label: ok?'Cryptographically verified':'Verification failed', proof:'derived — not a separate cryptographic event', evidenced:false});
-      }
+      // VERIFIED shown separately, not in chain
 
       if(events.length > 0) {
         html+='<div style="background:var(--bg2);border:1px solid var(--border);border-top:none;padding:20px 32px">';
         html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px">Event Chain</div>';
         html+='<div style="display:flex;flex-direction:column;gap:0">';
         const typeColors = {EVALUATED:'#40c4ff',COMMITTED:'#00e676',ABANDONED:'#ff5252',SEALED:'#00e676',TIMESTAMPED:'#ffd740',WITNESSED:'#b388ff',VERIFIED:'#00e676',UNVERIFIED:'#ff5252'};
-        events.forEach((ev, i) => {
+        const filteredEvents = events.filter(ev => ev.time && ev.time !== 'null' && ev.time !== '');
+        filteredEvents.forEach((ev, i) => {
           const color = typeColors[ev.type] || '#8899aa';
           const opacity = ev.evidenced ? '1' : '0.5';
           html+='<div style="display:flex;gap:16px;align-items:flex-start;opacity:'+opacity+'">';
           html+='<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">';
           html+='<div style="width:10px;height:10px;border-radius:50%;background:'+color+';margin-top:4px;flex-shrink:0'+(ev.evidenced?';box-shadow:0 0 6px '+color:'')+'""></div>';
-          if(i < events.length-1) html+='<div style="width:1px;flex:1;min-height:24px;background:var(--border2);margin:4px 0"></div>';
+          if(i < filteredEvents.length-1) html+='<div style="width:1px;flex:1;min-height:24px;background:var(--border2);margin:4px 0"></div>';
           html+='</div>';
           html+='<div style="padding-bottom:16px">';
           html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">';
