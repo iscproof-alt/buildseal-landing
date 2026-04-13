@@ -122,11 +122,19 @@ if(!id||id==='evidence'||id==='evidence.html'){
       html+='<button class="tab-btn" id="btn-draft" onclick="switchTab(\'draft\')">Draft (Sealed)</button>';
       html+='<button class="tab-btn" id="btn-diff" onclick="switchTab(\'diff\')">What Changed</button>';
       html+='</div><div class="message-section">';
-      html+='<div class="tab-content active" id="tab-final">';
+      // Inaction: no final body
+      if(!d.final_body || d.final_integrity === 'N/A') {
+        html+='<div class="tab-content active" id="tab-final">';
+        html+='<div class="message-label">No message delivered <span class="tag tag-draft">INACTION</span></div>';
+        html+='<div class="message-body" style="color:var(--text3);font-style:italic">No notification was sent. This is an inaction proof — the decision was evaluated but not committed to a delivery action.</div>';
+        html+='</div>';
+      } else {
+        html+='<div class="tab-content active" id="tab-final">';
       html+='<div class="message-label">Delivered to recipient <span class="tag tag-final">FINAL</span></div>';
       html+='<div class="message-body">'+br(d.final_body||'')+'</div>';
       html+='<div class="hash-row"><span class="hash-label">SHA-256</span><span class="hash-val">'+shortHash(d.final_sha256)+'<button class="copy-btn" onclick="copyText(\''+esc(d.final_sha256||'')+'\',this)">copy</button></span><span class="integrity-ok">'+(finalOk?'OK':'MISMATCH')+'</span></div>';
       html+='</div>';
+      }
       html+='<div class="tab-content" id="tab-draft">';
       html+='<div class="message-label">Sealed before sending <span class="tag tag-draft">DRAFT</span></div>';
       html+='<div class="message-body">'+br(d.draft_body||'')+'</div>';
