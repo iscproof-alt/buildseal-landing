@@ -110,7 +110,8 @@ if(!id||id==='evidence'||id==='evidence.html'){
     .then(d=>{
       const draftOk=d.draft_integrity==='OK';
       const finalOk=d.final_integrity==='OK';
-      const bothOk=draftOk&&finalOk;
+      const finalNA=d.final_integrity==='N/A'||!d.final_body;
+      const bothOk=draftOk&&(finalOk||finalNA);
       let html='<div class="container">';
       html+='<div class="ev-header"><div>';
       html+='<div class="ev-eyebrow">Communication Evidence</div>';
@@ -148,7 +149,7 @@ if(!id||id==='evidence'||id==='evidence.html'){
       html+='<div class="meta-section">';
       html+='<div><div class="meta-label">Created At</div><div class="meta-value">'+humanTime(d.created_at)+'</div></div>';
       html+='<div><div class="meta-label">Draft Integrity</div><div class="meta-value" style="color:'+(draftOk?'var(--green)':'#ff5252')+'">'+(draftOk?'OK':'MISMATCH')+'</div></div>';
-      html+='<div><div class="meta-label">Final Integrity</div><div class="meta-value" style="color:'+(finalOk?'var(--green)':'#ff5252')+'">'+(finalOk?'OK':'MISMATCH')+'</div></div>';
+      html+='<div><div class="meta-label">Final Integrity</div><div class="meta-value" style="color:'+(finalOk?'var(--green)':finalNA?'var(--text3)':'#ff5252')+'">'+(finalOk?'OK':finalNA?'N/A':'MISMATCH')+'</div></div>';
       html+='<div><div class="meta-label">Seal ID</div><div class="meta-value">'+esc(d.seal_id)+'</div></div>';
       html+='</div>';
       html+='<div class="actions-section">';
