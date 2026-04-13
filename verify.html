@@ -185,22 +185,33 @@ if(!id||id==='release'||id==='verify.html'){
       // Decision summary section
       if(d.decision_summary) {
         const ds = d.decision_summary;
+        // Support both nested (v1.1) and flat (inaction/commit) payload structures
         const dec = ds.decision || {};
         const risk = ds.risk || {};
         const agent = ds.agent || {};
         const subject = ds.subject || {};
+        // Flat structure fallback
+        const decType = dec.type || ds.decision_type || ds.decision || '-';
+        const decReasonCode = dec.reason_code || ds.reason_code || '-';
+        const subjectType = subject.type || ds.subject_type || '-';
+        const subjectRef = subject.ref || ds.subject_ref || '-';
+        const riskScore = (risk.score !== undefined && risk.score !== null) ? risk.score : (ds.risk_score !== undefined && ds.risk_score !== null ? ds.risk_score : '-');
+        const riskFlags = (risk.flags || ds.flags || []).join(', ') || 'none';
+        const rulesTriggered = (risk.rules_triggered || ds.rules_triggered || []).join(', ') || 'none';
+        const agentId = (agent.id || ds.model || '-') + ' ' + (agent.version || '');
+        const policyVersion = agent.policy_version || ds.policy_version || '-';
         html+='<div style="background:var(--bg2);border:1px solid var(--border);border-top:none;padding:20px 32px">';
         html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Decision Context</div>';
         html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">';
         const dsFields = [
-          ['Decision', dec.type || '-'],
-          ['Reason Code', dec.reason_code || '-'],
-          ['Subject', (subject.type||'-') + ' / ' + (subject.ref||'-')],
-          ['Risk Score', risk.score !== null && risk.score !== undefined ? risk.score : '-'],
-          ['Flags', (risk.flags||[]).join(', ') || 'none'],
-          ['Rules Triggered', (risk.rules_triggered||[]).join(', ') || 'none'],
-          ['Agent', (agent.id||'-') + ' ' + (agent.version||'')],
-          ['Policy Version', agent.policy_version || '-'],
+          ['Decision', decType],
+          ['Reason Code', decReasonCode],
+          ['Subject', subjectType + ' / ' + subjectRef],
+          ['Risk Score', riskScore],
+          ['Flags', riskFlags],
+          ['Rules Triggered', rulesTriggered],
+          ['Agent', agentId],
+          ['Policy Version', policyVersion],
         ];
         dsFields.forEach(([label, val]) => {
           html+='<div>';
