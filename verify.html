@@ -236,12 +236,12 @@ if(!id||id==='release'||id==='verify.html'){
         if(d.decision_summary.inaction===true) {
           events.push({type:'ABANDONED', time:d.sealed_at||'', label:'No action taken', proof:d.decision_summary.abandon_reason||'No commit issued', evidenced:true});
         } else if(d.decision_summary.inaction===false || d.decision_summary.decision) {
-          events.push({type:'COMMITTED', time:d.sealed_at||'', label:'Decision bound into seal', proof:'seal_id: '+esc(d.seal_id||''), evidenced:true});
+          events.push({type:'COMMITTED', time:d.sealed_at||d.created_at||'', label:'Decision bound into seal', proof:'seal_id: '+esc(d.seal_id||''), evidenced:true});
         }
       }
       // SEALED
       if(d.sealed_at) {
-        events.push({type:'SEALED', time:d.sealed_at, label:'Cryptographically sealed', proof:'ISCProof v'+(d.verify_detail&&d.verify_detail.pack_version||'5'), evidenced:true});
+        events.push({type:'SEALED', time:d.sealed_at||d.created_at, label:'Cryptographically sealed', proof:'ISCProof v'+(d.verify_detail&&d.verify_detail.pack_version||'5'), evidenced:true});
       }
       // TIMESTAMPED
       if(d.tsa && d.tsa.present && d.tsa.time) {
