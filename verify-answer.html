@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Answer Proof — BuildSeal</title>
+<style>
+  :root{--bg:#0d0f12;--bg2:#13161b;--bg3:#1a1e24;--border:#222831;--border2:#2a3140;--text:#e8eaf0;--text2:#8892a4;--text3:#505a6e;--green:#00e676;--red:#ff5252;--yellow:#ffd740;--mono:'JetBrains Mono',monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 16px}
+  .card{width:100%;max-width:680px}
+  .verdict-header{background:var(--bg2);border:1px solid var(--border);border-radius:14px 14px 0 0;padding:36px 32px 28px;text-align:center}
+  .verdict-icon{font-size:2.4em;margin-bottom:8px;display:block}
+  .verdict-label{font-family:var(--mono);font-size:1.2em;font-weight:700;letter-spacing:3px;margin-bottom:4px}
+  .verdict-label.valid{color:var(--green)}
+  .verdict-label.invalid{color:var(--red)}
+  .verdict-label.pending{color:var(--yellow)}
+  .seal-id-chip{display:inline-block;font-family:var(--mono);font-size:0.65em;color:var(--text3);background:var(--bg3);border:1px solid var(--border2);padding:4px 12px;border-radius:20px;margin-top:8px;word-break:break-all}
+  .section{background:var(--bg2);border:1px solid var(--border);border-top:none;padding:24px 28px}
+  .section+.section{border-top:none}
+  .section:last-child{border-radius:0 0 14px 14px}
+  .section-title{font-family:var(--mono);font-size:0.6em;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+  .qa-question{color:var(--text2);font-size:0.88em;margin-bottom:10px}
+  .qa-answer{color:var(--text);font-size:1em;font-weight:500;margin-bottom:12px}
+  .status-badge{display:inline-block;font-family:var(--mono);font-size:0.65em;font-weight:700;letter-spacing:1.5px;padding:4px 12px;border-radius:20px}
+  .status-badge.supported{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.3)}
+  .status-badge.not-supported{background:rgba(255,82,82,0.1);color:var(--red);border:1px solid rgba(255,82,82,0.3)}
+  .status-badge.partial{background:rgba(255,215,64,0.1);color:var(--yellow);border:1px solid rgba(255,215,64,0.3)}
+  .source-item{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+  .source-meta{font-family:var(--mono);font-size:0.62em;color:var(--text3);margin-bottom:6px}
+  .source-quote{font-size:0.85em;color:var(--text2);font-style:italic;border-left:2px solid var(--border2);padding-left:10px}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:12px}
+  .info-row:last-child{border-bottom:none}
+  .info-label{font-family:var(--mono);font-size:0.6em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+  .info-value{font-family:var(--mono);font-size:0.72em;color:var(--text);text-align:right;word-break:break-all}
+  .btn{display:inline-block;padding:10px 20px;border-radius:8px;font-size:0.82em;font-weight:600;cursor:pointer;border:none;text-decoration:none;margin-top:8px;margin-right:8px}
+  .btn-primary{background:var(--green);color:#000}
+  .btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+  .loading{color:var(--text3);font-family:var(--mono);font-size:0.85em;margin-top:60px}
+  .error-box{background:rgba(255,82,82,0.08);border:1px solid rgba(255,82,82,0.2);border-radius:10px;padding:20px;text-align:center;color:var(--red);font-family:var(--mono);font-size:0.82em}
+  .brand{font-family:var(--mono);font-size:0.7em;color:var(--text3);margin-top:32px}
+  .brand a{color:var(--text3);text-decoration:none}
+</style>
+</head>
+<body>
+<div id="root"><div class="loading">⟳ Loading proof...</div></div>
+<div class="brand"><a href="https://buildseal.io">buildseal.io</a> · ISCProof Protocol</div>
+
+<script>
+const API = 'https://buildseal-api-production-3ca5.up.railway.app';
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function statusBadge(s){
+  if(!s) return '';
+  const cl = s==='SUPPORTED'?'supported':s==='NOT_SUPPORTED'?'not-supported':'partial';
+  return `<span class="status-badge ${cl}">${esc(s)}</span>`;
+}
+
+function render(d){
+  const p = d.payload || {};
+  const isSealed = d.status === 'sealed';
+  const verdictIcon = isSealed ? '✅' : '⚠️';
+  const verdictClass = isSealed ? 'valid' : 'pending';
+  const verdictText = isSealed ? 'VERIFIED' : 'UNVERIFIED';
+
+  let sources = '';
+  if(p.sources && p.sources.length){
+    sources = p.sources.map(s=>`
+      <div class="source-item">
+        <div class="source-meta">Page ${esc(s.page)} ${s.section?'· §'+esc(s.section):''}</div>
+        <div class="source-quote">${esc(s.quote)}</div>
+      </div>`).join('');
+  }
+
+  document.getElementById('root').innerHTML = `
+    <div class="card">
+      <div class="verdict-header">
+        <span class="verdict-icon">${verdictIcon}</span>
+        <div class="verdict-label ${verdictClass}">${verdictText}</div>
+        <div style="color:var(--text2);font-size:0.82em;margin-top:4px">This AI answer has been cryptographically sealed</div>
+        <div class="seal-id-chip">${esc(d.seal_id)}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Question & Answer</div>
+        <div class="qa-question">${esc(p.question)}</div>
+        <div class="qa-answer">${esc(p.answer)}</div>
+        ${statusBadge(p.status)}
+      </div>
+
+      ${sources ? `<div class="section"><div class="section-title">Sources</div>${sources}</div>` : ''}
+
+      <div class="section">
+        <div class="section-title">Proof Details</div>
+        <div class="info-row"><span class="info-label">Sealed At</span><span class="info-value">${esc(d.sealed_at)}</span></div>
+        <div class="info-row"><span class="info-label">Model</span><span class="info-value">${esc(p.model||'—')}</span></div>
+        <div class="info-row"><span class="info-label">Prompt Version</span><span class="info-value">${esc(p.prompt_version||'—')}</span></div>
+        <div class="info-row"><span class="info-label">Root Hash</span><span class="info-value">${esc((d.root_hash||'').substring(0,32)+'...')}</span></div>
+        <div class="info-row"><span class="info-label">Artifact Hash</span><span class="info-value">${esc((d.artifact_hash||'').substring(0,40)+'...')}</span></div>
+      </div>
+
+      <div class="section">
+        <a class="btn btn-primary" href="data:application/json,${encodeURIComponent(JSON.stringify(d,null,2))}" download="answer_proof_${esc(d.seal_id)}.json">⬇ Download Proof JSON</a>
+        <a class="btn btn-secondary" href="https://buildseal.io">buildseal.io</a>
+      </div>
+    </div>`;
+}
+
+const id = new URLSearchParams(location.search).get('id') || location.pathname.split('/').pop();
+if(!id){
+  document.getElementById('root').innerHTML = '<div class="error-box">No seal ID provided.</div>';
+} else {
+  fetch(API + '/proof/' + encodeURIComponent(id))
+    .then(r=>r.json())
+    .then(render)
+    .catch(err=>{
+      document.getElementById('root').innerHTML = `<div class="error-box">Failed to load proof.<br>${esc(err.message)}</div>`;
+    });
+}
+</script>
+</body>
+</html>
