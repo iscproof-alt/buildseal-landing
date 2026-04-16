@@ -60,9 +60,9 @@ function statusBadge(s){
 function render(d){
   const p = d.payload || {};
   const isSealed = d.status === 'sealed';
-  const verdictIcon = isSealed ? '✅' : '⚠️';
+  const verdictIcon = isSealed ? '✓' : '⚠️';
   const verdictClass = isSealed ? 'valid' : 'pending';
-  const verdictText = isSealed ? 'VERIFIED' : 'UNVERIFIED';
+  const verdictText = isSealed ? 'SEALED &amp; VERIFIED' : 'UNSEALED &amp; VERIFIED';
 
   let sources = '';
   if(p.sources && p.sources.length){
@@ -78,7 +78,7 @@ function render(d){
       <div class="verdict-header">
         <span class="verdict-icon">${verdictIcon}</span>
         <div class="verdict-label ${verdictClass}">${verdictText}</div>
-        <div style="color:var(--text2);font-size:0.82em;margin-top:4px">This AI answer has been cryptographically sealed</div>
+        <div style="color:var(--text2);font-size:0.82em;margin-top:4px">The content, cited sources, and metadata of this answer were locked at creation. This record has not changed since sealing.</div>
         <div class="seal-id-chip">${esc(d.seal_id)}</div>
       </div>
 
@@ -89,10 +89,10 @@ function render(d){
         ${statusBadge(p.status)}
       </div>
 
-      ${sources ? `<div class="section"><div class="section-title">Sources</div>${sources}</div>` : ''}
+      ${sources ? `<div class="section"><div class="section-title">Cited Evidence</div>${sources}</div>` : ''}
 
       <div class="section">
-        <div class="section-title">Proof Details</div>
+        <div class="section-title">Seal Summary</div>
         <div class="info-row"><span class="info-label">Sealed At</span><span class="info-value">${esc(d.sealed_at)}</span></div>
         <div class="info-row"><span class="info-label">Model</span><span class="info-value">${esc(p.model||'—')}</span></div>
         <div class="info-row"><span class="info-label">Prompt Version</span><span class="info-value">${esc(p.prompt_version||'—')}</span></div>
@@ -101,7 +101,7 @@ function render(d){
       </div>
 
       <div class="section">
-        <a class="btn btn-primary" href="data:application/json,${encodeURIComponent(JSON.stringify(d,null,2))}" download="answer_proof_${esc(d.seal_id)}.json">⬇ Download Proof JSON</a>
+        <a class="btn btn-primary" href="data:application/json,${encodeURIComponent(JSON.stringify(d,null,2))}" download="answer_proof_${esc(d.seal_id)}.json">⬇ Download Proof Record</a>
         <a class="btn btn-secondary" href="https://buildseal.io">buildseal.io</a>
       </div>
     </div>`;
