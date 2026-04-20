@@ -33,6 +33,31 @@ h1 em{font-style:normal;background:linear-gradient(135deg,var(--green) 0%,#69f0a
 .hero-sub{font-size:1.275em;color:var(--text2);max-width:580px;margin:0 auto 12px;font-weight:400;line-height:1.7}
 .hero-niche{font-size:0.95em;color:var(--green);font-family:var(--mono);margin-bottom:40px;letter-spacing:0.5px}
 .hero-actions{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;text-align:left}
+.hero-left{display:flex;flex-direction:column;align-items:flex-start}
+.hero-left .hero-badge{margin:0 0 24px 0}
+.hero-left .hero-sub{margin:0 0 12px 0;text-align:left}
+.hero-left .hero-niche{text-align:left}
+.hero-left .hero-actions{justify-content:flex-start}
+.proof-flow{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,0.4)}
+.pf-title{font-family:var(--mono);font-size:0.65em;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px}
+.pf-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px}
+.pf-step:last-child{margin-bottom:0}
+.pf-connector{width:1px;height:16px;background:var(--border);margin-left:15px;margin-bottom:0}
+.pf-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;flex-shrink:0;margin-top:2px}
+.pf-icon.green{background:rgba(0,230,118,0.15);border:1px solid rgba(0,230,118,0.3);color:var(--green)}
+.pf-icon.grey{background:var(--bg3);border:1px solid var(--border);color:var(--text3)}
+.pf-body{flex:1}
+.pf-label{font-size:0.78em;font-weight:700;color:var(--text);margin-bottom:2px}
+.pf-detail{font-family:var(--mono);font-size:0.65em;color:var(--text3)}
+.pf-badge{display:inline-block;font-family:var(--mono);font-size:0.6em;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle}
+.pf-badge.reject{background:rgba(255,80,80,0.15);color:#ff5555;border:1px solid rgba(255,80,80,0.3)}
+.pf-badge.approve{background:rgba(0,230,118,0.15);color:var(--green);border:1px solid rgba(0,230,118,0.3)}
+.pf-verify{margin-top:20px;padding-top:20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.pf-verified{font-family:var(--mono);font-size:0.72em;color:var(--green);font-weight:700}
+.pf-link{font-family:var(--mono);font-size:0.62em;color:var(--text3);text-decoration:none;border:1px solid var(--border);padding:4px 10px;border-radius:5px;transition:all 0.2s}
+.pf-link:hover{border-color:var(--green);color:var(--green)}
+@media(max-width:768px){.hero-inner{grid-template-columns:1fr}.hero-left{align-items:center;text-align:center}.hero-left .hero-sub,.hero-left .hero-niche{text-align:center}.hero-left .hero-actions{justify-content:center}}
 .btn-primary{background:var(--green);color:#000;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1em;text-decoration:none;letter-spacing:0.2px;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
 .btn-primary:hover{background:var(--green2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,230,118,0.25)}
 .btn-secondary{background:transparent;color:var(--text);padding:14px 32px;border-radius:8px;font-weight:600;font-size:1em;text-decoration:none;letter-spacing:0.2px;border:1px solid var(--border2);transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
@@ -136,15 +161,57 @@ footer{position:relative;z-index:1;padding:48px 40px;border-top:1px solid var(--
 </nav>
 <section class="hero">
   <div class="hero-inner">
-    <div class="hero-badge fade-in">KYC &middot; Fraud &middot; Credit &middot; Compliance &middot; HR</div>
-    <h1 class="fade-in delay-1">Prove Every<br><em>Important Decision.</em></h1>
-    <p class="hero-sub fade-in delay-2">Make your AI and human decisions legally defensible with cryptographic evidence. Tamper-proof, timestamped, independently verifiable.</p>
-    <p class="hero-niche fade-in delay-2">Built for KYC, fraud detection, credit scoring, HR and regulated workflows.</p>
-    <div class="hero-actions fade-in delay-3">
-      <a class="btn-primary" href="/seal">Prove Your Decisions &rarr;</a>
-      <a class="btn-secondary" href="https://buildseal.io/release/seal_1776629149998_k3whsb" target="_blank">See Live Demo</a>
+    <div class="hero-left fade-in">
+      <div class="hero-badge">KYC &middot; Fraud &middot; Credit &middot; Compliance &middot; HR</div>
+      <h1>Prove Every<br><em>Important Decision.</em></h1>
+      <p class="hero-sub">Make your AI and human decisions legally defensible with cryptographic evidence. Tamper-proof, timestamped, independently verifiable.</p>
+      <p class="hero-niche">Built for KYC, fraud detection, credit scoring, HR and regulated workflows.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="/seal">Prove Your Decisions &rarr;</a>
+        <a class="btn-secondary" href="https://buildseal.io/release/seal_1776629149998_k3whsb" target="_blank">See Live Demo</a>
+      </div>
     </div>
-    <div class="hero-code fade-in delay-4">
+    <div class="fade-in delay-2">
+      <div class="proof-flow">
+        <div class="pf-title">Live Decision Proof</div>
+        <div class="pf-step">
+          <div class="pf-icon grey">⚖️</div>
+          <div class="pf-body">
+            <div class="pf-label">KYC Decision <span class="pf-badge reject">REJECT</span></div>
+            <div class="pf-detail">subject: user_8821 &middot; risk_score: 0.91</div>
+          </div>
+        </div>
+        <div class="pf-connector"></div>
+        <div class="pf-step">
+          <div class="pf-icon green">🔒</div>
+          <div class="pf-body">
+            <div class="pf-label">Sealed &amp; Signed</div>
+            <div class="pf-detail">ed25519 &middot; SHA-256 &middot; ISCProof v5.1</div>
+          </div>
+        </div>
+        <div class="pf-connector"></div>
+        <div class="pf-step">
+          <div class="pf-icon green">⏱️</div>
+          <div class="pf-body">
+            <div class="pf-label">TSA Timestamped</div>
+            <div class="pf-detail">RFC 3161 &middot; freetsa.org &middot; 19 Apr 2026</div>
+          </div>
+        </div>
+        <div class="pf-connector"></div>
+        <div class="pf-step">
+          <div class="pf-icon green">✉️</div>
+          <div class="pf-body">
+            <div class="pf-label">Notification Delivered</div>
+            <div class="pf-detail">compliance@company.com &middot; verify link embedded</div>
+          </div>
+        </div>
+        <div class="pf-verify">
+          <div class="pf-verified">✅ VERIFIED — All checks passed</div>
+          <a class="pf-link" href="https://buildseal.io/release/seal_1776629149998_k3whsb" target="_blank">Open proof &rarr;</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-code fade-in delay-4" style="display:none">
       <div class="code-bar"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div><span class="code-label">seal_decision.py</span></div>
       <div class="code-body">
 <span class="c-kw">from</span> buildseal <span class="c-kw">import</span> <span class="c-fn">seal_decision</span><br><br>
