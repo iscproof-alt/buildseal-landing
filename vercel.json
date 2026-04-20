@@ -1,1 +1,16 @@
-{"rewrites":[{"source":"/release/:id","destination":"/verify.html"}]}
+{
+  "rewrites": [
+    {
+      "source": "/release/:id",
+      "destination": "/verify.html"
+    },
+    {
+      "source": "/seal",
+      "destination": "/seal.html"
+    },
+    {
+      "source": "/verify",
+      "destination": "/verify.html"
+    }
+  ]
+}
