@@ -3,8 +3,9 @@ MSG=${1:-"update"}
 git add -A
 git commit -m "$MSG"
 git push
-OUTPUT=$(npx vercel --prod 2>&1)
-URL=$(echo "$OUTPUT" | grep "Production:" | awk '{print $2}')
-echo "Deployed: $URL"
-npx vercel alias set "$URL" buildseal.io
+npx vercel --prod > /tmp/vercel_out.txt 2>&1
+cat /tmp/vercel_out.txt | tail -5
+URL=$(grep "Production:" /tmp/vercel_out.txt | head -1 | awk '{print $2}' | tr -d '\n')
+echo "Aliasing: $URL"
+npx vercel alias set "$URL" buildseal.io 2>&1
 echo "Done: https://buildseal.io"
