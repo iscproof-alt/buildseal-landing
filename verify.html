@@ -277,7 +277,8 @@ if(!id||id==='release'||id==='verify.html'){
       }
 
       html+='<div class="actions-section">';
-      html+='<a class="btn btn-primary" href="'+evidenceUrl+'" target="_blank">&#11015; Pack JSON</a>';
+      html+='<a class="btn btn-primary" href="https://buildseal-api-production-3ca5.up.railway.app/seal/'+esc(d.seal_id||id)+'/evidence-package" download>&#11015; Download Evidence Package</a>';
+      html+='<a class="btn btn-secondary" href="'+evidenceUrl+'" target="_blank">&#128196; Pack JSON</a>';
       html+='<a class="btn btn-secondary" href="https://buildseal.io">&#128274; Seal a document</a>';
       html+='<a class="btn btn-secondary" href="https://buildseal-api-production-3ca5.up.railway.app/evidence/'+esc(d.seal_id||id)+'" target="_blank">&#128196; Communication Evidence</a>';
       html+='<button class="btn btn-secondary" onclick="copyText(window.location.href,this)">&#128279; Copy link</button>';
