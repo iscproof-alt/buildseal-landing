@@ -112,8 +112,8 @@
   <div id="tab-seal" class="tab-content active">
   <p>Drop your PDF here and seal it in one click.</p>
   <div class="drop-zone" id="dropZone">
-    <input type="file" id="fileInput" accept="application/pdf,.pdf" />
-    <div id="dropText">📄 Select or drop a PDF file</div>
+    <input type="file" id="fileInput" accept="*/*" />
+    <div id="dropText">📄 Select or drop any file</div>
   </div>
   <div class="step-indicator" id="stepIndicator"></div>
   <div class="status" id="statusMsg"></div>
@@ -157,6 +157,7 @@
 </div>
 <script>
 const API_URL = 'https://buildseal-api-production-3ca5.up.railway.app/upload-and-seal';
+const HASH_API_URL = 'https://buildseal-api-production-3ca5.up.railway.app/seal';
 const REQUEST_TIMEOUT_MS = 90000;
 const MAX_RETRIES = 3;
 let sealData = null;
@@ -234,11 +235,7 @@ async function handleFile(file) {
   clearStatus();
   resetResult();
 
-  if (!isPdf(file)) {
-    setStatus('error', '❌ Şu an yalnızca PDF dosyaları destekleniyor.');
-    dropText.textContent = '📄 Select or drop a PDF file';
-    return;
-  }
+
 
   dropText.textContent = '⏳ ' + file.name;
 
@@ -249,7 +246,7 @@ async function handleFile(file) {
     hash = await sha256Hex(file);
   } catch(e) {
     setStatus('error', '❌ Hash hesaplanamadı. Dosyayı tekrar dene.');
-    dropText.textContent = '📄 Select or drop a PDF file';
+    dropText.textContent = '📄 Select or drop any file';
     setStep('');
     return;
   }
@@ -260,11 +257,15 @@ async function handleFile(file) {
       setStep('3/5 Signing başlatılıyor...');
       await new Promise(r => setTimeout(r, 120));
       setStep('4/5 Timestamp alınıyor...' + (attempt > 1 ? ` (deneme ${attempt})` : ''));
-      const formData = new FormData();
-      formData.append('file', file);
-      const res = await fetchWithTimeout(API_URL, {
+      const res = await fetchWithTimeout(HASH_API_URL, {
         method: 'POST',
-        body: formData
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          artifact_hash: hash,
+          filename: file.name,
+          repo: 'web',
+          commit: 'direct'
+        })
       }, REQUEST_TIMEOUT_MS);
       if (!res.ok) throw new Error('api_error_' + res.status);
       data = await res.json();
@@ -277,7 +278,7 @@ async function handleFile(file) {
         setStatus('error', e.message === 'timeout'
           ? '❌ API yanıt vermedi (timeout). Backend uyuyor olabilir. 1 dakika sonra tekrar dene.'
           : '❌ API hatası: ' + e.message);
-        dropText.textContent = '📄 Select or drop a PDF file';
+        dropText.textContent = '📄 Select or drop any file';
         setStep('');
         return;
       }
