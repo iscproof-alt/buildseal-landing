@@ -166,11 +166,11 @@ if(!id||id==='release'||id==='verify.html'){
         const sealDate=d.created_at?new Date(d.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'';
         html+='<div style="background:#0d1f14;border:1px solid #1a3a22;border-top:none;padding:24px 32px;text-align:center">';
         html+='<div style="display:flex;justify-content:center;gap:20px;margin-bottom:14px;flex-wrap:wrap">';
-        html+='<span style="color:#4ade80;font-weight:600">&#10003; Verified</span>';
+        html+='<span style="color:#4ade80;font-weight:600">&#10003; Authentic</span>';
         html+='<span style="color:#4ade80;font-weight:600">&#10003; Unchanged</span>';
-        html+='<span style="color:#4ade80;font-weight:600">&#10003; Timestamped</span>';
+        html+='<span style="color:#4ade80;font-weight:600">&#10003; Time Proven</span>';
         html+='</div>';
-        html+='<div style="color:#e2e8f0;font-size:0.93em;line-height:1.7;margin-bottom:16px">This file was sealed on <strong style="color:#fff">'+sealDate+'</strong>.<br>No changes detected since sealing.<br>Can be independently verified by anyone.</div>';
+        html+='<div style="color:#e2e8f0;font-size:0.93em;line-height:1.7;margin-bottom:16px">This file was sealed on <strong style="color:#fff">'+sealDate+'</strong>.<br>It still matches the original version.<br>Publicly verifiable proof attached.</div>';
         html+='<button onclick="var t=document.getElementById(String.fromCharCode(116,100));t.style.display=t.style.display===String.fromCharCode(110,111,110,101)?String.fromCharCode():String.fromCharCode(110,111,110,101);this.textContent=t.style.display?String.fromCharCode(83,104,111,119,32,84,101,99,104,110,105,99,97,108,32,68,101,116,97,105,108,115):String.fromCharCode(72,105,100,101,32,84,101,99,104,110,105,99,97,108,32,68,101,116,97,105,108,115)" style="background:transparent;border:1px solid #2a3a4a;color:#94a3b8;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:0.8em">Show Technical Details</button>';
         html+='</div>';
         html+='<div id="td" style="display:none">';
@@ -178,21 +178,21 @@ if(!id||id==='release'||id==='verify.html'){
 
       // Info rows
       html+='<div class="seal-info">';
-      html+='<div class="info-row"><div class="info-label">Sealed At</div><div class="info-value muted">'+sealedAt+'</div></div>';
-      html+='<div class="info-row"><div class="info-label">Time Proof</div><div class="info-value">'+tsaRow+'</div></div>';
-      html+='<div class="info-row"><div class="info-label">Cryptographic Layer</div><div class="info-value muted"><a href="https://iscproof.dev/spec/v5" target="_blank" style="color:var(--text2);text-decoration:none">ISCProof v'+packVerNum+' ↗</a></div></div>';
-      if(root)html+='<div class="info-row"><div class="info-label">Root Hash</div><div class="info-value">'+shortHash(root)+'<button class="copy-btn" onclick="copyText(\''+root.replace(/'/g,"\\'")+'\'  ,this)">copy</button></div></div>';
-      if(artifactHash)html+='<div class="info-row"><div class="info-label">File Hash (SHA-256)</div><div class="info-value">'+shortHash(artifactHash)+'<button class="copy-btn" onclick="copyText(\''+artifactHash.replace(/'/g,"\\'")+'\'  ,this)">copy</button></div></div>';
-      if(fingerprint)html+='<div class="info-row"><div class="info-label">Signing Key</div><div class="info-value muted"><a href="https://buildseal.io/keys/'+esc(fingerprint)+'" target="_blank" style="color:var(--text2);text-decoration:none">'+esc(fingerprint)+' ↗</a></div></div>';
+      html+='<div class="info-row"><div class="info-label">Seal Date</div><div class="info-value muted">'+sealedAt+'</div></div>';
+      html+='<div class="info-row"><div class="info-label">Trusted Time Proof</div><div class="info-value">'+tsaRow+'</div></div>';
+      html+='<div class="info-row"><div class="info-label">Security Layer</div><div class="info-value muted"><a href="https://iscproof.dev/spec/v5" target="_blank" style="color:var(--text2);text-decoration:none">ISCProof v'+packVerNum+' ↗</a></div></div>';
+      if(root)html+='<div class="info-row"><div class="info-label">Integrity ID</div><div class="info-value">'+shortHash(root)+'<button class="copy-btn" onclick="copyText(\''+root.replace(/'/g,"\\'")+'\'  ,this)">copy</button></div></div>';
+      if(artifactHash)html+='<div class="info-row"><div class="info-label">File Fingerprint</div><div class="info-value">'+shortHash(artifactHash)+'<button class="copy-btn" onclick="copyText(\''+artifactHash.replace(/'/g,"\\'")+'\'  ,this)">copy</button></div></div>';
+      if(fingerprint)html+='<div class="info-row"><div class="info-label">Issuer Key</div><div class="info-value muted"><a href="https://buildseal.io/keys/'+esc(fingerprint)+'" target="_blank" style="color:var(--text2);text-decoration:none">'+esc(fingerprint)+' ↗</a></div></div>';
       html+='</div>';
 
-      // Verification checks
-      html+='<div class="steps-section"><div class="steps-label">Verification checks</div><div class="steps-grid">';
-      html+=step('ok','JSON parse','valid');
-      html+=step(packVerNum>=5?'ok':'warn','Pack version','v'+packVerNum);
-      html+=step(rootMatch?'ok':'fail','Root hash match',rootMatch?'passed':'MISMATCH');
-      html+=step(sigValid?'ok':'fail','ed25519 signature verified',sigValid?'valid':'INVALID');
-      html+=step(tsaVerified?'ok':'warn','RFC 3161 timestamp',tsaVerified?'cryptographically verified':tsaPresent?'present':'not found');
+      // Validation Results
+      html+='<div class="steps-section"><div class="steps-label">Validation Results</div><div class="steps-grid">';
+      html+=step('ok','Evidence file','valid');
+      html+=step(packVerNum>=5?'ok':'warn','Format version','v'+packVerNum);
+      html+=step(rootMatch?'ok':'fail','Integrity match',rootMatch?'passed':'MISMATCH');
+      html+=step(sigValid?'ok':'fail','Signature',sigValid?'valid':'INVALID');
+      html+=step(tsaVerified?'ok':'warn','Trusted timestamp',tsaVerified?'cryptographically verified':tsaPresent?'present':'not found');
       html+='</div>';
       if(isValid) html+='</div>'; // close td
       html+='</div>';
@@ -241,7 +241,7 @@ if(!id||id==='release'||id==='verify.html'){
         }
         html+='</div>';
       }
-      // Event Chain
+      // Proof Timeline
       const events = [];
       // EVALUATED
       if(d.decision_summary && d.decision_summary.event_time) {
@@ -261,13 +261,13 @@ if(!id||id==='release'||id==='verify.html'){
       }
       // TIMESTAMPED
       if(d.tsa && d.tsa.present && d.tsa.time) {
-        events.push({type:'TIMESTAMPED', time:d.tsa.time, label:'RFC 3161 timestamp', proof:'freetsa.org', evidenced:true});
+        events.push({type:'TIMESTAMPED', time:d.tsa.time, label:'Trusted timestamp', proof:'freetsa.org', evidenced:true});
       }
       // VERIFIED shown separately, not in chain
 
       if(events.length > 0) {
         html+='<div style="background:var(--bg2);border:1px solid var(--border);border-top:none;padding:20px 32px">';
-        html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px">Event Chain</div>';
+        html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px">Proof Timeline</div>';
         html+='<div style="display:flex;flex-direction:column;gap:0">';
         const typeColors = {EVALUATED:'#40c4ff',COMMITTED:'#00e676',ABANDONED:'#ff5252',SEALED:'#00e676',TIMESTAMPED:'#ffd740',WITNESSED:'#b388ff',VERIFIED:'#00e676',UNVERIFIED:'#ff5252'};
         const filteredEvents = events.filter(ev => ev.time && ev.time !== 'null' && ev.time !== '');
@@ -297,10 +297,10 @@ if(!id||id==='release'||id==='verify.html'){
       }
 
       html+='<div class="actions-section">';
-      html+='<a class="btn btn-primary" href="https://buildseal-api-production-3ca5.up.railway.app/seal/'+esc(d.seal_id||id)+'/evidence-package" download>&#11015; Download Evidence Package</a>';
-      html+='<a class="btn btn-secondary" href="'+evidenceUrl+'" target="_blank">&#128196; Pack JSON</a>';
-      html+='<a class="btn btn-secondary" href="https://buildseal.io">&#128274; Seal a document</a>';
-      html+='<a class="btn btn-secondary" href="https://buildseal-api-production-3ca5.up.railway.app/evidence/'+esc(d.seal_id||id)+'" target="_blank">&#128196; Communication Evidence</a>';
+      html+='<a class="btn btn-primary" href="https://buildseal-api-production-3ca5.up.railway.app/seal/'+esc(d.seal_id||id)+'/evidence-package" download>&#11015; Download Proof File</a>';
+      html+='<a class="btn btn-secondary" href="'+evidenceUrl+'" target="_blank">&#128196; Technical Proof Data</a>';
+      html+='<a class="btn btn-secondary" href="https://buildseal.io">&#128274; Seal Your File</a>';
+      html+='<a class="btn btn-secondary" href="https://buildseal-api-production-3ca5.up.railway.app/evidence/'+esc(d.seal_id||id)+'" target="_blank">&#128196; Share Verification Proof</a>';
       html+='<button class="btn btn-secondary" onclick="copyText(window.location.href,this)">&#128279; Copy link</button>';
       html+='</div>';
       if(isValid) html+='</div>'; // close td
