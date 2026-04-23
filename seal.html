@@ -257,15 +257,11 @@ async function handleFile(file) {
       setStep('3/5 Signing başlatılıyor...');
       await new Promise(r => setTimeout(r, 120));
       setStep('4/5 Timestamp alınıyor...' + (attempt > 1 ? ` (deneme ${attempt})` : ''));
-      const res = await fetchWithTimeout(HASH_API_URL, {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetchWithTimeout(API_URL, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          artifact_hash: hash,
-          filename: file.name,
-          repo: 'web',
-          commit: 'direct'
-        })
+        body: formData
       }, REQUEST_TIMEOUT_MS);
       if (!res.ok) throw new Error('api_error_' + res.status);
       data = await res.json();
