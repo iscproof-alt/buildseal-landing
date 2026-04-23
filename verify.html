@@ -162,6 +162,20 @@ if(!id||id==='release'||id==='verify.html'){
       html+='<div class="seal-id-chip">'+esc(d.seal_id||id)+'</div>';
       html+='</div>';
 
+      if(isValid){
+        const sealDate=d.created_at?new Date(d.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'';
+        html+='<div style="background:#0d1f14;border:1px solid #1a3a22;border-top:none;padding:24px 32px;text-align:center">';
+        html+='<div style="display:flex;justify-content:center;gap:20px;margin-bottom:14px;flex-wrap:wrap">';
+        html+='<span style="color:#4ade80;font-weight:600">&#10003; Verified</span>';
+        html+='<span style="color:#4ade80;font-weight:600">&#10003; Unchanged</span>';
+        html+='<span style="color:#4ade80;font-weight:600">&#10003; Timestamped</span>';
+        html+='</div>';
+        html+='<div style="color:#e2e8f0;font-size:0.93em;line-height:1.7;margin-bottom:16px">This file was sealed on <strong style="color:#fff">'+sealDate+'</strong>.<br>No changes detected since sealing.<br>Can be independently verified by anyone.</div>';
+        html+='<button onclick="var t=document.getElementById(String.fromCharCode(116,100));t.style.display=t.style.display===String.fromCharCode(110,111,110,101)?String.fromCharCode():String.fromCharCode(110,111,110,101);this.textContent=t.style.display?String.fromCharCode(83,104,111,119,32,84,101,99,104,110,105,99,97,108,32,68,101,116,97,105,108,115):String.fromCharCode(72,105,100,101,32,84,101,99,104,110,105,99,97,108,32,68,101,116,97,105,108,115)" style="background:transparent;border:1px solid #2a3a4a;color:#94a3b8;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:0.8em">Show Technical Details</button>';
+        html+='</div>';
+        html+='<div id="td" style="display:none">';
+      }
+
       // Info rows
       html+='<div class="seal-info">';
       html+='<div class="info-row"><div class="info-label">Sealed At</div><div class="info-value muted">'+sealedAt+'</div></div>';
@@ -179,7 +193,9 @@ if(!id||id==='release'||id==='verify.html'){
       html+=step(rootMatch?'ok':'fail','Root hash match',rootMatch?'passed':'MISMATCH');
       html+=step(sigValid?'ok':'fail','ed25519 signature verified',sigValid?'valid':'INVALID');
       html+=step(tsaVerified?'ok':'warn','RFC 3161 timestamp',tsaVerified?'cryptographically verified':tsaPresent?'present':'not found');
-      html+='</div></div>';
+      html+='</div>';
+      if(isValid) html+='</div>'; // close td
+      html+='</div>';
 
       // Actions
       // Decision summary section
@@ -271,9 +287,13 @@ if(!id||id==='release'||id==='verify.html'){
           html+='<div style="font-family:var(--sans);font-size:0.8em;color:var(--text2);margin-bottom:2px">'+esc(ev.label)+'</div>';
           html+='<div style="font-family:var(--mono);font-size:0.68em;color:var(--text3)">'+humanTime(ev.time)+'</div>';
           html+='<div style="font-family:var(--mono);font-size:0.65em;color:var(--text3);margin-top:2px">'+esc(ev.proof)+'</div>';
-          html+='</div></div>';
+          html+='</div>';
+      if(isValid) html+='</div>'; // close td
+      html+='</div>';
         });
-        html+='</div></div>';
+        html+='</div>';
+      if(isValid) html+='</div>'; // close td
+      html+='</div>';
       }
 
       html+='<div class="actions-section">';
@@ -282,7 +302,9 @@ if(!id||id==='release'||id==='verify.html'){
       html+='<a class="btn btn-secondary" href="https://buildseal.io">&#128274; Seal a document</a>';
       html+='<a class="btn btn-secondary" href="https://buildseal-api-production-3ca5.up.railway.app/evidence/'+esc(d.seal_id||id)+'" target="_blank">&#128196; Communication Evidence</a>';
       html+='<button class="btn btn-secondary" onclick="copyText(window.location.href,this)">&#128279; Copy link</button>';
-      html+='</div></div>';
+      html+='</div>';
+      if(isValid) html+='</div>'; // close td
+      html+='</div>';
 
       document.getElementById('main').innerHTML=html;
     })
