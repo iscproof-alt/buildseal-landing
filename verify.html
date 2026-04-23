@@ -146,7 +146,7 @@ if(!id||id==='release'||id==='verify.html'){
       const root=(vd&&vd.root)||d.root||d.pack_hash||null;
       const artifactHash=d.artifact_hash||null;
       const fingerprint=(vd.fields&&vd.fields.fingerprint)||null;
-      const evidenceUrl='https://verify.buildseal.io/pack/'+esc(d.seal_id||id);
+      const evidenceUrl='https://buildseal-api-production-3ca5.up.railway.app/seal/'+esc(d.seal_id||id)+'/pack';
 
       const tsaRow=tsaPresent&&tsaTime
         ?'✅ '+esc(tsaTime)+' &middot; '+tsaProvider
