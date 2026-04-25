@@ -394,6 +394,10 @@ function copyHash() {
 
 
 function switchTab(tab) {
+  // Mode switch
+  document.body.classList.remove('mode-seal', 'mode-verify');
+  document.body.classList.add('mode-' + tab);
+  
   document.querySelectorAll('.tab-btn').forEach(b => {
     b.classList.remove('active', 'seal-active', 'verify-active');
   });
@@ -503,6 +507,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function switchTab(tab) {
+  // Mode switch
+  document.body.classList.remove('mode-seal', 'mode-verify');
+  document.body.classList.add('mode-' + tab);
+  
   document.querySelectorAll('.tab-btn').forEach(b => {
     b.classList.remove('active', 'seal-active', 'verify-active');
   });
