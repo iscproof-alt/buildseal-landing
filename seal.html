@@ -181,8 +181,8 @@
 
 </div>
 <script>
-const API_URL = 'https://buildseal-api-production-24b6.up.railway.app/upload-and-seal';
-const HASH_API_URL = 'https://buildseal-api-production-24b6.up.railway.app/seal';
+const API_URL = 'https://buildseal-api-production-1db6.up.railway.app/upload-and-seal';
+const HASH_API_URL = 'https://buildseal-api-production-1db6.up.railway.app/seal';
 const REQUEST_TIMEOUT_MS = 90000;
 const MAX_RETRIES = 3;
 let sealData = null;
@@ -460,7 +460,7 @@ async function verifyBySealId() {
   res.style.display = 'block';
   res.innerHTML = '<div style="color:#888">Sorgulanıyor...</div>';
   try {
-    const r = await fetch('https://buildseal-api-production-24b6.up.railway.app/verify/' + id);
+    const r = await fetch('https://buildseal-api-production-1db6.up.railway.app/verify/' + id);
     const d = await r.json();
     showVerifyResult(d);
   } catch(e) {
@@ -477,7 +477,7 @@ async function verifyByFile(file) {
   const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
   res.innerHTML = '<div style="color:#888">Kayıt aranıyor...</div>';
   try {
-    const r = await fetch('https://buildseal-api-production-24b6.up.railway.app/verify-by-hash', {
+    const r = await fetch('https://buildseal-api-production-1db6.up.railway.app/verify-by-hash', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ artifact_hash: hash })
@@ -573,7 +573,7 @@ async function verifyBySealId() {
   res.style.display = 'block';
   res.innerHTML = '<div style="color:#888">Sorgulanıyor...</div>';
   try {
-    const r = await fetch('https://buildseal-api-production-24b6.up.railway.app/verify/' + id);
+    const r = await fetch('https://buildseal-api-production-1db6.up.railway.app/verify/' + id);
     const d = await r.json();
     showVerifyResult(d);
   } catch(e) {
@@ -590,7 +590,7 @@ async function verifyByFile(file) {
   const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
   res.innerHTML = '<div style="color:#888">Kayıt aranıyor...</div>';
   try {
-    const r = await fetch('https://buildseal-api-production-24b6.up.railway.app/verify-by-hash', {
+    const r = await fetch('https://buildseal-api-production-1db6.up.railway.app/verify-by-hash', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ artifact_hash: hash })
