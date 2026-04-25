@@ -331,11 +331,16 @@ async function handleFile(file) {
   document.getElementById('sealId').textContent = n.seal_id || 'N/A';
   document.getElementById('fileName').textContent = file.name;
   document.getElementById('hashVal').textContent = hash;
+  // Fill accordion
+  const hashVal2 = document.getElementById('hashVal2');
+  if (hashVal2) hashVal2.textContent = hash;
   document.getElementById('sealTime').textContent = n.seal_timestamp || '⚠️ Backend seal zamanı dönmedi';
   const fullRoot = n.root || '';
   const shortRoot = fullRoot.length > 16 ? fullRoot.slice(0,8) + '...' + fullRoot.slice(-8) : fullRoot;
   document.getElementById('rootHash').textContent = shortRoot || '—';
   document.getElementById('rootHash').title = fullRoot;
+  const rootHash2 = document.getElementById('rootHash2');
+  if (rootHash2) rootHash2.textContent = fullRoot || '—';
   document.getElementById('copyRootHash').style.display = fullRoot ? 'inline-block' : 'none';
   const tsaTimeStr = n.tsa_token?.time ? new Date(n.tsa_token.time).toLocaleString('tr-TR', {timeZone:'UTC'}) + ' UTC' : '';
   document.getElementById('tsaStatus').textContent = n.tsa_status === 'present' ? '✅ ' + tsaTimeStr + ' (freetsa.org)' : 'Bağımsız TSA bilgisi dönmedi';
