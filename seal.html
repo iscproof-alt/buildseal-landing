@@ -145,12 +145,12 @@
   <div id="tab-verify" class="tab-content">
     <p>Upload a file or enter a Seal ID.</p>
     <div id="verify-drop" style="border:2px dashed #4ade80;border-radius:12px;padding:40px;margin:20px 0;cursor:pointer;transition:border-color 0.2s" onclick="document.getElementById('verifyFileInput').click()">
-      <div id="verifyDropText">📄 Dogrulanacak dosyayi sec</div>
+      <div id="verifyDropText">📄 Select file to verify</div>
       <input type="file" id="verifyFileInput" style="display:none" accept=".pdf,.doc,.docx,.txt" />
     </div>
     <div style="margin:16px 0;color:#666">— veya —</div>
-    <input id="sealIdInput" type="text" placeholder="Seal ID gir (seal_...)" style="width:100%;padding:12px;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:8px;color:#fff;font-size:0.95em;box-sizing:border-box;margin-bottom:12px" />
-    <button onclick="verifyBySealId()" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:12px 24px;font-size:1em;cursor:pointer;width:100%">🔍 Seal ID ile Dogrula</button>
+    <input id="sealIdInput" type="text" placeholder="Enter Seal ID (seal_...)" style="width:100%;padding:12px;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:8px;color:#fff;font-size:0.95em;box-sizing:border-box;margin-bottom:12px" />
+    <button onclick="verifyBySealId()" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:12px 24px;font-size:1em;cursor:pointer;width:100%">🔍 Verify with Seal ID</button>
     <div id="verifyResult" style="margin-top:24px;display:none;background:#111827;border-radius:12px;padding:24px;text-align:left"></div>
   </div><!-- /tab-verify -->
 
