@@ -146,7 +146,7 @@
     <div class="value" id="sealTime"></div>
 
     <div style="margin:12px 0">
-    <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.innerHTML = this.innerHTML.includes('▶') ? '📋 Open Evidence Package' : '📋 Open Evidence Package'" style="cursor:pointer;background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;font-size:0.9em;text-align:center;display:inline-block;user-select:none">📋 Open Evidence Package</div>
+    <div onclick="openEvidence()" = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.innerHTML = this.innerHTML.includes('▶') ? '📋 Open Evidence Package' : '📋 Open Evidence Package'" style="cursor:pointer;background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;font-size:0.9em;text-align:center;display:inline-block;user-select:none">📋 Open Evidence Package</div>
     <div style="display:none;margin-top:8px;padding:8px;background:#1a1a2e;border-radius:6px">
       <div style="font-size:0.8em;color:#888">SHA-256:</div>
       <div id="hashVal2" style="font-family:monospace;font-size:0.75em;word-break:break-all"></div>
@@ -385,6 +385,32 @@ dropZone.addEventListener('drop', e => {
   handleFile(e.dataTransfer.files?.[0]);
 });
 
+
+function openEvidence() {
+  const modal = document.getElementById('evidenceModal');
+  const hashEl = document.getElementById('hashVal');
+  const rootEl = document.getElementById('rootHash2') || document.getElementById('rootHash');
+  
+  document.getElementById('modalHash').textContent = hashEl ? hashEl.textContent : 'N/A';
+  document.getElementById('modalRoot').textContent = rootEl ? (rootEl.title || rootEl.textContent) : 'N/A';
+  
+  modal.style.display = 'block';
+}
+
+function closeEvidence() {
+  document.getElementById('evidenceModal').style.display = 'none';
+}
+
+function copyTechnicalData() {
+  const hash = document.getElementById('modalHash').textContent;
+  const root = document.getElementById('modalRoot').textContent;
+  const data = 'SHA-256: ' + hash + '
+Root Hash: ' + root;
+  navigator.clipboard.writeText(data).then(() => {
+    event.target.textContent = 'Copied!';
+    setTimeout(() => event.target.textContent = 'Copy Technical Data', 1500);
+  });
+}
 function copyHash() {
   const full = document.getElementById('rootHash').title;
   if (!full) return;
