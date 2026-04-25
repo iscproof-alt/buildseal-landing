@@ -149,14 +149,14 @@
   </div></div><!-- /tab-seal -->
 
   <div style="position:relative;z-index:1"><div id="tab-verify" class="tab-content">
-    <p>Upload a file or enter a Seal ID.</p>
+    <p>Verify a file or check a Seal ID.</p>
     <div id="verify-drop" style="border:2px dashed #4ade80;border-radius:12px;padding:40px;margin:20px 0;cursor:pointer;transition:border-color 0.2s" onclick="document.getElementById('verifyFileInput').click()">
-      <div id="verifyDropText">📄 Select file to verify</div>
+      <div id="verifyDropText">📄 Drop file here or click to upload</div>
       <input type="file" id="verifyFileInput" style="display:none" accept=".pdf,.doc,.docx,.txt" />
     </div>
-    <div style="margin:16px 0;color:#666">— veya —</div>
+    <div style="margin:16px 0;color:#666">or</div>
     <input id="sealIdInput" type="text" placeholder="Enter Seal ID (seal_...)" style="width:100%;padding:12px;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:8px;color:#fff;font-size:0.95em;box-sizing:border-box;margin-bottom:12px" />
-    <button onclick="verifyBySealId()" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:12px 24px;font-size:1em;cursor:pointer;width:100%">🔍 Verify with Seal ID</button>
+    <button onclick="verifyBySealId()" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:12px 24px;font-size:1em;cursor:pointer;width:100%">🔍 Check Proof</button>
     <div id="verifyResult" style="margin-top:24px;display:none;background:#111827;border-radius:12px;padding:24px;text-align:left"></div>
   </div></div><!-- /tab-verify -->
 
@@ -558,8 +558,8 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <div style="position:fixed;bottom:0;left:0;right:0;background:#0a0f0a;border-top:1px solid #1a2a1a;padding:10px 20px;display:flex;justify-content:center;gap:32px;font-size:0.75em;color:#4a7a4a;z-index:100">
-  <span>✓ End-to-end verifiable</span>
-  <span>✓ Zero-knowledge</span>
-  <span>✓ Privacy first</span>
+  <span>✓ Tamper-proof</span>
+  <span>✓ Timestamped</span>
+  <span>✓ Private</span>
 </div></body>
 </html>
