@@ -317,5 +317,19 @@ window.onerror=function(msg,src,line,col,err){
   return true;
 };
 </script>
+
+<script>
+async function copyProofLink() {
+  const sealId = window.location.pathname.split("/").filter(Boolean).pop();
+  const proofUrl = `https://buildseal.io/release/${sealId}`;
+  try {
+    await navigator.clipboard.writeText(proofUrl);
+    alert("Proof link copied.");
+  } catch(e) {
+    prompt("Copy this link:", proofUrl);
+  }
+}
+</script>
+
 </body>
 </html>
