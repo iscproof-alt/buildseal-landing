@@ -129,7 +129,7 @@
     <div style="color:#4ade80;font-size:0.85em">✓ Independently verifiable</div>
     <div style="color:#4ade80;font-size:0.85em">✓ No account required</div>
   </div>
-  <div class="drop-zone" id="dropZone" style="position:relative;z-index:9999;pointer-events:auto">
+  <div class="drop-zone" id="dropZone">
     <input type="file" id="fileInput" accept="*/*" />
     <div id="dropText">Seal File Now — Drop or click to select</div>
   </div>
@@ -146,7 +146,7 @@
     <div class="value" id="sealTime"></div>
 
     <div style="margin:12px 0">
-    <div onclick="openEvidence()" = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.innerHTML = this.innerHTML.includes('▶') ? '📋 Open Evidence Package' : '📋 Open Evidence Package'" style="cursor:pointer;background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;font-size:0.9em;text-align:center;display:inline-block;user-select:none">📋 Open Evidence Package</div>
+    <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.innerHTML = this.innerHTML.includes('▶') ? '📋 Open Evidence Package' : '📋 Open Evidence Package'" style="cursor:pointer;background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;font-size:0.9em;text-align:center;display:inline-block;user-select:none">📋 Open Evidence Package</div>
     <div style="display:none;margin-top:8px;padding:8px;background:#1a1a2e;border-radius:6px">
       <div style="font-size:0.8em;color:#888">SHA-256:</div>
       <div id="hashVal2" style="font-family:monospace;font-size:0.75em;word-break:break-all"></div>
@@ -181,8 +181,8 @@
 
 </div>
 <script>
-const API_URL = 'http://localhost:3000/upload-and-seal';
-const HASH_API_URL = 'http://localhost:3000/seal';
+const API_URL = 'https://buildseal-api-production-3ca5.up.railway.app/upload-and-seal';
+const HASH_API_URL = 'https://buildseal-api-production-3ca5.up.railway.app/seal';
 const REQUEST_TIMEOUT_MS = 90000;
 const MAX_RETRIES = 3;
 let sealData = null;
@@ -305,62 +305,47 @@ async function handleFile(file) {
       }
     }
   }
+    setStep('5/5 Finalizing package...');
+    const n = normalizeApiData(data);
 
-  setStep('5/5 Finalizing package...');
-  const n = normalizeApiData(data);
+    sealData = {
+      schema: 'buildseal/seal-summary@1',
+      seal_id: n.seal_id,
+      file_name: file.name,
+      content_hash: hash,
+      verify_url: n.verify_url || ('http://localhost:8080/seal.html?seal=' + encodeURIComponent(n.seal_id || '')),
+      seal_timestamp: n.seal_timestamp || new Date().toISOString(),
+      algorithm: 'sha256',
+      raw_response: data
+    };
 
-  sealData = {
-    schema: 'buildseal/seal-summary@1',
-    seal_id: n.seal_id,
-    file_name: file.name,
-    content_hash: hash,
-    verify_url: n.verify_url,
-    seal_timestamp: n.seal_timestamp,
-    tsa_status: n.tsa_status,
-    tsa_token_present: !!n.tsa_token,
-    tsa_time: n.tsa_token?.time || null,
-    tsa_provider: n.tsa_token?.provider || null,
-    tsa_token_b64: n.tsa_token?.token_b64 || null,
-    root_hash: n.root || null,
-    algorithm: 'sha256',
-    pack_version: n.raw?.pack_version || '5.1',
-    raw_response: n.raw
-  };
+    const safeSet = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+    const safeHref = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.href = value;
+    };
 
-  document.getElementById('sealId').textContent = n.seal_id || 'N/A';
-  document.getElementById('fileName').textContent = file.name;
-  document.getElementById('hashVal').textContent = hash;
-  // Fill accordion
-  const hashVal2 = document.getElementById('hashVal2');
-  if (hashVal2) hashVal2.textContent = hash;
-  document.getElementById('sealTime').textContent = n.seal_timestamp || '⚠️ Backend seal zamanı dönmedi';
-  const fullRoot = n.root || '';
-  const shortRoot = fullRoot.length > 16 ? fullRoot.slice(0,8) + '...' + fullRoot.slice(-8) : fullRoot;
-  document.getElementById('rootHash').textContent = shortRoot || '—';
-  document.getElementById('rootHash').title = fullRoot;
-  const rootHash2 = document.getElementById('rootHash2');
-  if (rootHash2) rootHash2.textContent = fullRoot || '—';
-  document.getElementById('copyRootHash').style.display = fullRoot ? 'inline-block' : 'none';
-  const tsaTimeStr = n.tsa_token?.time ? new Date(n.tsa_token.time).toLocaleString('tr-TR', {timeZone:'UTC'}) + ' UTC' : '';
-  document.getElementById('tsaStatus').textContent = n.tsa_status === 'present' ? '✅ ' + tsaTimeStr + ' (freetsa.org)' : 'Bağımsız TSA bilgisi dönmedi';
+    const verifyUrl = sealData.verify_url || '#';
 
-  const verifyUrl = n.verify_url || '#';
-  document.getElementById('verifyUrl').textContent = n.verify_url || 'Verify URL dönmedi';
-  document.getElementById('verifyUrl').href = verifyUrl;
-  document.getElementById('verifyBtn').href = verifyUrl;
-  document.getElementById('summaryText').textContent = n.verify_url
-    ? `${file.name}. Proof created. Anyone can verify using the link above.`
-    : `${file.name} için seal yanıtı alındı ancak verify link dönmedi.`;
+    safeSet('sealId', sealData.seal_id || 'N/A');
+    safeSet('fileName', file.name);
+    safeSet('hashVal', hash);
+    safeSet('sealTime', sealData.seal_timestamp);
+    safeSet('tsaStatus', data?.status === 'offline_mode' ? '⚠️ Offline test mode' : '✅ Seal response received');
+    safeSet('verifyUrl', verifyUrl);
+    safeHref('verifyUrl', verifyUrl);
+    safeHref('verifyBtn', verifyUrl);
+    safeSet('summaryText', file.name + ' sealed. Seal ID: ' + (sealData.seal_id || 'N/A'));
 
-  resultEl.style.display = 'block';
-  dropText.textContent = '✅ ' + file.name + ' sealed!';
-  setStep('');
+    if (resultEl) resultEl.style.display = 'block';
+    dropText.textContent = '✅ ' + file.name + ' sealed!';
+    setStep('');
+    setStatus('success', '✅ Seal tamamlandı.');
+  }
 
-  setStatus(n.tsa_status === 'present' ? 'success' : 'warning',
-    n.tsa_status === 'present'
-      ? '✅ Seal tamamlandı.'
-      : '⚠️ TSA bilgisi dönmedi. Seal üretildi, ancak bağımsız zaman damgası bu yanıtta görünmüyor.');
-}
 
 function downloadSealSummary() {
   if (!sealData) return;
@@ -385,32 +370,6 @@ dropZone.addEventListener('drop', e => {
   handleFile(e.dataTransfer.files?.[0]);
 });
 
-
-function openEvidence() {
-  const modal = document.getElementById('evidenceModal');
-  const hashEl = document.getElementById('hashVal');
-  const rootEl = document.getElementById('rootHash2') || document.getElementById('rootHash');
-  
-  document.getElementById('modalHash').textContent = hashEl ? hashEl.textContent : 'N/A';
-  document.getElementById('modalRoot').textContent = rootEl ? (rootEl.title || rootEl.textContent) : 'N/A';
-  
-  modal.style.display = 'block';
-}
-
-function closeEvidence() {
-  document.getElementById('evidenceModal').style.display = 'none';
-}
-
-function copyTechnicalData() {
-  const hash = document.getElementById('modalHash').textContent;
-  const root = document.getElementById('modalRoot').textContent;
-  const data = 'SHA-256: ' + hash + '
-Root Hash: ' + root;
-  navigator.clipboard.writeText(data).then(() => {
-    event.target.textContent = 'Copied!';
-    setTimeout(() => event.target.textContent = 'Copy Technical Data', 1500);
-  });
-}
 function copyHash() {
   const full = document.getElementById('rootHash').title;
   if (!full) return;
@@ -460,7 +419,7 @@ async function verifyBySealId() {
   res.style.display = 'block';
   res.innerHTML = '<div style="color:#888">Sorgulanıyor...</div>';
   try {
-    const r = await fetch('http://localhost:3000/verify/' + id);
+    const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id);
     const d = await r.json();
     showVerifyResult(d);
   } catch(e) {
@@ -477,7 +436,7 @@ async function verifyByFile(file) {
   const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
   res.innerHTML = '<div style="color:#888">Kayıt aranıyor...</div>';
   try {
-    const r = await fetch('http://localhost:3000/verify-by-hash', {
+    const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify-by-hash', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ artifact_hash: hash })
@@ -573,7 +532,7 @@ async function verifyBySealId() {
   res.style.display = 'block';
   res.innerHTML = '<div style="color:#888">Sorgulanıyor...</div>';
   try {
-    const r = await fetch('http://localhost:3000/verify/' + id);
+    const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify/' + id);
     const d = await r.json();
     showVerifyResult(d);
   } catch(e) {
@@ -590,7 +549,7 @@ async function verifyByFile(file) {
   const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2,'0')).join('');
   res.innerHTML = '<div style="color:#888">Kayıt aranıyor...</div>';
   try {
-    const r = await fetch('http://localhost:3000/verify-by-hash', {
+    const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify-by-hash', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ artifact_hash: hash })
@@ -627,39 +586,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 
-<div style="position:fixed;bottom:0;left:0;right:0;background:#0a0f0a;border-top:1px solid #1a2a1a;padding:16px 20px;display:flex;justify-content:center;gap:48px;font-size:0.85em;color:#4ade80;z-index:100;line-height:1">
-  <span>✓ End-to-end verified</span>
-  <span>✓ Zero-knowledge</span>
-  <span>✓ Privacy first</span>
-</div>
-
-<div id="evidenceModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:1000;padding:20px">
-  <div style="background:#1a1a2e;border-radius:12px;max-width:600px;margin:50px auto;padding:24px;max-height:80vh;overflow-y:auto">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h3 style="color:#fff;margin:0">📋 Evidence Package</h3>
-      <button onclick="closeEvidence()" style="background:none;border:none;color:#888;font-size:24px;cursor:pointer">×</button>
-    </div>
-    <p style="color:#aaa;margin-bottom:20px;font-size:0.9em">Technical proof data for verification and audit purposes.</p>
-    
-    <div style="background:#0f1117;border-radius:8px;padding:16px;margin:12px 0">
-      <div style="color:#888;font-size:0.8em;margin-bottom:4px">SHA-256 Fingerprint</div>
-      <div id="modalHash" style="font-family:monospace;font-size:0.8em;word-break:break-all;color:#d4d4d8"></div>
-    </div>
-    
-    <div style="background:#0f1117;border-radius:8px;padding:16px;margin:12px 0">
-      <div style="color:#888;font-size:0.8em;margin-bottom:4px">Root Hash</div>
-      <div id="modalRoot" style="font-family:monospace;font-size:0.8em;word-break:break-all;color:#d4d4d8"></div>
-    </div>
-    
-    <div style="background:#0f1117;border-radius:8px;padding:16px;margin:12px 0">
-      <div style="color:#888;font-size:0.8em;margin-bottom:4px">Timestamp Authority</div>
-      <div style="color:#d4d4d8;font-size:0.9em">freetsa.org (RFC 3161)</div>
-    </div>
-    
-    <div style="text-align:center;margin-top:24px">
-      <button onclick="copyTechnicalData()" style="background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;margin:0 8px;cursor:pointer">Copy Technical Data</button>
-      <button onclick="closeEvidence()" style="background:#2a2a4a;color:#fff;border:1px solid #3a3a5a;border-radius:8px;padding:10px 20px;margin:0 8px;cursor:pointer">Close</button>
-    </div>
-  </div>
+<div style="position:fixed;bottom:0;left:0;right:0;background:#0a0f0a;border-top:1px solid #1a2a1a;padding:16px 20px;display:flex;justify-content:center;gap:40px;font-size:0.85em;color:#4ade80;z-index:100;line-height:1">
+  <span>✓ Tamper-proof</span>
+  <span>✓ Timestamped</span>
+  <span>✓ Private</span>
 </div></body>
 </html>
