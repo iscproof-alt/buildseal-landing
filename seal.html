@@ -333,17 +333,19 @@ async function handleFile(file) {
     safeSet('sealId', sealData.seal_id || 'N/A');
     safeSet('fileName', file.name);
     safeSet('hashVal', hash);
-    safeSet('sealTime', sealData.seal_timestamp);
-    safeSet('tsaStatus', data?.status === 'offline_mode' ? '⚠️ Offline test mode' : '✅ Seal response received');
+    const sealTimeRaw = sealData.seal_timestamp || sealData.created_at;
+    const sealTimeFmt = sealTimeRaw ? new Date(sealTimeRaw).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC' : '—';
+    safeSet('sealTime', sealTimeFmt);
+    const tsaTime = sealData.tsa?.time ? new Date(sealData.tsa.time).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC' : null;
+    safeSet('tsaStatus', data?.status === 'offline_mode' ? '⚠️ Offline test mode' : tsaTime ? '✅ ' + tsaTime + ' · freetsa.org' : '✅ Timestamp recorded');
     safeSet('verifyUrl', verifyUrl);
     safeHref('verifyUrl', verifyUrl);
     safeHref('verifyBtn', verifyUrl);
-    safeSet('summaryText', file.name + ' sealed. Seal ID: ' + (sealData.seal_id || 'N/A'));
 
     if (resultEl) resultEl.style.display = 'block';
     dropText.textContent = '✅ ' + file.name + ' sealed!';
     setStep('');
-    setStatus('success', '✅ Seal tamamlandı.');
+    setStatus('success', '✅ File Sealed');
   }
 
 
