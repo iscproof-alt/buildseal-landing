@@ -341,7 +341,7 @@ async function handleFile(file) {
     const sealTimeRaw = sealData.seal_timestamp || sealData.created_at;
     const sealTimeFmt = sealTimeRaw ? new Date(sealTimeRaw).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC' : '—';
     safeSet('sealTime', sealTimeFmt);
-    const tsaTime = sealData.tsa?.time ? new Date(sealData.tsa.time).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC' : null;
+    const tsaTime = sealData.tsa_token?.time ? new Date(sealData.tsa_token.time).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC' : null;
     safeSet('tsaStatus', data?.status === 'offline_mode' ? '⚠️ Offline test mode' : tsaTime ? '✅ ' + tsaTime + ' · freetsa.org' : '✅ Timestamp recorded');
     safeSet('verifyUrl', 'View Verification Page');
     safeHref('verifyUrl', verifyUrl);
