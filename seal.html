@@ -136,34 +136,39 @@
   <div class="step-indicator" id="stepIndicator"></div>
   <div class="status" id="statusMsg"></div>
   <div class="result" id="result">
-    <div class="label">Proof ID</div>
-    <div class="value seal-id" id="sealId"></div>
-    <div class="label">Original File Name</div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:1em;color:#4ade80;font-weight:600;margin-bottom:8px">What this means</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.85em;color:#ccc">
+        <div>&#10003; Original version locked</div>
+        <div>&#10003; Time of sealing recorded</div>
+        <div>&#10003; Future changes detectable</div>
+        <div>&#10003; Publicly verifiable proof</div>
+      </div>
+    </div>
+    <div class="label">File</div>
     <div class="value" id="fileName"></div>
-    <div class="label">File Fingerprint</div>
-    <div class="value" id="hashVal"></div><div style="font-size:0.8em;color:#888;margin-top:2px">Unique identity generated for this file</div>
-    <div class="label">Sealed On</div>
+    <div class="label">Protected At</div>
     <div class="value" id="sealTime"></div>
-
-    <div style="margin:12px 0">
-    <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.innerHTML = this.innerHTML.includes('▶') ? '📋 Open Evidence Package' : '📋 Open Evidence Package'" style="cursor:pointer;background:#1e3a2f;color:#4ade80;border:1px solid #2a5a3a;border-radius:8px;padding:10px 20px;font-size:0.9em;text-align:center;display:inline-block;user-select:none">📋 Open Evidence Package</div>
-    <div style="display:none;margin-top:8px;padding:8px;background:#1a1a2e;border-radius:6px">
-      <div style="font-size:0.8em;color:#888">SHA-256:</div>
-      <div id="hashVal2" style="font-family:monospace;font-size:0.75em;word-break:break-all"></div>
-      <div style="font-size:0.8em;color:#888;margin-top:8px">Root Hash:</div>
-      <div id="rootHash2" style="font-family:monospace;font-size:0.75em;word-break:break-all"></div>
-    </div>
-  </div><div class="label">Trusted Time Proof</div>
+    <div class="label">Trusted Time Proof</div>
     <div class="value" id="tsaStatus"></div>
-    <div class="label">Verify Authenticity</div>
-    <div class="value">
-      <a class="verify-link" id="verifyUrl" href="#" target="_blank" rel="noopener noreferrer"></a>
+    <div style="margin:12px 0">
+      <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'" style="cursor:pointer;color:#666;font-size:0.8em;padding:4px 0;user-select:none">&#9658; Advanced Technical Details</div>
+      <div style="display:none;margin-top:8px;padding:10px;background:#1a1a2e;border-radius:6px">
+        <div style="font-size:0.8em;color:#888">Proof ID</div>
+        <div class="value seal-id" id="sealId" style="font-size:0.8em"></div>
+        <div style="font-size:0.8em;color:#888;margin-top:8px">File Fingerprint (SHA-256)</div>
+        <div id="hashVal" style="font-family:monospace;font-size:0.75em;word-break:break-all;color:#aaa"></div>
+        <div id="hashVal2" style="display:none"></div>
+        <div id="rootHash2" style="display:none"></div>
+      </div>
     </div>
-    <div class="summary" id="summaryText"></div>
     <div class="actions">
-      <a class="btn" id="verifyBtn" href="#" target="_blank" rel="noopener noreferrer">Verify</a>
-      <button class="btn secondary" id="downloadBtn" type="button" onclick="downloadSealSummary()">⬇ Download Proof Receipt</button>
+      <a class="btn" id="verifyBtn" href="#" target="_blank" rel="noopener noreferrer">Verify File</a>
+      <button class="btn secondary" id="downloadBtn" type="button" onclick="downloadSealSummary()">&#11015; Download Proof Receipt</button>
     </div>
+    <div id="summaryText" style="display:none"></div>
+    <div id="verifyUrl" style="display:none"></div>
+  </div>
   </div>
   </div></div><!-- /tab-seal -->
 
