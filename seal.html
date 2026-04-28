@@ -345,7 +345,7 @@ async function handleFile(file) {
     if (resultEl) resultEl.style.display = 'block';
     dropText.textContent = '✅ File Sealed';
     setStep('');
-    setStatus('success', '✅ File Sealed');
+    setStatus('success', '✅ File Sealed'); document.getElementById('statusMsg').innerHTML = '✅ File Sealed<br><span style="font-size:0.85em;color:#aaa">This file is now timestamped, protected, and independently verifiable.</span>';
   }
 
 
