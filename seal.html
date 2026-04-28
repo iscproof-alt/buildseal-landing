@@ -139,17 +139,17 @@
     <div style="margin-bottom:16px">
       <div style="font-size:1em;color:#4ade80;font-weight:600;margin-bottom:8px">What this means</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.85em;color:#ccc">
-        <div>&#10003; Original file fingerprint recorded</div>
-        <div>&#10003; Time of sealing permanently logged</div>
-        <div>&#10003; Future modifications detectable</div>
-        <div>&#10003; Publicly verifiable proof</div>
+        <div>&#10003; File version recorded</div>
+        <div>&#10003; Seal time permanently logged</div>
+        <div>&#10003; Future changes will be detectable</div>
+        <div>&#10003; Anyone can verify authenticity</div>
       </div>
     </div>
     <div class="label">File</div>
     <div class="value" id="fileName"></div>
-    <div class="label">Protected At</div>
+    <div class="label">Sealed At</div>
     <div class="value" id="sealTime"></div>
-    <div class="label">Trusted Time Proof</div>
+    <div class="label">Trusted Timestamp</div>
     <div class="value" id="tsaStatus"></div>
     <div style="margin:12px 0">
       <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'" style="cursor:pointer;color:#666;font-size:0.8em;padding:4px 0;user-select:none">&#9658; Advanced Technical Details</div>
@@ -350,7 +350,7 @@ async function handleFile(file) {
     if (resultEl) resultEl.style.display = 'block';
     dropText.textContent = '✅ File Sealed';
     setStep('');
-    setStatus('success', '✅ File Sealed'); document.getElementById('statusMsg').innerHTML = '✅ File Sealed<br><span style="font-size:0.85em;color:#aaa">This file now has a trusted timestamp and verifiable proof of integrity.</span>';
+    setStatus('success', '✅ File Sealed'); document.getElementById('statusMsg').innerHTML = '✅ File Sealed<br><span style="font-size:0.85em;color:#aaa">Your file is now sealed with trusted proof of time and integrity.</span>';
   }
 
 
