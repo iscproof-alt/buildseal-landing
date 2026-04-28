@@ -139,9 +139,9 @@
     <div style="margin-bottom:16px">
       <div style="font-size:1em;color:#4ade80;font-weight:600;margin-bottom:8px">What this means</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.85em;color:#ccc">
-        <div>&#10003; Original version locked</div>
-        <div>&#10003; Time of sealing recorded</div>
-        <div>&#10003; Future changes detectable</div>
+        <div>&#10003; Original file fingerprint recorded</div>
+        <div>&#10003; Time of sealing permanently logged</div>
+        <div>&#10003; Future modifications detectable</div>
         <div>&#10003; Publicly verifiable proof</div>
       </div>
     </div>
@@ -350,7 +350,7 @@ async function handleFile(file) {
     if (resultEl) resultEl.style.display = 'block';
     dropText.textContent = '✅ File Sealed';
     setStep('');
-    setStatus('success', '✅ File Sealed'); document.getElementById('statusMsg').innerHTML = '✅ File Sealed<br><span style="font-size:0.85em;color:#aaa">This file is now timestamped, protected, and independently verifiable.</span>';
+    setStatus('success', '✅ File Sealed'); document.getElementById('statusMsg').innerHTML = '✅ File Sealed<br><span style="font-size:0.85em;color:#aaa">This file now has a trusted timestamp and verifiable proof of integrity.</span>';
   }
 
 
