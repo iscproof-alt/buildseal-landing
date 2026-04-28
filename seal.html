@@ -119,7 +119,7 @@
   <div style="position:relative;z-index:1"><h1 style="font-size:2.8em;font-weight:800;letter-spacing:-0.02em;margin-bottom:12px"><span style="color:#4ade80">Build</span><span style="color:#fff">Seal</span></h1>
   <div class="tabs">
     <button class="tab-btn active seal-active" onclick="switchTab('seal')">Seal</button>
-    <button class="tab-btn" onclick="switchTab('verify')">Verify</button>
+    <button class="tab-btn" onclick="switchTab('verify')">Verify File</button>
   </div>
   <div id="tab-seal" class="tab-content active">
   <p style="font-size:1.1em;margin-bottom:8px;font-weight:500">Prove any file in seconds.</p>
@@ -138,11 +138,11 @@
   <div class="result" id="result">
     <div class="label">Proof ID</div>
     <div class="value seal-id" id="sealId"></div>
-    <div class="label">File Name</div>
+    <div class="label">Original File Name</div>
     <div class="value" id="fileName"></div>
-    <div class="label">Digital Fingerprint</div>
-    <div class="value" id="hashVal"></div><div style="font-size:0.8em;color:#888;margin-top:2px">Unique fingerprint created for this file</div>
-    <div class="label">Protected At</div>
+    <div class="label">File Fingerprint</div>
+    <div class="value" id="hashVal"></div><div style="font-size:0.8em;color:#888;margin-top:2px">Unique identity generated for this file</div>
+    <div class="label">Sealed On</div>
     <div class="value" id="sealTime"></div>
 
     <div style="margin:12px 0">
@@ -153,16 +153,16 @@
       <div style="font-size:0.8em;color:#888;margin-top:8px">Root Hash:</div>
       <div id="rootHash2" style="font-family:monospace;font-size:0.75em;word-break:break-all"></div>
     </div>
-  </div><div class="label">Trusted Timestamp</div>
+  </div><div class="label">Trusted Time Proof</div>
     <div class="value" id="tsaStatus"></div>
-    <div class="label">Verify Proof</div>
+    <div class="label">Verify Authenticity</div>
     <div class="value">
       <a class="verify-link" id="verifyUrl" href="#" target="_blank" rel="noopener noreferrer"></a>
     </div>
     <div class="summary" id="summaryText"></div>
     <div class="actions">
       <a class="btn" id="verifyBtn" href="#" target="_blank" rel="noopener noreferrer">Verify</a>
-      <button class="btn secondary" id="downloadBtn" type="button" onclick="downloadSealSummary()">⬇ Download Seal Summary</button>
+      <button class="btn secondary" id="downloadBtn" type="button" onclick="downloadSealSummary()">⬇ Download Proof Receipt</button>
     </div>
   </div>
   </div></div><!-- /tab-seal -->
@@ -338,7 +338,7 @@ async function handleFile(file) {
     safeSet('sealTime', sealTimeFmt);
     const tsaTime = sealData.tsa?.time ? new Date(sealData.tsa.time).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC' : null;
     safeSet('tsaStatus', data?.status === 'offline_mode' ? '⚠️ Offline test mode' : tsaTime ? '✅ ' + tsaTime + ' · freetsa.org' : '✅ Timestamp recorded');
-    safeSet('verifyUrl', verifyUrl);
+    safeSet('verifyUrl', 'View Verification Page');
     safeHref('verifyUrl', verifyUrl);
     safeHref('verifyBtn', verifyUrl);
 
