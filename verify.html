@@ -129,7 +129,7 @@ if(!id||id==='release'||id==='verify.html'){
       const verdictClass=isValid?'valid':isInvalid?'invalid':'pending';
       const verdictIcon=isValid?'✅':isInvalid?'❌':'⏳';
       const verdictLabel=isValid?'VERIFIED':isInvalid?'INVALID':'PENDING';
-      const verdictSub=isValid?'This file matches the original sealed version.':isInvalid?'Verification failed':'Processing';
+      const verdictSub=isValid?'This decision matches the original sealed record.':isInvalid?'Verification failed':'Processing';
 
       const tsa=d.tsa||null;
       const tsaPresent=!!(tsa&&tsa.present===true);
@@ -170,7 +170,7 @@ if(!id||id==='release'||id==='verify.html'){
         html+='<span style="color:#4ade80;font-weight:600">&#10003; Unchanged</span>';
         html+='<span style="color:#4ade80;font-weight:600">&#10003; Time Proven</span>';
         html+='</div>';
-        html+='<div style="color:#e2e8f0;font-size:0.93em;line-height:1.7;margin-bottom:16px">This file was sealed on <strong style="color:#fff">'+sealDate+'</strong>.<br>It still matches the original version.<br>Publicly verifiable proof attached.</div>';
+        html+='<div style="color:#e2e8f0;font-size:0.93em;line-height:1.7;margin-bottom:16px">This decision was sealed at the moment it was made.<br><span style="color:#94a3b8">Timestamped on <strong style="color:#fff">'+sealDate+'</strong> · Independently verifiable.</span></div>';
         if(d.decision_summary) {
           const ds = d.decision_summary;
           const decVerdict = ds.decision || '-';
@@ -178,8 +178,7 @@ if(!id||id==='release'||id==='verify.html'){
           const reasons = ds.reasons || [];
           const counterfactuals = ds.counterfactuals || [];
           html+='<div style="background:#0a1628;border:1px solid #1a3a22;border-top:none;padding:20px 32px;text-align:left">';
-          html+='<div style="font-family:var(--mono);font-size:1.1em;font-weight:700;color:#f87171;letter-spacing:1px;margin-bottom:4px">Decision: '+esc(decVerdict)+'</div>';
-          html+='<div style="font-family:var(--mono);font-size:0.75em;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px">'+esc(decType)+'</div>';
+          html+='<div style="font-family:var(--mono);font-size:1.1em;font-weight:700;color:#f87171;letter-spacing:1px;margin-bottom:4px">Decision: '+esc(decVerdict)+' <span style="font-size:0.75em;color:#94a3b8;font-weight:400">('+esc(decType.replace(/_/g,\' \').replace(/(?:^|\s)\w/g,c=>c.toUpperCase()))+')</span></div>';
           if(reasons.length > 0) {
             html+='<div style="margin-bottom:14px">';
             html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Why this decision</div>';
