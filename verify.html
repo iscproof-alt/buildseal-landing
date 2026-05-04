@@ -171,6 +171,33 @@ if(!id||id==='release'||id==='verify.html'){
         html+='<span style="color:#4ade80;font-weight:600">&#10003; Time Proven</span>';
         html+='</div>';
         html+='<div style="color:#e2e8f0;font-size:0.93em;line-height:1.7;margin-bottom:16px">This file was sealed on <strong style="color:#fff">'+sealDate+'</strong>.<br>It still matches the original version.<br>Publicly verifiable proof attached.</div>';
+        if(d.decision_summary) {
+          const ds = d.decision_summary;
+          const decVerdict = ds.decision || '-';
+          const decType = ds.decision_type || '-';
+          const reasons = ds.reasons || [];
+          const counterfactuals = ds.counterfactuals || [];
+          html+='<div style="background:#0a1628;border:1px solid #1a3a22;border-top:none;padding:20px 32px;text-align:left">';
+          html+='<div style="font-family:var(--mono);font-size:1.1em;font-weight:700;color:#f87171;letter-spacing:1px;margin-bottom:4px">Decision: '+esc(decVerdict)+'</div>';
+          html+='<div style="font-family:var(--mono);font-size:0.75em;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px">'+esc(decType)+'</div>';
+          if(reasons.length > 0) {
+            html+='<div style="margin-bottom:14px">';
+            html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Why this decision</div>';
+            reasons.forEach(r => {
+              html+='<div style="font-family:var(--mono);font-size:0.82em;color:#e2e8f0;padding:5px 0;border-bottom:1px solid #1e2d3d">→ '+esc(r)+'</div>';
+            });
+            html+='</div>';
+          }
+          if(counterfactuals.length > 0) {
+            html+='<div style="margin-bottom:6px">';
+            html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">What would change it</div>';
+            counterfactuals.forEach(c => {
+              html+='<div style="font-family:var(--mono);font-size:0.82em;color:#f59e0b;padding:5px 0;border-bottom:1px solid #1e2d3d">⟳ '+esc(c)+'</div>';
+            });
+            html+='</div>';
+          }
+          html+='</div>';
+        }
         html+='<button onclick="var t=document.getElementById(String.fromCharCode(116,100));t.style.display=t.style.display===String.fromCharCode(110,111,110,101)?String.fromCharCode():String.fromCharCode(110,111,110,101);this.textContent=t.style.display?String.fromCharCode(83,104,111,119,32,84,101,99,104,110,105,99,97,108,32,68,101,116,97,105,108,115):String.fromCharCode(72,105,100,101,32,84,101,99,104,110,105,99,97,108,32,68,101,116,97,105,108,115)" style="background:transparent;border:1px solid #2a3a4a;color:#94a3b8;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:0.8em">Show Technical Details</button>';
         html+='</div>';
         html+='<div id="td" style="display:none">';
