@@ -201,33 +201,24 @@ if(!id||id==='release'||id==='verify.html'){
       // Decision summary section
       if(d.decision_summary) {
         const ds = d.decision_summary;
-        // Support both nested (v1.1) and flat (inaction/commit) payload structures
-        const dec = ds.decision || {};
-        const risk = ds.risk || {};
-        const agent = ds.agent || {};
-        const subject = ds.subject || {};
-        // Flat structure fallback
-        const decType = dec.type || ds.decision_type || ds.decision || '-';
-        const decReasonCode = dec.reason_code || ds.reason_code || '-';
-        const subjectType = subject.type || ds.subject_type || '-';
-        const subjectRef = subject.ref || ds.subject_ref || '-';
-        const riskScore = (risk.score !== undefined && risk.score !== null) ? risk.score : (ds.risk_score !== undefined && ds.risk_score !== null ? ds.risk_score : '-');
-        const riskFlags = (risk.flags || ds.flags || []).join(', ') || 'none';
-        const rulesTriggered = (risk.rules_triggered || ds.rules_triggered || []).join(', ') || 'none';
-        const agentId = (agent.id || ds.model || '-') + ' ' + (agent.version || '');
-        const policyVersion = agent.policy_version || ds.policy_version || '-';
+        const decVerdict = ds.decision || '-';
+        const decType = ds.decision_type || '-';
+        const actor = ds.actor || ds.model || '-';
+        const inputRef = ds.input_ref || '-';
+        const policyVersion = ds.policy_version || '-';
+        const modelVersion = ds.model_version || '-';
+        const reasons = ds.reasons || [];
+        const counterfactuals = ds.counterfactuals || [];
         html+='<div style="background:var(--bg2);border:1px solid var(--border);border-top:none;padding:20px 32px">';
         html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Decision Context</div>';
-        html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">';
+        html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px">';
         const dsFields = [
-          ['Decision', decType],
-          ['Reason Code', decReasonCode],
-          ['Subject', subjectType + ' / ' + subjectRef],
-          ['Risk Score', riskScore],
-          ['Flags', riskFlags],
-          ['Rules Triggered', rulesTriggered],
-          ['Agent', agentId],
-          ['Policy Version', policyVersion],
+          ['Decision', decVerdict],
+          ['Type', decType],
+          ['Actor', actor],
+          ['Input Ref', inputRef],
+          ['Model', modelVersion],
+          ['Policy', policyVersion],
         ];
         dsFields.forEach(([label, val]) => {
           html+='<div>';
@@ -236,6 +227,22 @@ if(!id||id==='release'||id==='verify.html'){
           html+='</div>';
         });
         html+='</div>';
+        if(reasons.length > 0) {
+          html+='<div style="margin-bottom:14px">';
+          html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Why this decision</div>';
+          reasons.forEach(r => {
+            html+='<div style="font-family:var(--mono);font-size:0.78em;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)">→ '+esc(r)+'</div>';
+          });
+          html+='</div>';
+        }
+        if(counterfactuals.length > 0) {
+          html+='<div style="margin-bottom:14px">';
+          html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">What would change it</div>';
+          counterfactuals.forEach(c => {
+            html+='<div style="font-family:var(--mono);font-size:0.78em;color:#f59e0b;padding:4px 0;border-bottom:1px solid var(--border)">⟳ '+esc(c)+'</div>';
+          });
+          html+='</div>';
+        }
         if(d.evidence_url) {
           html+='<div style="margin-top:14px"><a href="'+esc(d.evidence_url)+'" target="_blank" style="font-family:var(--mono);font-size:0.72em;color:var(--green);text-decoration:none">View Communication Evidence ↗</a></div>';
         }
