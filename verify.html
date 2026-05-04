@@ -178,7 +178,7 @@ if(!id||id==='release'||id==='verify.html'){
           const reasons = ds.reasons || [];
           const counterfactuals = ds.counterfactuals || [];
           html+='<div style="background:#0a1628;border:1px solid #1a3a22;border-top:none;padding:20px 32px;text-align:left">';
-          html+='<div style="font-family:var(--mono);font-size:1.1em;font-weight:700;color:#f87171;letter-spacing:1px;margin-bottom:4px">Decision: '+esc(decVerdict)+' <span style="font-size:0.75em;color:#94a3b8;font-weight:400">('+esc(decType.replace(/_/g,\' \').replace(/(?:^|\s)\w/g,c=>c.toUpperCase()))+')</span></div>';
+          html+='<div style="font-family:var(--mono);font-size:1.1em;font-weight:700;color:#f87171;letter-spacing:1px;margin-bottom:4px">Decision: '+esc(decVerdict)+' <span style="font-size:0.75em;color:#94a3b8;font-weight:400">('+esc(decType.replace(/_/g,' ').replace(/(?:^|\s)\w/g,c=>c.toUpperCase()))+')</span></div>';
           if(reasons.length > 0) {
             html+='<div style="margin-bottom:14px">';
             html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Why this decision</div>';
