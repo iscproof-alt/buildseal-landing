@@ -134,7 +134,7 @@ if(!id||id==='release'||id==='verify.html'){
       const tsa=d.tsa||null;
       const tsaPresent=!!(tsa&&tsa.present===true);
       const tsaTime=tsaPresent&&tsa.time?humanTime(tsa.time):null;
-      const tsaProvider=esc((tsa&&tsa.provider?tsa.provider+'.org':'')||'freetsa.org');
+      const tsaProvider=esc((tsa&&tsa.provider?tsa.provider:'')||'freetsa.org');
 
       const vd=d.verify_detail||{};
       const rootMatch=vd.root_match===true;
