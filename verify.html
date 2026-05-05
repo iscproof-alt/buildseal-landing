@@ -188,11 +188,28 @@ if(!id||id==='release'||id==='verify.html'){
             html+='</div>';
           }
           if(counterfactuals.length > 0) {
-            html+='<div style="margin-bottom:6px">';
+            html+='<div style="margin-bottom:14px">';
             html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">What would change it</div>';
             counterfactuals.forEach(c => {
-              html+='<div style="font-family:var(--mono);font-size:0.82em;color:#f59e0b;padding:5px 0;border-bottom:1px solid #1e2d3d">⟳ '+esc(c)+'</div>';
+              const cText = typeof c === 'object' ? esc(c.change||'')+' → '+esc(c.result||'') : esc(c);
+              html+='<div style="font-family:var(--mono);font-size:0.82em;color:#f59e0b;padding:5px 0;border-bottom:1px solid #1e2d3d">⟳ '+cText+'</div>';
             });
+            html+='</div>';
+          }
+          if(ds.policy) {
+            const pol = ds.policy;
+            html+='<div style="margin-bottom:14px;padding:10px 14px;background:#0d1f14;border:1px solid #1a3a22;border-radius:6px">';
+            html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Policy Applied</div>';
+            html+='<div style="font-family:var(--mono);font-size:0.78em;color:#4ade80;margin-bottom:2px">'+esc(pol.id||'')+'</div>';
+            if(pol.rule) html+='<div style="font-family:var(--mono);font-size:0.75em;color:#e2e8f0">Rule: '+esc(pol.rule)+'</div>';
+            html+='</div>';
+          }
+          if(ds.epistemic) {
+            const ep = ds.epistemic;
+            html+='<div style="margin-bottom:14px;padding:10px 14px;background:#0a1628;border:1px solid #1e3a5f;border-radius:6px">';
+            html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Epistemic State</div>';
+            if(ep.confidence!==undefined) html+='<div style="font-family:var(--mono);font-size:0.78em;color:#60a5fa;margin-bottom:2px">Confidence: '+ep.confidence+' <span style="color:#94a3b8">['+(ep.uncertainty_band||[])[0]+' – '+(ep.uncertainty_band||[])[1]+']</span></div>';
+            if(ep.unknowns&&ep.unknowns.length>0) html+='<div style="font-family:var(--mono);font-size:0.72em;color:#f87171;margin-top:4px">Missing: '+ep.unknowns.map(u=>esc(u)).join(', ')+'</div>';
             html+='</div>';
           }
           html+='</div>';
