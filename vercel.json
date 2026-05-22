@@ -11,6 +11,14 @@
     {
       "source": "/verify",
       "destination": "/verify.html"
+    },
+    {
+      "source": "/forensic/graph/:id",
+      "destination": "/forensic-graph.html"
+    },
+    {
+      "source": "/demo",
+      "destination": "/demo.html"
     }
   ]
 }
