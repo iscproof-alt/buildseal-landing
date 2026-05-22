@@ -194,7 +194,7 @@ if(!id||id==='release'||id==='verify.html'){
             html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Why this decision</div>';
             if (d.graph_id) {
               html+='<div style="color:#94a3b8;font-size:0.85em;line-height:1.8;margin-bottom:12px">The request remained within the active decision scope. No boundary or escalation trigger was matched. The response was allowed to proceed to final sealing.</div>';
-              html+='<a href="https://buildseal-api-production-3ca5.up.railway.app/forensic/graph/'+esc(d.graph_id)+'" target="_blank" style="font-family:var(--mono);font-size:9px;color:#00e87a;text-decoration:none;border:1px solid #1a3a22;padding:4px 10px;">&#128202; View Full Decision Trace</a>';
+              html+='<a href="https://buildseal.io/forensic/graph/'+esc(d.graph_id)+'" target="_blank" style="font-family:var(--mono);font-size:9px;color:#00e87a;text-decoration:none;border:1px solid #1a3a22;padding:4px 10px;">&#128202; View Full Decision Trace</a>';
             }
             reasons.forEach(r => {
               html+='<div style="font-family:var(--mono);font-size:0.82em;color:#e2e8f0;padding:5px 0;border-bottom:1px solid #1e2d3d">→ '+esc(r)+'</div>';

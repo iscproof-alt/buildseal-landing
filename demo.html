@@ -78,6 +78,22 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,14,9,.95);
 .final-sub{font-size:11px;color:#4a7c59;margin-bottom:40px;font-style:italic}
 .final-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
+@media(max-width:600px){
+.hero{padding:80px 20px 60px}
+.section{padding:60px 20px}
+.steps{margin-top:32px}
+.step{grid-template-columns:36px 1fr}
+.step-right{padding:0 0 24px 12px}
+.fe-hash{display:none}
+.forensic-root{flex-direction:column;gap:6px}
+.fr-val{max-width:100%;text-align:left;font-size:7px}
+.exchange-meta{gap:6px}
+.final-section{padding:60px 20px 80px}
+.final-links{flex-direction:column;align-items:center}
+.btn-primary,.btn-secondary{width:100%;text-align:center;padding:14px 24px}
+.hero-cta{flex-direction:column;align-items:center;width:100%}
+.hero-cta .btn-primary,.hero-cta .btn-secondary{width:100%;text-align:center}
+}
 .reveal.visible{opacity:1;transform:translateY(0)}
 </style>
 </head>
@@ -89,9 +105,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,14,9,.95);
 <section class="hero">
   <div class="hero-eyebrow">Live Demo &#183; Cryptographic AI Evidence</div>
   <h1 class="hero-claim">"The AI said this."<br><em>Now prove it.</em></h1>
-  <p class="hero-sub">This is not a screenshot of an AI answer.<br>This is a cryptographically verifiable decision record.</p>
+  <p class="hero-sub">This demo shows how a disputed AI answer can be verified through a sealed decision record.<br><br>This is not a screenshot. This is cryptographic proof.</p>
   <div class="hero-cta">
-    <a href="#demo" class="btn-primary">View the evidence</a>
+    <a href="#demo" class="btn-primary">Open the forensic record</a>
     <a href="https://nym.iscproof.io" class="btn-secondary">Try live &#8594;</a>
   </div>
 </section>
@@ -122,7 +138,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,14,9,.95);
           <div class="exchange-a"><span>NYM &#8594;</span> A BuildSeal record is cryptographically sealed at generation &#8212; making it tamper-evident and independently verifiable through ISCProof. Regular chat logs can be edited, fabricated, or disputed without detection. BuildSeal records anchor decisions to immutable evidence chains for audit and compliance.</div>
           <div class="exchange-meta">
             <div class="exchange-badge confirmed">&#9643; CONFIRMED</div>
-            <div class="exchange-badge">seal_1779463478745_pmdaa3wc</div>
+            <div class="exchange-badge" title="The unique identifier for this sealed record">seal_1779463478745_pmdaa3wc <span style="color:#4a7c59;font-size:7px">&#183; record ID</span></div>
             <div class="exchange-badge">Ed25519 &#183; RFC3161</div><div class="exchange-badge" style="color:var(--green);border:1px solid #1a3a22;padding:2px 6px">&#9632; SEALED BEFORE DELIVERY</div>
           </div>
         </div>
@@ -164,7 +180,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,14,9,.95);
             <div class="forensic-event"><span class="fe-num">04</span><span class="fe-type db">DECISION BASIS</span><span class="fe-hash">3bd49706e6260eb74f808af9288579ec78327442...</span></div>
             <div class="forensic-event"><span class="fe-num">05</span><span class="fe-type fa">FINAL ANSWER</span><span class="fe-hash">1c7510fcf2e4b6470e824e89213b10e4ce42920a...</span></div>
           </div>
-          <div class="forensic-root"><span class="fr-label">MERKLE ROOT</span><span class="fr-val">cfbaef92a39feabfbf4b507b3a9f47704eb31d562e573ed93325f68731c33061</span></div>
+          <div class="forensic-root"><div style="display:flex;flex-direction:column;gap:4px;width:100%"><div style="display:flex;justify-content:space-between;align-items:center"><span class="fr-label">MERKLE ROOT</span><span class="fr-val">cfbaef92a39feabfbf4b507b3a9f47704eb31d562e573ed93325f68731c33061</span></div><div style="font-size:8px;color:#4a7c59;margin-top:4px">The integrity fingerprint of the full event chain. If any event was altered, this value changes.</div><div style="font-size:9px;color:#94a3b8;margin-top:6px;font-family:var(--sans)">This chain proves the decision process was not modified after sealing.</div></div></div>
           <a href="https://buildseal.io/forensic/graph/6f8cb567-563f-4cfb-ae3d-cad848946ace" target="_blank" class="forensic-link">&#9654; Open interactive forensic trace</a>
         </div>
       </div>
@@ -174,7 +190,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,14,9,.95);
       <div class="step-right">
         <div class="step-tag">The claim</div>
         <div class="step-title">"The AI said this."</div>
-        <div class="step-desc">Now it can be proven &#8212; not asserted.<br><br>The claim may be disputed.<br>The record cannot be altered without detection.</div>
+        <div class="step-desc">The claim may be disputed.<br>The evidence cannot be rewritten.</div>
       </div>
     </div>
   </div>
@@ -182,10 +198,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,14,9,.95);
 <hr class="divider">
 <section class="final-section">
   <p class="final-claim">The conversation may be disputed.<br><em style="color:var(--green)">The evidence cannot be rewritten.</em></p>
-  <p class="final-sub">BuildSeal &#183; ISCProof &#183; Level 2 Production</p>
+  <p class="final-sub">Cryptographic evidence for AI decisions.</p><p style="font-size:9px;color:#4a7c59;margin-bottom:32px;font-style:normal">BuildSeal &#183; ISCProof &#183; Level 2 Production</p>
   <div class="final-links">
     <a href="https://nym.iscproof.io" class="btn-primary">Generate a verifiable AI decision</a>
-    <a href="https://buildseal.io" class="btn-secondary">buildseal.io</a>
+    <a href="https://buildseal.io/verify?id=seal_1779463478745_pmdaa3wc" target="_blank" class="btn-secondary">Inspect the live record</a>
+    <a href="https://buildseal.io/forensic/graph/6f8cb567-563f-4cfb-ae3d-cad848946ace" target="_blank" class="btn-secondary">View forensic trace</a>
   </div>
 </section>
 <script>
