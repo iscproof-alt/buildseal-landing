@@ -4,141 +4,149 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BuildSeal Ecosystem — Epistemic Infrastructure for AI</title>
-<meta name="description" content="13 cryptographic layers. One proof stack. ISCProof open protocol, BuildSeal platform, NYM reference agent — the complete epistemic infrastructure for AI decisions."/>
+<meta name="description" content="13 cryptographic layers. One proof stack. The complete epistemic infrastructure for AI decisions."/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#05080b;--bg2:#090d12;--bg3:#0d1219;--bg4:#111820;
-  --border:#1a2535;--border2:#1e2d3d;
-  --green:#00e676;--green2:#00c853;--green-dim:rgba(0,230,118,0.07);--green-glow:rgba(0,230,118,0.15);
-  --text:#e8f0fe;--text2:#8899aa;--text3:#445566;
-  --mono:'IBM Plex Mono',monospace;--sans:'Syne',sans-serif;--max:1160px;
-  /* Category palette */
-  --c-protocol:#4D9FFF;--c-protocol-dim:rgba(77,159,255,0.08);
-  --c-memory:#A78BFA;--c-memory-dim:rgba(167,139,250,0.08);
-  --c-audit:#34D399;--c-audit-dim:rgba(52,211,153,0.08);
-  --c-identity:#F87171;--c-identity-dim:rgba(248,113,113,0.08);
-  --c-boundary:#FBBF24;--c-boundary-dim:rgba(251,191,36,0.08);
+  --bg:#ffffff;--bg2:#f7f8fa;--bg3:#f0f2f5;--bg4:#e8eaed;
+  --border:#e2e5ea;--border2:#d0d5dd;
+  --accent:#0052CC;--accent2:#0747A6;--accent-dim:rgba(0,82,204,0.06);
+  --text:#0a0d12;--text2:#4a5568;--text3:#8a96a3;
+  --mono:'IBM Plex Mono',monospace;--sans:'Inter',sans-serif;--max:1100px;
+  --c-protocol:#0052CC;--c-protocol-dim:#EBF2FF;
+  --c-memory:#6B46C1;--c-memory-dim:#F3EEFF;
+  --c-audit:#047857;--c-audit-dim:#ECFDF5;
+  --c-identity:#B91C1C;--c-identity-dim:#FEF2F2;
+  --c-boundary:#B45309;--c-boundary-dim:#FFFBEB;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,230,118,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(0,230,118,0.015) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6;-webkit-font-smoothing:antialiased}
 
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,8,11,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
-.nav-logo-icon{width:32px;height:32px;background:var(--green);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.nav-logo-text{font-family:var(--mono);font-size:1.1em;font-weight:600;color:var(--text);letter-spacing:-0.5px}
-.nav-logo-text span{color:var(--green)}
-.nav-links{display:flex;align-items:center;gap:32px}
-.nav-link{color:var(--text2);text-decoration:none;font-size:0.88em;font-weight:600;letter-spacing:0.3px;transition:color 0.2s}
-.nav-link:hover,.nav-link.active{color:var(--green)}
-.nav-cta{background:var(--green);color:#000;padding:9px 22px;border-radius:6px;font-weight:700;font-size:0.85em;text-decoration:none;letter-spacing:0.3px;transition:all 0.2s}
-.nav-cta:hover{background:var(--green2);transform:translateY(-1px)}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{width:28px;height:28px;background:var(--accent);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.nav-logo-text{font-family:var(--mono);font-size:0.95em;font-weight:600;color:var(--text)}
+.nav-logo-text span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-link{color:var(--text2);text-decoration:none;font-size:0.85em;font-weight:500;transition:color 0.15s}
+.nav-link:hover{color:var(--text)}
+.nav-link.active{color:var(--accent);font-weight:600}
+.nav-cta{background:var(--accent);color:#fff;padding:7px 18px;border-radius:6px;font-weight:600;font-size:0.82em;text-decoration:none;transition:background 0.15s}
+.nav-cta:hover{background:var(--accent2)}
 
-/* ── HERO ── */
-.eco-hero{position:relative;z-index:1;padding:140px 40px 100px;text-align:center;border-bottom:1px solid var(--border)}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(0,230,118,0.2);padding:6px 16px;border-radius:20px;margin-bottom:36px;font-family:var(--mono);font-size:0.72em;color:var(--green);letter-spacing:1px}
-.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s ease infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.eco-hero h1{font-size:clamp(2.6em,6vw,5em);font-weight:800;line-height:1.05;letter-spacing:-2.5px;margin-bottom:28px;background:linear-gradient(135deg,#ffffff 0%,#c8d8e8 60%,#8899aa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.eco-hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--green) 0%,#69f0ae 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.eco-hero-sub{font-size:1.15em;color:var(--text2);max-width:560px;margin:0 auto 48px;line-height:1.75}
-.eco-three{display:inline-flex;border:1px solid var(--border2);border-radius:12px;overflow:hidden;background:var(--bg2)}
-.eco-three-item{padding:18px 36px;border-right:1px solid var(--border);text-align:center}
-.eco-three-item:last-child{border-right:none}
-.eco-three-label{font-family:var(--mono);font-size:0.65em;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px}
-.eco-three-value{font-size:0.95em;font-weight:700;color:var(--text)}
-.eco-three-value.green{color:var(--green)}
+/* HERO — kurumsal, sol hizalı, kompakt */
+.eco-hero{padding:100px 40px 72px;border-bottom:1px solid var(--border)}
+.eco-hero-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:80px;align-items:center}
+.hero-eyebrow{font-family:var(--mono);font-size:0.72em;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--accent)}
+.eco-hero h1{font-size:clamp(1.9em,3.2vw,2.8em);font-weight:800;line-height:1.12;letter-spacing:-0.03em;color:var(--text);margin-bottom:20px}
+.eco-hero h1 span{color:var(--accent)}
+.eco-hero-sub{font-size:1em;color:var(--text2);line-height:1.75;max-width:480px;margin-bottom:32px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#fff;padding:10px 22px;border-radius:7px;font-weight:600;font-size:0.88em;text-decoration:none;transition:background 0.15s}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:transparent;color:var(--text2);padding:10px 22px;border-radius:7px;font-weight:500;font-size:0.88em;text-decoration:none;border:1px solid var(--border2);transition:all 0.15s}
+.btn-ghost:hover{border-color:var(--text3);color:var(--text)}
 
-/* ── SECTION COMMONS ── */
-section{position:relative;z-index:1;padding:100px 40px}
-.section-inner{max-width:var(--max);margin:0 auto}
-.section-tag{font-family:var(--mono);font-size:0.68em;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
-h2{font-size:clamp(1.9em,3.8vw,3em);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:16px}
-.section-sub{font-size:1em;color:var(--text2);max-width:560px;line-height:1.75;margin-bottom:56px}
+/* Hero right — stat card */
+.hero-stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px 28px;display:flex;flex-direction:column;gap:20px}
+.hero-stat{display:flex;align-items:flex-start;gap:14px}
+.hero-stat-num{font-family:var(--mono);font-size:1.6em;font-weight:600;color:var(--accent);line-height:1;flex-shrink:0;width:44px}
+.hero-stat-text strong{display:block;font-size:0.9em;font-weight:700;color:var(--text);margin-bottom:2px}
+.hero-stat-text span{font-size:0.82em;color:var(--text2)}
+.hero-stat-divider{height:1px;background:var(--border)}
 
-/* ── LEGEND ── */
-.legend{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:40px}
-.legend-item{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:0.68em;color:var(--text2);letter-spacing:0.5px}
-.legend-pip{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* DEFINITION */
+.def-section{padding:60px 40px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.def-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:200px 1fr;gap:60px;align-items:start}
+.def-label-col{font-family:var(--mono);font-size:0.72em;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;padding-top:4px}
+.def-content{}
+.def-term{font-size:1.15em;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-0.01em}
+.def-body{font-size:0.92em;color:var(--text2);line-height:1.8;max-width:680px}
+.def-body strong{color:var(--text);font-weight:600}
 
-/* ── LAYER GRID ── */
-.layers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.layer-card{background:var(--bg2);padding:26px 28px;border-left:3px solid transparent;transition:background 0.15s}
-.layer-card:hover{background:var(--bg3)}
+/* LAYERS */
+.layers-section{padding:80px 40px;border-bottom:1px solid var(--border)}
+.layers-inner{max-width:var(--max);margin:0 auto}
+.section-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:20px}
+.section-header-left{}
+.section-eyebrow{font-family:var(--mono);font-size:0.7em;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px}
+.section-title{font-size:clamp(1.5em,2.8vw,2.1em);font-weight:800;letter-spacing:-0.025em;color:var(--text);line-height:1.1}
+.section-desc{font-size:0.9em;color:var(--text2);max-width:440px;line-height:1.7}
+.legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:0.65em;color:var(--text3);letter-spacing:0.05em}
+.legend-pip{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Grid */
+.layers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.layer-card{background:#fff;padding:22px 22px 22px 19px;border-left:3px solid transparent;transition:background 0.12s}
+.layer-card:hover{background:var(--bg2)}
 .layer-card.protocol{border-left-color:var(--c-protocol)}
 .layer-card.memory  {border-left-color:var(--c-memory)}
 .layer-card.audit   {border-left-color:var(--c-audit)}
 .layer-card.identity{border-left-color:var(--c-identity)}
 .layer-card.boundary{border-left-color:var(--c-boundary)}
-.layer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.layer-badge{font-family:var(--mono);font-size:0.62em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border-radius:4px;padding:3px 9px}
-.protocol .layer-badge{color:var(--c-protocol);background:var(--c-protocol-dim);border:1px solid rgba(77,159,255,0.2)}
-.memory   .layer-badge{color:var(--c-memory);  background:var(--c-memory-dim);  border:1px solid rgba(167,139,250,0.2)}
-.audit    .layer-badge{color:var(--c-audit);   background:var(--c-audit-dim);   border:1px solid rgba(52,211,153,0.2)}
-.identity .layer-badge{color:var(--c-identity);background:var(--c-identity-dim);border:1px solid rgba(248,113,113,0.2)}
-.boundary .layer-badge{color:var(--c-boundary);background:var(--c-boundary-dim);border:1px solid rgba(251,191,36,0.2)}
-.layer-num{font-family:var(--mono);font-size:0.68em;color:var(--text3)}
-.layer-name{font-size:1.05em;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-0.3px}
-.layer-tagline{font-family:var(--mono);font-size:0.68em;color:var(--text3);letter-spacing:0.5px;margin-bottom:10px;text-transform:uppercase}
-.layer-desc{font-size:0.86em;color:var(--text2);line-height:1.65}
+.layer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.layer-badge{font-family:var(--mono);font-size:0.6em;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-radius:3px;padding:2px 7px}
+.protocol .layer-badge{color:var(--c-protocol);background:var(--c-protocol-dim)}
+.memory   .layer-badge{color:var(--c-memory);  background:var(--c-memory-dim)}
+.audit    .layer-badge{color:var(--c-audit);   background:var(--c-audit-dim)}
+.identity .layer-badge{color:var(--c-identity);background:var(--c-identity-dim)}
+.boundary .layer-badge{color:var(--c-boundary);background:var(--c-boundary-dim)}
+.layer-num{font-family:var(--mono);font-size:0.65em;color:var(--text3)}
+.layer-name{font-size:0.95em;font-weight:700;color:var(--text);margin-bottom:3px;letter-spacing:-0.01em}
+.layer-tagline{font-family:var(--mono);font-size:0.62em;color:var(--text3);letter-spacing:0.04em;margin-bottom:8px;text-transform:uppercase}
+.layer-desc{font-size:0.82em;color:var(--text2);line-height:1.6}
 
-/* ── PLATFORM STACK ── */
-.platform-bg{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.platform-stack{display:flex;flex-direction:column;gap:3px;margin-top:56px}
-.platform-row{display:grid;grid-template-columns:150px 1fr auto;align-items:center;gap:24px;padding:24px 28px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;transition:border-color 0.2s}
-.platform-row:hover{border-color:var(--border2)}
-.platform-role{font-family:var(--mono);font-size:0.65em;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3)}
-.platform-name{font-size:1em;font-weight:700;color:var(--text);margin-bottom:4px}
-.platform-desc{font-size:0.84em;color:var(--text2)}
-.platform-link{font-family:var(--mono);font-size:0.75em;color:var(--green);text-decoration:none;border:1px solid rgba(0,230,118,0.2);background:var(--green-dim);border-radius:6px;padding:8px 16px;white-space:nowrap;transition:all 0.2s;letter-spacing:0.3px}
-.platform-link:hover{background:var(--green-glow);border-color:rgba(0,230,118,0.4)}
-.stack-arrow{text-align:center;font-size:1.1em;color:var(--text3);padding:6px 0 6px 174px}
+/* PLATFORM */
+.platform-section{padding:80px 40px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.platform-inner{max-width:var(--max);margin:0 auto}
+.platform-stack{display:flex;flex-direction:column;gap:2px;margin-top:40px}
+.platform-row{display:grid;grid-template-columns:140px 1fr 140px;align-items:center;gap:24px;padding:20px 24px;background:#fff;border:1px solid var(--border);border-radius:8px;transition:border-color 0.15s,box-shadow 0.15s}
+.platform-row:hover{border-color:var(--border2);box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.platform-role{font-family:var(--mono);font-size:0.65em;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)}
+.platform-name{font-size:0.95em;font-weight:700;color:var(--text);margin-bottom:2px}
+.platform-desc{font-size:0.82em;color:var(--text2)}
+.platform-link{font-family:var(--mono);font-size:0.72em;color:var(--accent);text-decoration:none;border:1px solid rgba(0,82,204,0.2);background:var(--accent-dim);border-radius:5px;padding:6px 12px;text-align:center;transition:all 0.15s;white-space:nowrap}
+.platform-link:hover{background:rgba(0,82,204,0.1);border-color:rgba(0,82,204,0.35)}
+.stack-arrow{text-align:center;color:var(--text3);font-size:0.9em;padding:4px 0;padding-left:164px}
 
-/* ── EPISTEMIC DEFINITION ── */
-.definition-box{background:var(--bg2);border:1px solid var(--border2);border-left:3px solid var(--green);border-radius:12px;padding:36px 40px;margin-top:56px}
-.def-label{font-family:var(--mono);font-size:0.65em;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
-.def-term{font-size:1.4em;font-weight:800;color:var(--text);letter-spacing:-0.5px;margin-bottom:12px}
-.def-body{font-size:0.92em;color:var(--text2);line-height:1.8;max-width:680px}
-.def-body strong{color:var(--text);font-weight:600}
+/* CTA */
+.cta-section{padding:80px 40px;text-align:center}
+.cta-inner{max-width:560px;margin:0 auto}
+.cta-inner h2{font-size:clamp(1.5em,2.5vw,2em);font-weight:800;letter-spacing:-0.025em;color:var(--text);margin-bottom:12px;line-height:1.2}
+.cta-inner p{font-size:0.9em;color:var(--text2);margin-bottom:28px;line-height:1.7}
+.cta-btns{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
 
-/* ── CTA SECTION ── */
-.cta-section{padding:100px 40px;text-align:center}
-.cta-inner{max-width:640px;margin:0 auto}
-.cta-inner h2{margin-bottom:16px}
-.cta-inner p{font-size:1em;color:var(--text2);margin-bottom:40px;line-height:1.7}
-.cta-btns{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
-.btn-primary{background:var(--green);color:#000;padding:14px 32px;border-radius:8px;font-weight:700;font-size:0.95em;text-decoration:none;letter-spacing:0.2px;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
-.btn-primary:hover{background:var(--green2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,230,118,0.25)}
-.btn-secondary{background:transparent;color:var(--text);padding:14px 32px;border-radius:8px;font-weight:600;font-size:0.95em;text-decoration:none;letter-spacing:0.2px;border:1px solid var(--border2);transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
-.btn-secondary:hover{border-color:var(--text3);background:var(--bg3)}
-
-/* ── FOOTER ── */
-footer{position:relative;z-index:1;padding:40px;border-top:1px solid var(--border)}
-.footer-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
-.footer-logo{font-family:var(--mono);font-weight:600;color:var(--text)}
-.footer-logo span{color:var(--green)}
-.footer-links{display:flex;gap:28px}
-.footer-link{color:var(--text3);text-decoration:none;font-size:0.85em;transition:color 0.2s}
+/* FOOTER */
+footer{padding:32px 40px;border-top:1px solid var(--border);background:var(--bg2)}
+.footer-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{font-family:var(--mono);font-size:0.85em;font-weight:600;color:var(--text)}
+.footer-logo span{color:var(--accent)}
+.footer-links{display:flex;gap:24px}
+.footer-link{color:var(--text3);text-decoration:none;font-size:0.82em;transition:color 0.15s}
 .footer-link:hover{color:var(--text2)}
-.footer-copy{font-family:var(--mono);font-size:0.72em;color:var(--text3)}
+.footer-copy{font-family:var(--mono);font-size:0.68em;color:var(--text3)}
 
-@media(max-width:768px){
-  nav{padding:16px 20px}
-  .nav-links{gap:16px}
-  .eco-hero{padding:120px 24px 80px}
-  section{padding:80px 24px}
-  .eco-three{flex-direction:column}
-  .eco-three-item{border-right:none;border-bottom:1px solid var(--border)}
-  .eco-three-item:last-child{border-bottom:none}
-  .platform-row{grid-template-columns:1fr;gap:12px}
+@media(max-width:900px){
+  .eco-hero-inner{grid-template-columns:1fr;gap:40px}
+  .hero-stat-card{display:none}
+  .def-inner{grid-template-columns:1fr;gap:12px}
+  .layers-grid{grid-template-columns:repeat(2,1fr)}
+  .platform-row{grid-template-columns:1fr;gap:10px}
   .stack-arrow{padding-left:0}
+  .section-header{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:600px){
+  nav{padding:0 20px}
+  .eco-hero{padding:80px 20px 56px}
+  .def-section,.layers-section,.platform-section,.cta-section{padding:60px 20px}
   .layers-grid{grid-template-columns:1fr}
   .footer-inner{flex-direction:column;text-align:center}
-  .footer-links{flex-wrap:wrap;justify-content:center}
+  footer{padding:28px 20px}
 }
 </style>
 </head>
@@ -146,211 +154,187 @@ footer{position:relative;z-index:1;padding:40px;border-top:1px solid var(--borde
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="/">
-    <div class="nav-logo-icon">🔒</div>
-    <div class="nav-logo-text">Build<span>Seal</span></div>
-  </a>
+  <a class="nav-logo" href="/"><div class="nav-logo-icon">🔒</div><span class="nav-logo-text">Build<span>Seal</span></span></a>
   <div class="nav-links">
     <a class="nav-link" href="/#how">How it works</a>
     <a class="nav-link" href="/#compliance">Compliance</a>
     <a class="nav-link active" href="/ecosystem">Ecosystem</a>
     <a class="nav-link" href="/#pricing">Pricing</a>
     <a class="nav-link" href="https://verify.buildseal.io">Verify</a>
-    <a class="nav-cta" href="/seal">Get Started</a>
   </div>
+  <a class="nav-cta" href="/seal">Get Started</a>
 </nav>
 
 <!-- HERO -->
 <section class="eco-hero">
-  <div class="hero-badge">The BuildSeal Ecosystem</div>
-  <h1>Epistemic memory<br>for <em>AI decisions.</em></h1>
-  <p class="eco-hero-sub">
-    Not a log file. Not a database record.<br>
-    A cryptographic memory that cannot be altered, denied, or forgotten —<br>layer by layer, from generation to verdict.
-  </p>
-  <div class="eco-three">
-    <div class="eco-three-item">
-      <div class="eco-three-label">What</div>
-      <div class="eco-three-value green">Epistemic Memory</div>
+  <div class="eco-hero-inner">
+    <div>
+      <div class="hero-eyebrow">The BuildSeal Ecosystem</div>
+      <h1>Epistemic infrastructure<br>for <span>AI accountability.</span></h1>
+      <p class="eco-hero-sub">Not a log file. Not a database record. A cryptographic proof stack that captures what an AI knew, decided, and why — immutably, from the moment of generation.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="/seal">Start for free &rarr;</a>
+        <a class="btn-ghost" href="https://iscproof.io" target="_blank">Read the protocol</a>
+        <a class="btn-ghost" href="https://nym.iscproof.io" target="_blank">Talk to NYM</a>
+      </div>
     </div>
-    <div class="eco-three-item">
-      <div class="eco-three-label">How</div>
-      <div class="eco-three-value">13 Sealed Layers</div>
-    </div>
-    <div class="eco-three-item">
-      <div class="eco-three-label">Why</div>
-      <div class="eco-three-value">Provably Accountable AI</div>
+    <div class="hero-stat-card">
+      <div class="hero-stat">
+        <div class="hero-stat-num">13</div>
+        <div class="hero-stat-text"><strong>Infrastructure layers</strong><span>Each sealing a different dimension of epistemic truth</span></div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-text"><strong>Product surfaces</strong><span>ISCProof · BuildSeal · NYM</span></div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">1</div>
+        <div class="hero-stat-text"><strong>Open protocol</strong><span>ISCProof v5.1 — no vendor lock-in</span></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- EPISTEMIC DEFINITION -->
-<section style="padding:80px 40px 0">
-  <div class="section-inner">
-    <div class="definition-box">
-      <div class="def-label">Definition</div>
+<!-- DEFINITION -->
+<section class="def-section">
+  <div class="def-inner">
+    <div class="def-label-col">Definition</div>
+    <div class="def-content">
       <div class="def-term">Epistemic Memory</div>
-      <p class="def-body">
-        The complete, cryptographically sealed record of <strong>what an AI system knew</strong>, <strong>what it decided</strong>, <strong>why it decided it</strong>, and <strong>how that knowledge changed over time</strong>. Not a snapshot. Not a log. A living, append-only proof chain — where every claim is classified, every context selection is recorded, every revision is sealed, and every refusal is a first-class audit event.
-        <br><br>
-        BuildSeal implements epistemic memory across <strong>13 infrastructure layers</strong>, all anchored to the ISCProof open protocol.
-      </p>
+      <p class="def-body">The complete, cryptographically sealed record of <strong>what an AI system knew</strong>, <strong>what it decided</strong>, <strong>why it decided it</strong>, and <strong>how that knowledge changed over time</strong>. Not a snapshot. Not a log. A living, append-only proof chain — where every claim is classified, every context selection is recorded, every revision is sealed, and every refusal is a first-class audit event. BuildSeal implements epistemic memory across <strong>13 infrastructure layers</strong>, all anchored to the ISCProof open protocol.</p>
     </div>
   </div>
 </section>
 
 <!-- 13 LAYERS -->
-<section id="layers">
-  <div class="section-inner">
-    <div class="section-tag">Infrastructure · 13 Layers</div>
-    <h2>What runs under<br>every sealed decision</h2>
-    <p class="section-sub">Each layer captures a different dimension of epistemic truth. Together they form a complete, independently verifiable proof stack.</p>
-
-    <div class="legend">
-      <div class="legend-item"><div class="legend-pip" style="background:var(--c-protocol)"></div>Protocol</div>
-      <div class="legend-item"><div class="legend-pip" style="background:var(--c-memory)"></div>Memory</div>
-      <div class="legend-item"><div class="legend-pip" style="background:var(--c-audit)"></div>Audit</div>
-      <div class="legend-item"><div class="legend-pip" style="background:var(--c-identity)"></div>Identity</div>
-      <div class="legend-item"><div class="legend-pip" style="background:var(--c-boundary)"></div>Boundary</div>
+<section class="layers-section" id="layers">
+  <div class="layers-inner">
+    <div class="section-header">
+      <div class="section-header-left">
+        <div class="section-eyebrow">Infrastructure · 13 Layers</div>
+        <div class="section-title">What runs under every sealed decision</div>
+      </div>
+      <div>
+        <p class="section-desc" style="margin-bottom:16px">Each layer captures a different dimension of epistemic truth.</p>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-pip" style="background:var(--c-protocol)"></div>Protocol</div>
+          <div class="legend-item"><div class="legend-pip" style="background:var(--c-memory)"></div>Memory</div>
+          <div class="legend-item"><div class="legend-pip" style="background:var(--c-audit)"></div>Audit</div>
+          <div class="legend-item"><div class="legend-pip" style="background:var(--c-identity)"></div>Identity</div>
+          <div class="legend-item"><div class="legend-pip" style="background:var(--c-boundary)"></div>Boundary</div>
+        </div>
+      </div>
     </div>
 
     <div class="layers-grid">
-
       <div class="layer-card protocol">
         <div class="layer-top"><span class="layer-badge">Protocol</span><span class="layer-num">01</span></div>
         <div class="layer-name">ISCProof v5.1</div>
         <div class="layer-tagline">Open verification standard</div>
-        <p class="layer-desc">Ed25519 signatures, RFC 3161 timestamps, JCS canonicalization, Merkle roots. The cryptographic foundation every other layer is built on. Open spec — no vendor lock-in. Anyone can implement it.</p>
+        <p class="layer-desc">Ed25519 signatures, RFC 3161 timestamps, JCS canonicalization, Merkle roots. The cryptographic foundation every other layer is built on. Open spec — no vendor lock-in.</p>
       </div>
-
       <div class="layer-card memory">
         <div class="layer-top"><span class="layer-badge">Memory</span><span class="layer-num">02</span></div>
         <div class="layer-name">VEDM</div>
         <div class="layer-tagline">Verifiable Epistemic Decision Memory</div>
-        <p class="layer-desc">Every claim the AI makes is classified at generation: CONFIRMED, INFERRED, RECORDED_POINTER, or UNKNOWN. Epistemic scope drift is impossible — the boundary is sealed into the proof payload.</p>
+        <p class="layer-desc">Every claim classified at generation: CONFIRMED, INFERRED, RECORDED_POINTER, or UNKNOWN. Epistemic scope drift is impossible — the boundary is sealed into the proof payload.</p>
       </div>
-
       <div class="layer-card audit">
         <div class="layer-top"><span class="layer-badge">Audit</span><span class="layer-num">03</span></div>
         <div class="layer-name">EST</div>
         <div class="layer-tagline">Evidentiary State Transition</div>
-        <p class="layer-desc">Why a decision changed over time — sealed. Historical truth vs current truth tracked in an append-only chain with authority, semantic diff, and transition confidence scores.</p>
+        <p class="layer-desc">Why a decision changed over time — sealed. Historical truth vs current truth tracked in an append-only chain with authority, semantic diff, and confidence scores.</p>
       </div>
-
       <div class="layer-card memory">
         <div class="layer-top"><span class="layer-badge">Memory</span><span class="layer-num">04</span></div>
         <div class="layer-name">EML</div>
         <div class="layer-tagline">Epistemic Meta Layer</div>
-        <p class="layer-desc">Which records were retrieved, which were excluded, and why — captured at the moment of generation. Context selection is a first-class audit object. No reconstruction after the fact.</p>
+        <p class="layer-desc">Which records were retrieved, which were excluded, and why — captured at generation. Context selection is a first-class audit object. No reconstruction after the fact.</p>
       </div>
-
       <div class="layer-card memory">
         <div class="layer-top"><span class="layer-badge">Memory</span><span class="layer-num">05</span></div>
         <div class="layer-name">PSM</div>
         <div class="layer-tagline">Portable Sealed Memory</div>
-        <p class="layer-desc">Full session context — conversation, decisions, entity state — sealed into a single restorable link. Provable continuity across devices and sessions. Restoration, not reconstruction.</p>
+        <p class="layer-desc">Full session context sealed into a single restorable link. Provable continuity across devices and sessions. Restoration, not reconstruction.</p>
       </div>
-
       <div class="layer-card boundary">
         <div class="layer-top"><span class="layer-badge">Boundary</span><span class="layer-num">06</span></div>
         <div class="layer-name">GABA Boundaries</div>
         <div class="layer-tagline">Cryptographic refusal records</div>
-        <p class="layer-desc">What the AI refused to do — and why — is also sealed. Inhibition events are first-class audit objects, not silent omissions. The AI's limits are as provable as its decisions.</p>
+        <p class="layer-desc">What the AI refused — and why — is also sealed. Inhibition events are first-class audit objects, not silent omissions. The AI's limits are as provable as its decisions.</p>
       </div>
-
       <div class="layer-card protocol">
         <div class="layer-top"><span class="layer-badge">Protocol</span><span class="layer-num">07</span></div>
         <div class="layer-name">Seal Engine</div>
         <div class="layer-tagline">The sealing runtime</div>
-        <p class="layer-desc">JCS canonicalization → SHA-256 → Ed25519 sign → RFC 3161 TSA → Merkle root. Deterministic, reproducible, independently verifiable at any future point in time. No trust required.</p>
+        <p class="layer-desc">JCS canonicalization → SHA-256 → Ed25519 → RFC 3161 TSA → Merkle root. Deterministic, reproducible, independently verifiable at any future point in time.</p>
       </div>
-
       <div class="layer-card identity">
         <div class="layer-top"><span class="layer-badge">Identity</span><span class="layer-num">08</span></div>
         <div class="layer-name">Epistemic Continuity</div>
         <div class="layer-tagline">Identity across sessions</div>
-        <p class="layer-desc">Reasoning posture, tone, terminology, and epistemic state sealed across sessions. The AI is provably the same agent it was in session one — or the delta is a sealed record.</p>
+        <p class="layer-desc">Reasoning posture, tone, and epistemic state sealed across sessions. The AI is provably the same agent it was in session one — or the delta is a sealed record.</p>
       </div>
-
       <div class="layer-card audit">
         <div class="layer-top"><span class="layer-badge">Audit</span><span class="layer-num">09</span></div>
         <div class="layer-name">Full Audit Seal</div>
         <div class="layer-tagline">Input + context + policy, all hashed</div>
-        <p class="layer-desc">input_hash, context_hash, entity_state_hash, policy_hash — all captured at generation time. Nothing reconstructed after the fact. The moment of decision is the proof.</p>
+        <p class="layer-desc">input_hash, context_hash, entity_state_hash, policy_hash — all captured at generation. Nothing reconstructed. The moment of decision is the proof.</p>
       </div>
-
       <div class="layer-card audit">
         <div class="layer-top"><span class="layer-badge">Audit</span><span class="layer-num">10</span></div>
         <div class="layer-name">Forensic Events</div>
         <div class="layer-tagline">Scope upgrades &amp; contradictions</div>
-        <p class="layer-desc">SCOPE_UPGRADE_EVENT, EPISTEMIC_REVISION_EVENT, CONTRADICTION_EVENT — when the AI changes its understanding, the change itself becomes a sealed forensic record, not a silent overwrite.</p>
+        <p class="layer-desc">SCOPE_UPGRADE, EPISTEMIC_REVISION, CONTRADICTION — when the AI changes its understanding, the change itself becomes a sealed forensic record.</p>
       </div>
-
       <div class="layer-card identity">
         <div class="layer-top"><span class="layer-badge">Identity</span><span class="layer-num">11</span></div>
         <div class="layer-name">Cognitive State</div>
         <div class="layer-tagline">Sealed runtime state</div>
-        <p class="layer-desc">Coherence, trust level, threat index, signal strength — the AI's internal state at decision time is captured in the seal payload. Attested runtime state, not roleplay.</p>
+        <p class="layer-desc">Coherence, trust level, threat index, signal strength — the AI's internal state at decision time is in the seal payload. Attested runtime state, not roleplay.</p>
       </div>
-
       <div class="layer-card protocol">
         <div class="layer-top"><span class="layer-badge">Protocol</span><span class="layer-num">12</span></div>
         <div class="layer-name">Challenge Endpoint</div>
         <div class="layer-tagline">Evidence without inference</div>
-        <p class="layer-desc">The /challenge endpoint returns pure database evidence packets — no model, no interpretation. The cryptographic proof speaks for itself. Regulators and auditors can query directly.</p>
+        <p class="layer-desc">Returns pure database evidence packets — no model, no interpretation. The cryptographic proof speaks for itself. Regulators and auditors query directly.</p>
       </div>
-
       <div class="layer-card memory">
         <div class="layer-top"><span class="layer-badge">Memory</span><span class="layer-num">13</span></div>
         <div class="layer-name">Relation Graph</div>
         <div class="layer-tagline">Decision lineage</div>
-        <p class="layer-desc">Decisions relate to each other: supports, contradicts, derived_from, supersedes, delegates_to. The full epistemic graph of an AI system — sealed, queryable, verifiable at any depth.</p>
+        <p class="layer-desc">Decisions relate: supports, contradicts, derived_from, supersedes, delegates_to. The full epistemic graph of an AI system — sealed, queryable, verifiable at any depth.</p>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- PLATFORM STACK -->
-<section class="platform-bg" id="platform">
-  <div class="section-inner">
-    <div class="section-tag">Platform</div>
-    <h2>Three surfaces.<br>One proof stack.</h2>
-    <p class="section-sub">The 13 layers run under everything. These are the surfaces you interact with — each addressing a different audience, all anchored to the same cryptographic foundation.</p>
-
+<!-- PLATFORM -->
+<section class="platform-section" id="platform">
+  <div class="platform-inner">
+    <div class="section-eyebrow">Platform</div>
+    <div class="section-title" style="margin-bottom:8px">Three surfaces. One proof stack.</div>
+    <p class="section-desc">The 13 layers run under everything. These are the surfaces you interact with.</p>
     <div class="platform-stack">
-
       <div class="platform-row">
         <div class="platform-role">Open Protocol</div>
-        <div>
-          <div class="platform-name">ISCProof</div>
-          <div class="platform-desc">The open standard anyone can implement. Spec, SDK, verification examples, GitHub. Developers and auditors start here.</div>
-        </div>
+        <div><div class="platform-name">ISCProof</div><div class="platform-desc">The open standard anyone can implement. Spec, SDK, verification examples, GitHub.</div></div>
         <a class="platform-link" href="https://iscproof.io" target="_blank">iscproof.io &rarr;</a>
       </div>
-
       <div class="stack-arrow">&darr;</div>
-
       <div class="platform-row">
         <div class="platform-role">Managed Platform</div>
-        <div>
-          <div class="platform-name">BuildSeal</div>
-          <div class="platform-desc">Production implementation of ISCProof. EU AI Act Article 12 compliant. Three lines of code to integrate. Compliance and CISO teams start here.</div>
-        </div>
+        <div><div class="platform-name">BuildSeal</div><div class="platform-desc">Production implementation. EU AI Act Article 12 compliant. Three lines to integrate.</div></div>
         <a class="platform-link" href="/seal">Start free &rarr;</a>
       </div>
-
       <div class="stack-arrow">&darr;</div>
-
       <div class="platform-row">
         <div class="platform-role">Reference Agent</div>
-        <div>
-          <div class="platform-name">NYM</div>
-          <div class="platform-desc">A live AI agent where every answer is sealed, signed, and restorable via a single link. Not a demo — a working proof of the entire stack in production.</div>
-        </div>
+        <div><div class="platform-name">NYM</div><div class="platform-desc">A live AI agent where every answer is sealed and restorable. Show, don't tell.</div></div>
         <a class="platform-link" href="https://nym.iscproof.io" target="_blank">Talk to NYM &rarr;</a>
       </div>
-
     </div>
   </div>
 </section>
@@ -358,13 +342,12 @@ footer{position:relative;z-index:1;padding:40px;border-top:1px solid var(--borde
 <!-- CTA -->
 <section class="cta-section">
   <div class="cta-inner">
-    <div class="section-tag" style="text-align:center">Get Started</div>
-    <h2>Epistemic memory<br>for your AI. Starting now.</h2>
-    <p>Free tier. No credit card. First sealed decision in under a minute. The proof stack is already running — you just need to connect.</p>
+    <h2>Epistemic memory for your AI.<br>Starting now.</h2>
+    <p>Free tier. No credit card. First sealed decision in under a minute.</p>
     <div class="cta-btns">
       <a class="btn-primary" href="/seal">Seal your first decision &rarr;</a>
-      <a class="btn-secondary" href="https://iscproof.io" target="_blank">Read the protocol</a>
-      <a class="btn-secondary" href="https://nym.iscproof.io" target="_blank">Talk to NYM</a>
+      <a class="btn-ghost" href="https://iscproof.io" target="_blank">Read the protocol</a>
+      <a class="btn-ghost" href="https://nym.iscproof.io" target="_blank">Talk to NYM</a>
     </div>
   </div>
 </section>
