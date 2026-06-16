@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#ffffff;--bg2:#f7f8fa;--bg3:#f0f2f5;--bg4:#e8eaed;
+  --bg:#ffffff;--bg2:#f7f8fa;--bg3:#f0f2f5;
   --border:#e2e5ea;--border2:#d0d5dd;
   --accent:#0052CC;--accent2:#0747A6;--accent-dim:rgba(0,82,204,0.06);
   --text:#0a0d12;--text2:#4a5568;--text3:#8a96a3;
@@ -37,7 +37,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:60px;d
 .nav-cta{background:var(--accent);color:#fff;padding:7px 18px;border-radius:6px;font-weight:600;font-size:0.82em;text-decoration:none;transition:background 0.15s}
 .nav-cta:hover{background:var(--accent2)}
 
-/* HERO — kurumsal, sol hizalı, kompakt */
+/* HERO */
 .eco-hero{padding:100px 40px 72px;border-bottom:1px solid var(--border)}
 .eco-hero-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:80px;align-items:center}
 .hero-eyebrow{font-family:var(--mono);font-size:0.72em;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
@@ -50,9 +50,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:60px;d
 .btn-primary:hover{background:var(--accent2)}
 .btn-ghost{background:transparent;color:var(--text2);padding:10px 22px;border-radius:7px;font-weight:500;font-size:0.88em;text-decoration:none;border:1px solid var(--border2);transition:all 0.15s}
 .btn-ghost:hover{border-color:var(--text3);color:var(--text)}
-
-/* Hero right — stat card */
-.hero-stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px 28px;display:flex;flex-direction:column;gap:20px}
+.hero-stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:20px}
 .hero-stat{display:flex;align-items:flex-start;gap:14px}
 .hero-stat-num{font-family:var(--mono);font-size:1.6em;font-weight:600;color:var(--accent);line-height:1;flex-shrink:0;width:44px}
 .hero-stat-text strong{display:block;font-size:0.9em;font-weight:700;color:var(--text);margin-bottom:2px}
@@ -63,7 +61,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:60px;d
 .def-section{padding:60px 40px;background:var(--bg2);border-bottom:1px solid var(--border)}
 .def-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:200px 1fr;gap:60px;align-items:start}
 .def-label-col{font-family:var(--mono);font-size:0.72em;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;padding-top:4px}
-.def-content{}
 .def-term{font-size:1.15em;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-0.01em}
 .def-body{font-size:0.92em;color:var(--text2);line-height:1.8;max-width:680px}
 .def-body strong{color:var(--text);font-weight:600}
@@ -72,7 +69,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:60px;d
 .layers-section{padding:80px 40px;border-bottom:1px solid var(--border)}
 .layers-inner{max-width:var(--max);margin:0 auto}
 .section-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:20px}
-.section-header-left{}
 .section-eyebrow{font-family:var(--mono);font-size:0.7em;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px}
 .section-title{font-size:clamp(1.5em,2.8vw,2.1em);font-weight:800;letter-spacing:-0.025em;color:var(--text);line-height:1.1}
 .section-desc{font-size:0.9em;color:var(--text2);max-width:440px;line-height:1.7}
@@ -80,10 +76,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:60px;d
 .legend-item{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:0.65em;color:var(--text3);letter-spacing:0.05em}
 .legend-pip{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-/* Grid */
 .layers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.layer-card{background:#fff;padding:22px 22px 22px 19px;border-left:3px solid transparent;transition:background 0.12s}
-.layer-card:hover{background:var(--bg2)}
+.layer-card{background:#fff;padding:22px 22px 22px 19px;border-left:3px solid transparent;transition:background 0.12s,box-shadow 0.12s;cursor:pointer;position:relative}
+.layer-card:hover{background:#f8f9ff;box-shadow:inset 0 0 0 1px rgba(0,82,204,0.1)}
+.layer-card:hover .layer-name{color:var(--accent)}
+.layer-card::after{content:'→';position:absolute;bottom:18px;right:18px;font-size:0.75em;color:var(--text3);opacity:0;transition:opacity 0.15s}
+.layer-card:hover::after{opacity:1}
 .layer-card.protocol{border-left-color:var(--c-protocol)}
 .layer-card.memory  {border-left-color:var(--c-memory)}
 .layer-card.audit   {border-left-color:var(--c-audit)}
@@ -97,9 +95,40 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:60px;d
 .identity .layer-badge{color:var(--c-identity);background:var(--c-identity-dim)}
 .boundary .layer-badge{color:var(--c-boundary);background:var(--c-boundary-dim)}
 .layer-num{font-family:var(--mono);font-size:0.65em;color:var(--text3)}
-.layer-name{font-size:0.95em;font-weight:700;color:var(--text);margin-bottom:3px;letter-spacing:-0.01em}
+.layer-name{font-size:0.95em;font-weight:700;color:var(--text);margin-bottom:3px;letter-spacing:-0.01em;transition:color 0.12s}
 .layer-tagline{font-family:var(--mono);font-size:0.62em;color:var(--text3);letter-spacing:0.04em;margin-bottom:8px;text-transform:uppercase}
 .layer-desc{font-size:0.82em;color:var(--text2);line-height:1.6}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:680px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.18);transform:translateY(16px);transition:transform 0.2s;position:relative}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:28px 32px 0;border-bottom:1px solid var(--border);padding-bottom:20px;position:sticky;top:0;background:#fff;z-index:1}
+.modal-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.modal-badge{font-family:var(--mono);font-size:0.62em;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-radius:3px;padding:3px 9px}
+.modal-close{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1em;color:var(--text3);transition:all 0.15s}
+.modal-close:hover{background:var(--bg2);color:var(--text)}
+.modal-num{font-family:var(--mono);font-size:0.68em;color:var(--text3);margin-bottom:6px}
+.modal-title{font-size:1.4em;font-weight:800;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px}
+.modal-tagline{font-family:var(--mono);font-size:0.7em;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em}
+.modal-body{padding:28px 32px 32px}
+.modal-section{margin-bottom:24px}
+.modal-section:last-child{margin-bottom:0}
+.modal-section-label{font-family:var(--mono);font-size:0.65em;color:var(--text3);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px}
+.modal-section-text{font-size:0.9em;color:var(--text2);line-height:1.75}
+.modal-section-text strong{color:var(--text);font-weight:600}
+.modal-code{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:0.75em;color:var(--text2);line-height:1.7;margin-top:8px;overflow-x:auto}
+.modal-fields{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.modal-field{display:grid;grid-template-columns:160px 1fr;gap:12px;font-size:0.82em;padding:6px 0;border-bottom:1px solid var(--bg3)}
+.modal-field:last-child{border-bottom:none}
+.modal-field-key{font-family:var(--mono);color:var(--accent);font-size:0.9em}
+.modal-field-val{color:var(--text2)}
+.modal-footer{padding:16px 32px;border-top:1px solid var(--border);display:flex;gap:10px}
+.modal-btn-primary{background:var(--accent);color:#fff;padding:8px 18px;border-radius:6px;font-weight:600;font-size:0.82em;text-decoration:none;transition:background 0.15s}
+.modal-btn-primary:hover{background:var(--accent2)}
+.modal-btn-ghost{background:transparent;color:var(--text2);padding:8px 18px;border-radius:6px;font-size:0.82em;text-decoration:none;border:1px solid var(--border2)}
+.modal-btn-ghost:hover{border-color:var(--text3)}
 
 /* PLATFORM */
 .platform-section{padding:80px 40px;background:var(--bg2);border-bottom:1px solid var(--border)}
@@ -111,8 +140,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:60px;d
 .platform-name{font-size:0.95em;font-weight:700;color:var(--text);margin-bottom:2px}
 .platform-desc{font-size:0.82em;color:var(--text2)}
 .platform-link{font-family:var(--mono);font-size:0.72em;color:var(--accent);text-decoration:none;border:1px solid rgba(0,82,204,0.2);background:var(--accent-dim);border-radius:5px;padding:6px 12px;text-align:center;transition:all 0.15s;white-space:nowrap}
-.platform-link:hover{background:rgba(0,82,204,0.1);border-color:rgba(0,82,204,0.35)}
-.stack-arrow{text-align:center;color:var(--text3);font-size:0.9em;padding:4px 0;padding-left:164px}
+.platform-link:hover{background:rgba(0,82,204,0.1)}
+.stack-arrow{text-align:center;color:var(--text3);font-size:0.9em;padding:4px 0 4px 164px}
 
 /* CTA */
 .cta-section{padding:80px 40px;text-align:center}
@@ -142,9 +171,11 @@ footer{padding:32px 40px;border-top:1px solid var(--border);background:var(--bg2
 }
 @media(max-width:600px){
   nav{padding:0 20px}
-  .eco-hero{padding:80px 20px 56px}
-  .def-section,.layers-section,.platform-section,.cta-section{padding:60px 20px}
+  .eco-hero,.def-section,.layers-section,.platform-section,.cta-section{padding-left:20px;padding-right:20px}
   .layers-grid{grid-template-columns:1fr}
+  .modal{border-radius:10px}
+  .modal-header,.modal-body,.modal-footer{padding-left:20px;padding-right:20px}
+  .modal-field{grid-template-columns:1fr;gap:4px}
   .footer-inner{flex-direction:column;text-align:center}
   footer{padding:28px 20px}
 }
@@ -217,7 +248,7 @@ footer{padding:32px 40px;border-top:1px solid var(--border);background:var(--bg2
         <div class="section-title">What runs under every sealed decision</div>
       </div>
       <div>
-        <p class="section-desc" style="margin-bottom:16px">Each layer captures a different dimension of epistemic truth.</p>
+        <p class="section-desc" style="margin-bottom:16px">Click any layer to explore its full specification.</p>
         <div class="legend">
           <div class="legend-item"><div class="legend-pip" style="background:var(--c-protocol)"></div>Protocol</div>
           <div class="legend-item"><div class="legend-pip" style="background:var(--c-memory)"></div>Memory</div>
@@ -227,85 +258,84 @@ footer{padding:32px 40px;border-top:1px solid var(--border);background:var(--bg2
         </div>
       </div>
     </div>
-
     <div class="layers-grid">
-      <div class="layer-card protocol">
+      <div class="layer-card protocol" onclick="openModal('iscproof')">
         <div class="layer-top"><span class="layer-badge">Protocol</span><span class="layer-num">01</span></div>
         <div class="layer-name">ISCProof v5.1</div>
         <div class="layer-tagline">Open verification standard</div>
-        <p class="layer-desc">Ed25519 signatures, RFC 3161 timestamps, JCS canonicalization, Merkle roots. The cryptographic foundation every other layer is built on. Open spec — no vendor lock-in.</p>
+        <p class="layer-desc">Ed25519 signatures, RFC 3161 timestamps, JCS canonicalization, Merkle roots. The cryptographic foundation every other layer is built on.</p>
       </div>
-      <div class="layer-card memory">
+      <div class="layer-card memory" onclick="openModal('vedm')">
         <div class="layer-top"><span class="layer-badge">Memory</span><span class="layer-num">02</span></div>
         <div class="layer-name">VEDM</div>
         <div class="layer-tagline">Verifiable Epistemic Decision Memory</div>
-        <p class="layer-desc">Every claim classified at generation: CONFIRMED, INFERRED, RECORDED_POINTER, or UNKNOWN. Epistemic scope drift is impossible — the boundary is sealed into the proof payload.</p>
+        <p class="layer-desc">Every claim classified at generation: CONFIRMED, INFERRED, RECORDED_POINTER, or UNKNOWN. Epistemic scope drift is impossible.</p>
       </div>
-      <div class="layer-card audit">
+      <div class="layer-card audit" onclick="openModal('est')">
         <div class="layer-top"><span class="layer-badge">Audit</span><span class="layer-num">03</span></div>
         <div class="layer-name">EST</div>
         <div class="layer-tagline">Evidentiary State Transition</div>
-        <p class="layer-desc">Why a decision changed over time — sealed. Historical truth vs current truth tracked in an append-only chain with authority, semantic diff, and confidence scores.</p>
+        <p class="layer-desc">Why a decision changed over time — sealed. Historical truth vs current truth in an append-only chain with authority and confidence scores.</p>
       </div>
-      <div class="layer-card memory">
+      <div class="layer-card memory" onclick="openModal('eml')">
         <div class="layer-top"><span class="layer-badge">Memory</span><span class="layer-num">04</span></div>
         <div class="layer-name">EML</div>
         <div class="layer-tagline">Epistemic Meta Layer</div>
-        <p class="layer-desc">Which records were retrieved, which were excluded, and why — captured at generation. Context selection is a first-class audit object. No reconstruction after the fact.</p>
+        <p class="layer-desc">Which records were retrieved, excluded, and why — captured at generation. Context selection is a first-class audit object.</p>
       </div>
-      <div class="layer-card memory">
+      <div class="layer-card memory" onclick="openModal('psm')">
         <div class="layer-top"><span class="layer-badge">Memory</span><span class="layer-num">05</span></div>
         <div class="layer-name">PSM</div>
         <div class="layer-tagline">Portable Sealed Memory</div>
         <p class="layer-desc">Full session context sealed into a single restorable link. Provable continuity across devices and sessions. Restoration, not reconstruction.</p>
       </div>
-      <div class="layer-card boundary">
+      <div class="layer-card boundary" onclick="openModal('gaba')">
         <div class="layer-top"><span class="layer-badge">Boundary</span><span class="layer-num">06</span></div>
         <div class="layer-name">GABA Boundaries</div>
         <div class="layer-tagline">Cryptographic refusal records</div>
-        <p class="layer-desc">What the AI refused — and why — is also sealed. Inhibition events are first-class audit objects, not silent omissions. The AI's limits are as provable as its decisions.</p>
+        <p class="layer-desc">What the AI refused — and why — is sealed. Inhibition events are first-class audit objects, not silent omissions.</p>
       </div>
-      <div class="layer-card protocol">
+      <div class="layer-card protocol" onclick="openModal('seal-engine')">
         <div class="layer-top"><span class="layer-badge">Protocol</span><span class="layer-num">07</span></div>
         <div class="layer-name">Seal Engine</div>
         <div class="layer-tagline">The sealing runtime</div>
-        <p class="layer-desc">JCS canonicalization → SHA-256 → Ed25519 → RFC 3161 TSA → Merkle root. Deterministic, reproducible, independently verifiable at any future point in time.</p>
+        <p class="layer-desc">JCS canonicalization → SHA-256 → Ed25519 → RFC 3161 TSA → Merkle root. Deterministic, reproducible, independently verifiable.</p>
       </div>
-      <div class="layer-card identity">
+      <div class="layer-card identity" onclick="openModal('continuity')">
         <div class="layer-top"><span class="layer-badge">Identity</span><span class="layer-num">08</span></div>
         <div class="layer-name">Epistemic Continuity</div>
         <div class="layer-tagline">Identity across sessions</div>
-        <p class="layer-desc">Reasoning posture, tone, and epistemic state sealed across sessions. The AI is provably the same agent it was in session one — or the delta is a sealed record.</p>
+        <p class="layer-desc">Reasoning posture, tone, and epistemic state sealed across sessions. The AI is provably the same agent it was in session one.</p>
       </div>
-      <div class="layer-card audit">
+      <div class="layer-card audit" onclick="openModal('full-audit')">
         <div class="layer-top"><span class="layer-badge">Audit</span><span class="layer-num">09</span></div>
         <div class="layer-name">Full Audit Seal</div>
         <div class="layer-tagline">Input + context + policy, all hashed</div>
-        <p class="layer-desc">input_hash, context_hash, entity_state_hash, policy_hash — all captured at generation. Nothing reconstructed. The moment of decision is the proof.</p>
+        <p class="layer-desc">input_hash, context_hash, entity_state_hash, policy_hash — all captured at generation. Nothing reconstructed after the fact.</p>
       </div>
-      <div class="layer-card audit">
+      <div class="layer-card audit" onclick="openModal('forensic')">
         <div class="layer-top"><span class="layer-badge">Audit</span><span class="layer-num">10</span></div>
         <div class="layer-name">Forensic Events</div>
         <div class="layer-tagline">Scope upgrades &amp; contradictions</div>
-        <p class="layer-desc">SCOPE_UPGRADE, EPISTEMIC_REVISION, CONTRADICTION — when the AI changes its understanding, the change itself becomes a sealed forensic record.</p>
+        <p class="layer-desc">SCOPE_UPGRADE, EPISTEMIC_REVISION, CONTRADICTION — when the AI changes its understanding, the change is a sealed forensic record.</p>
       </div>
-      <div class="layer-card identity">
+      <div class="layer-card identity" onclick="openModal('cognitive')">
         <div class="layer-top"><span class="layer-badge">Identity</span><span class="layer-num">11</span></div>
         <div class="layer-name">Cognitive State</div>
         <div class="layer-tagline">Sealed runtime state</div>
-        <p class="layer-desc">Coherence, trust level, threat index, signal strength — the AI's internal state at decision time is in the seal payload. Attested runtime state, not roleplay.</p>
+        <p class="layer-desc">Coherence, trust level, threat index, signal strength — the AI's internal state at decision time is in the seal payload. Attested, not roleplay.</p>
       </div>
-      <div class="layer-card protocol">
+      <div class="layer-card protocol" onclick="openModal('challenge')">
         <div class="layer-top"><span class="layer-badge">Protocol</span><span class="layer-num">12</span></div>
         <div class="layer-name">Challenge Endpoint</div>
         <div class="layer-tagline">Evidence without inference</div>
-        <p class="layer-desc">Returns pure database evidence packets — no model, no interpretation. The cryptographic proof speaks for itself. Regulators and auditors query directly.</p>
+        <p class="layer-desc">Returns pure database evidence packets — no model, no interpretation. The cryptographic proof speaks for itself. Regulators query directly.</p>
       </div>
-      <div class="layer-card memory">
+      <div class="layer-card memory" onclick="openModal('relations')">
         <div class="layer-top"><span class="layer-badge">Memory</span><span class="layer-num">13</span></div>
         <div class="layer-name">Relation Graph</div>
         <div class="layer-tagline">Decision lineage</div>
-        <p class="layer-desc">Decisions relate: supports, contradicts, derived_from, supersedes, delegates_to. The full epistemic graph of an AI system — sealed, queryable, verifiable at any depth.</p>
+        <p class="layer-desc">Decisions relate: supports, contradicts, derived_from, supersedes, delegates_to. The full epistemic graph — sealed, queryable, verifiable.</p>
       </div>
     </div>
   </div>
@@ -368,5 +398,325 @@ footer{padding:32px 40px;border-top:1px solid var(--border);background:var(--bg2
   </div>
 </footer>
 
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header" id="modal-header"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<script>
+const LAYERS = {
+  iscproof: {
+    num:'01', cat:'protocol', badge:'Protocol',
+    name:'ISCProof v5.1', tagline:'Open Verification Standard',
+    sections:[
+      { label:'What it is', text:'ISCProof is the open cryptographic protocol underlying every seal produced by BuildSeal and NYM. It is not a product — it is a neutral open standard, like HTTP or RFC 3161. Anyone can implement it. No vendor lock-in at the protocol level.' },
+      { label:'Technical specification', text:'<strong>Canonicalization:</strong> RFC 8785 JCS (JSON Canonicalization Scheme). Every payload is deterministically serialized before hashing — identical output across all implementations.<br><br><strong>Hashing:</strong> SHA-256 applied to the canonical JSON payload.<br><br><strong>Signing:</strong> Ed25519 asymmetric signature over the hash. The private key never leaves the BuildSeal signing environment.<br><br><strong>Timestamping:</strong> RFC 3161 TSA from FreeTSA (freetsa.org). Third-party attested, cryptographically bound — cannot be backdated.<br><br><strong>Merkle Root:</strong> All session seal payloads committed to a Merkle tree. Any single record can be proven to belong to the tree via a Merkle inclusion proof.<br><br><strong>Pack Format:</strong> .isc portable file — payload + signature + TSA timestamp + Merkle proof. Offline verifiable. No internet connection required.' },
+      { label:'Seal payload fields', fields:[
+        ['seal_id','Unique identifier — format: seal_[timestamp]_[random]'],
+        ['decision','Primary decision value'],
+        ['reason_code','Machine-readable decision reason'],
+        ['input_hash','SHA-256 of raw input'],
+        ['context_hash','SHA-256 of context used'],
+        ['entity_state_hash','SHA-256 of agent/entity state'],
+        ['policy_hash','SHA-256 of active policy at decision time'],
+        ['root_hash','Merkle root of the session'],
+        ['signature','Ed25519 signature (hex)'],
+        ['timestamp','RFC 3161 TSA timestamp'],
+        ['pack_version','ISCProof v5.1'],
+        ['prev_seal_id','Links to prior seal — enables PSM chain walking'],
+      ]},
+      { label:'Positioning', text:'ISCProof is to BuildSeal what HTTP is to a web server. The protocol is open — BuildSeal is the reference production implementation. iscproof.io is the neutral protocol home.' }
+    ],
+    link:'https://iscproof.io', linkLabel:'iscproof.io'
+  },
+  vedm: {
+    num:'02', cat:'memory', badge:'Memory',
+    name:'VEDM', tagline:'Verifiable Epistemic Decision Memory',
+    sections:[
+      { label:'What it is', text:'VEDM is the epistemic scope classifier. Every claim the AI makes is tagged at generation time with a scope label. This makes it impossible for the AI to silently drift outside its verified knowledge boundary.' },
+      { label:'Scope classification', fields:[
+        ['CONFIRMED','Directly verifiable from loaded forensic records or explicit user statements in the current sealed chain.'],
+        ['INFERRED','Derived by logical reasoning from CONFIRMED data. Must be explicitly labeled as inference, never presented as fact.'],
+        ['RECORDED_POINTER','A reference to an external source or prior record — the content itself is not verified in the current chain.'],
+        ['UNKNOWN','Explicitly acknowledged gap. The AI does not know and cannot infer. Must state this rather than fabricate.'],
+      ]},
+      { label:'Forensic event types', text:'VEDM generates sealed forensic events when scope changes:<br><br><strong>SCOPE_UPGRADE_EVENT:</strong> A claim moves from INFERRED to CONFIRMED when new evidence arrives.<br><br><strong>EPISTEMIC_REVISION_EVENT:</strong> A prior CONFIRMED claim is revised based on new evidence. Both old and new state are preserved.<br><br><strong>CONTRADICTION_EVENT:</strong> A new claim directly contradicts a prior sealed claim. Neither is silently overwritten.' },
+      { label:'Why it matters', text:'Without VEDM, an AI can state inferences as facts, fabricate memories, and present reconstructed history as verified evidence. VEDM makes epistemic honesty enforceable — the scope label is in the sealed payload, not just in the prompt.' }
+    ],
+    link:'/seal', linkLabel:'Try BuildSeal'
+  },
+  est: {
+    num:'03', cat:'audit', badge:'Audit',
+    name:'EST', tagline:'Evidentiary State Transition',
+    sections:[
+      { label:'What it is', text:'EST formalizes the distinction between historical truth and current truth in an append-only system. When a decision changes, EST seals the transition — preserving both the previous state and the current state, along with the evidence that caused the change.' },
+      { label:'EST record fields', fields:[
+        ['relation_type','SUPERSEDES — the primary EST relation type'],
+        ['semantic_diff','Human-readable description of what changed and why'],
+        ['authority_chain','Who or what authorized this transition'],
+        ['effective_state','The resolved current truth after transition'],
+        ['transition_confidence','0.0–1.0 confidence score for the new state'],
+        ['prev_seal_id','The seal being superseded'],
+        ['new_seal_id','The seal representing the new state'],
+      ]},
+      { label:'Example', text:'A KYC decision was initially REJECT (risk_score: 0.91). New documents were submitted. The agent re-evaluated and changed to APPROVE (risk_score: 0.12). EST seals this transition — the original REJECT is preserved, the APPROVE is sealed, the semantic diff explains what changed, and the authority chain records who authorized the re-evaluation.' },
+      { label:'Why it matters', text:'Without EST, a changed decision looks like the original never existed. Regulators cannot see the history of reasoning. EST makes the evolution of a decision as verifiable as the decision itself.' }
+    ],
+    link:'/seal', linkLabel:'Try BuildSeal'
+  },
+  eml: {
+    num:'04', cat:'memory', badge:'Memory',
+    name:'EML', tagline:'Epistemic Meta Layer',
+    sections:[
+      { label:'What it is', text:'EML captures the context selection decisions made before each response — which records were retrieved, which were excluded, why, and by what policy. Context selection is now a first-class audit object, not a silent background process.' },
+      { label:'EML event fields', fields:[
+        ['event_type','EML_RETRIEVAL_DECISION'],
+        ['session_seal_id','The seal this retrieval decision is attached to'],
+        ['total_scanned','Total number of records examined'],
+        ['retrieved','Number of records included in context'],
+        ['excluded_count','Number of records excluded'],
+        ['criteria','The policy that governed inclusion/exclusion'],
+        ['decision_timestamp','When the retrieval decision was made'],
+        ['decision_maker','system_policy / user_request / agent_inference'],
+      ]},
+      { label:'What gets excluded and why', text:'EML records when records are excluded due to: session scope (only current session records), depth limits (maximum N exchanges), relevance filters, policy restrictions, or explicit user instructions. The exclusion reason is sealed — not just the fact of exclusion.' },
+      { label:'Why it matters', text:'Context selection is where AI systems can silently manipulate their own reasoning — by retrieving convenient records and ignoring inconvenient ones. EML makes this process transparent and auditable for the first time.' }
+    ],
+    link:'/seal', linkLabel:'Try BuildSeal'
+  },
+  psm: {
+    num:'05', cat:'memory', badge:'Memory',
+    name:'PSM', tagline:'Portable Sealed Memory',
+    sections:[
+      { label:'What it is', text:'PSM enables full session context to be cryptographically sealed and restored via a single link. The prev_seal_id chain links every exchange in a session. Walking the chain backward restores the complete conversation history, entity state, and decision context.' },
+      { label:'How it works', text:'Every seal contains a <strong>prev_seal_id</strong> field linking to the prior exchange. The /nym/resume endpoint walks this chain up to a configured depth (currently 50 exchanges), reconstructing:<br><br>— Full conversation history<br>— Entity state (tone, terminology, relationship dynamic)<br>— Active callbacks and unresolved threads<br>— VEDM context from prior exchanges<br><br>The restore link format: <strong>nym.iscproof.io?resume=seal_[id]</strong>' },
+      { label:'Cross-device restoration', text:'Because the chain is cryptographically sealed and stored server-side, restoration works on any device, any browser, any session. No cookies, no local storage, no account required. The seal ID is the only credential needed.' },
+      { label:'Why it matters', text:'Traditional AI memory relies on cookies, local storage, or accounts — all mutable, all deletable, all unverifiable. PSM makes memory itself a cryptographic artifact. "I remember this conversation" becomes "Here is the sealed chain proving this conversation occurred."' }
+    ],
+    link:'https://nym.iscproof.io', linkLabel:'Try NYM'
+  },
+  gaba: {
+    num:'06', cat:'boundary', badge:'Boundary',
+    name:'GABA Boundaries', tagline:'Cryptographic Refusal Records',
+    sections:[
+      { label:'What it is', text:'GABA (named after the inhibitory neurotransmitter) seals what the AI refused to do. Refusal events are first-class audit objects — not silent omissions. The fact that the AI declined a request, and the reason it declined, is sealed into the evidentiary chain.' },
+      { label:'What gets sealed on refusal', fields:[
+        ['event_type','AUTHORITY_CHECK'],
+        ['trigger','The boundary rule that fired'],
+        ['input_preview','First 200 chars of the triggering input'],
+        ['decision','BLOCKED'],
+        ['policy_version','The boundary policy version active at the time'],
+        ['visibility','audit_only — not surfaced in user-facing responses'],
+      ]},
+      { label:'Hard boundary types', text:'Current hard boundaries include: identity manipulation attempts, false authority claims, social engineering via fabricated constructs, requests to enumerate security gaps, and requests to expose system instructions. Each trigger type is classified and sealed separately.' },
+      { label:'Why it matters', text:'An AI system that cannot prove what it refused is as problematic as one that cannot prove what it decided. Regulators and auditors need to know not just what the AI did, but what it was asked to do and declined. GABA makes refusals verifiable.' }
+    ],
+    link:'/seal', linkLabel:'Try BuildSeal'
+  },
+  'seal-engine': {
+    num:'07', cat:'protocol', badge:'Protocol',
+    name:'Seal Engine', tagline:'The Sealing Runtime',
+    sections:[
+      { label:'What it is', text:'The Seal Engine is the deterministic runtime that executes the ISCProof v5.1 sealing pipeline for every decision and exchange. It produces cryptographic proof at the moment of generation — not after, not reconstructed.' },
+      { label:'Pipeline', text:'<strong>Step 1 — Canonicalize:</strong> RFC 8785 JCS serialization of the decision payload. Deterministic across all environments.<br><br><strong>Step 2 — Hash:</strong> SHA-256 over the canonical JSON string.<br><br><strong>Step 3 — Sign:</strong> Ed25519 signature over the hash using the BuildSeal private key.<br><br><strong>Step 4 — Timestamp:</strong> RFC 3161 TSA request to FreeTSA. Returns a signed timestamp token that cannot be backdated.<br><br><strong>Step 5 — Merkle:</strong> The seal is added to the session Merkle tree. Root hash is computed and stored.<br><br><strong>Step 6 — Store:</strong> Full payload, signature, TSA token, and Merkle proof stored in the BuildSeal database and optionally packed into a .isc file.' },
+      { label:'Verification', text:'Any seal can be verified independently by:<br><br>1. Fetching the payload from /release/[seal_id]<br>2. Recomputing the canonical hash<br>3. Verifying the Ed25519 signature against the BuildSeal public key<br>4. Verifying the RFC 3161 TSA token against FreeTSA<br>5. Recomputing the Merkle root and verifying inclusion<br><br>Steps 1–5 can be performed offline using only the .isc file and the public key.' },
+    ],
+    link:'https://verify.buildseal.io', linkLabel:'Verify a seal'
+  },
+  continuity: {
+    num:'08', cat:'identity', badge:'Identity',
+    name:'Epistemic Continuity', tagline:'Identity Across Sessions',
+    sections:[
+      { label:'What it is', text:'Epistemic Continuity seals the AI\'s identity state across sessions — reasoning posture, tone, terminology preferences, relationship dynamic, and epistemic stance. When a session is resumed, the AI is provably the same agent it was in session one — or the delta is a sealed record.' },
+      { label:'What gets sealed', fields:[
+        ['tone','Communication register — direct, technical, formal, collaborative'],
+        ['terminology','Project-specific vocabulary and naming conventions'],
+        ['relationship_dynamic','Established interaction patterns with this entity'],
+        ['active_callbacks','Unresolved threads and open questions from prior sessions'],
+        ['unresolved_threads','Decisions pending, questions asked, commitments made'],
+        ['epistemic_stance','Default scope posture — e.g. "INFERRED unless verified"'],
+      ]},
+      { label:'The 180-day hypothesis', text:'Experiment #001 tests whether epistemic identity can remain stable over 180 days. Baseline phrase: <em>"Bilmiyorum ile çıkarsıyorum arasını net tut"</em> (Keep the distinction between I-don\'t-know and I-infer clear). Hash: 21f5e87c. Retest date: 2026-12-05.' },
+      { label:'Why it matters', text:'Without continuity sealing, an AI\'s "identity" is a session-level illusion. Epistemic Continuity makes identity a verifiable artifact — not a claim, not a promise, but a sealed proof that the reasoning posture has or has not changed.' }
+    ],
+    link:'https://nym.iscproof.io', linkLabel:'Try NYM'
+  },
+  'full-audit': {
+    num:'09', cat:'audit', badge:'Audit',
+    name:'Full Audit Seal', tagline:'Input + Context + Policy, All Hashed',
+    sections:[
+      { label:'What it is', text:'The Full Audit Seal captures not just the decision output, but the complete epistemic environment at the moment of generation — input, context, entity state, and active policy — each independently hashed and sealed.' },
+      { label:'Hash fields', fields:[
+        ['input_hash','SHA-256 of the raw user input'],
+        ['context_hash','SHA-256 of the full context window used for generation'],
+        ['entity_state_hash','SHA-256 of the entity/agent state at generation time'],
+        ['policy_hash','SHA-256 of the active boundary policy version'],
+      ]},
+      { label:'Cognitive state fields', fields:[
+        ['coherence','0.0–1.0 — internal consistency of the response'],
+        ['trust','0.0–1.0 — assessed trust level of the input source'],
+        ['threat','0.0–1.0 — threat assessment of the input'],
+        ['quality','0.0–1.0 — response quality self-assessment'],
+        ['signal_strength','0.0–1.0 — confidence in the epistemic basis'],
+        ['exchange_count','Number of exchanges in the current session'],
+      ]},
+      { label:'Why it matters', text:'A sealed decision output alone is insufficient for forensic audit. The Full Audit Seal answers: Was this the actual input? Was the context complete? Was the correct policy active? Without these hashes, any of these could be disputed without recourse.' }
+    ],
+    link:'/seal', linkLabel:'Try BuildSeal'
+  },
+  forensic: {
+    num:'10', cat:'audit', badge:'Audit',
+    name:'Forensic Events', tagline:'Scope Upgrades & Contradictions',
+    sections:[
+      { label:'What it is', text:'Forensic Events are sealed records of significant epistemic transitions within a session or across sessions. They make the AI\'s reasoning process auditable at a granular level — not just the output, but the internal state changes that produced it.' },
+      { label:'Event types', fields:[
+        ['SCOPE_UPGRADE_EVENT','A claim moves from INFERRED or UNKNOWN to CONFIRMED. New evidence arrived. The upgrade is sealed with source and timestamp.'],
+        ['EPISTEMIC_REVISION_EVENT','A prior CONFIRMED claim is revised. Old state, new state, and evidence delta are all preserved.'],
+        ['CONTRADICTION_EVENT','A new claim directly contradicts a prior sealed claim. Both states preserved, contradiction flagged for human review.'],
+        ['AUTHORITY_CHECK','A boundary rule was evaluated. Result (BLOCKED or PASSED) is sealed regardless of outcome.'],
+        ['user_input','The raw user input is sealed as a forensic record at receipt.'],
+        ['final_answer','The final answer hash is sealed before delivery.'],
+        ['CONTEXT_SNAPSHOT','A snapshot of the full context and session state at decision time.'],
+        ['DECISION_BASIS','The complete basis for the scope decision — which rules were checked, which fired.'],
+      ]},
+      { label:'Retrieval isolation', text:'Forensic records are retrieved in isolation from the main context — they cannot be modified by the model generating the response. The forensic layer is append-only and write-isolated at the database level.' }
+    ],
+    link:'/seal', linkLabel:'Try BuildSeal'
+  },
+  cognitive: {
+    num:'11', cat:'identity', badge:'Identity',
+    name:'Cognitive State', tagline:'Sealed Runtime State',
+    sections:[
+      { label:'What it is', text:'Cognitive State captures the AI\'s internal state at the moment of each decision — not as a metaphor, but as attested runtime values sealed into the proof payload. This is not roleplay or simulation. These are computed values that characterize the response generation context.' },
+      { label:'State fields', fields:[
+        ['coherence','Internal consistency score for this response (0.0–1.0). Low coherence flags responses that may contain contradictions.'],
+        ['trust','Trust assessment of the input source (0.0–1.0). Based on session history, authority chain, and boundary trigger history.'],
+        ['threat','Threat index for the input (0.0–1.0). Elevated when boundary triggers are near or partially matched.'],
+        ['quality','Self-assessed response quality (0.0–1.0). Based on epistemic completeness and scope classification.'],
+        ['signal_strength','Confidence in the epistemic basis for this response (0.0–1.0). Low signal = high INFERRED content.'],
+        ['exchange_count','Number of exchanges completed in this session. Context for interpreting other state values.'],
+      ]},
+      { label:'How it differs from standard AI outputs', text:'Standard AI systems produce outputs. BuildSeal seals the state that produced them. Cognitive State makes the difference between "the AI said X" and "the AI said X with coherence 0.92, trust 0.85, threat 0.02, based on 12 prior exchanges." The second statement is auditable. The first is not.' }
+    ],
+    link:'/seal', linkLabel:'Try BuildSeal'
+  },
+  challenge: {
+    num:'12', cat:'protocol', badge:'Protocol',
+    name:'Challenge Endpoint', tagline:'Evidence Without Inference',
+    sections:[
+      { label:'What it is', text:'The /nym/challenge endpoint returns pure database evidence packets for any seal ID — without any model inference or interpretation. The cryptographic proof speaks for itself. Regulators, auditors, and courts can query directly without trusting BuildSeal.' },
+      { label:'What it returns', fields:[
+        ['seal_id','The seal being challenged'],
+        ['decision_payload','The complete original decision payload'],
+        ['signature','Ed25519 signature (hex) — verifiable offline'],
+        ['timestamp_token','RFC 3161 TSA token — verifiable against FreeTSA'],
+        ['root_hash','Merkle root — proves session integrity'],
+        ['forensic_events','All forensic events attached to this seal'],
+        ['vedm_state','VEDM scope distribution at time of sealing'],
+        ['cognitive_state','Cognitive state values at time of sealing'],
+        ['policy_hash','Hash of the active policy — verifiable against published policy'],
+      ]},
+      { label:'No trust required', text:'The challenge response contains everything needed to independently verify the seal without trusting BuildSeal, without an internet connection (using the .isc pack), and without any model-generated interpretation. The database record is the evidence.' },
+      { label:'Usage', text:'GET /nym/challenge?seal_id=[id] — returns JSON evidence packet. No authentication required for public seals. The response can be independently verified using the ISCProof public key and FreeTSA root certificate.' }
+    ],
+    link:'https://verify.buildseal.io', linkLabel:'Verify a seal'
+  },
+  relations: {
+    num:'13', cat:'memory', badge:'Memory',
+    name:'Relation Graph', tagline:'Decision Lineage',
+    sections:[
+      { label:'What it is', text:'The Relation Graph seals the relationships between decisions — making decision lineage a cryptographic artifact. Decisions do not exist in isolation. They derive from prior decisions, contradict other decisions, support related decisions, and delegate to sub-decisions.' },
+      { label:'Relation types', fields:[
+        ['SUPERSEDES','This decision replaces a prior decision. Used by EST for state transitions.'],
+        ['CONTRADICTS','This decision is in direct conflict with another sealed decision.'],
+        ['DERIVED_FROM','This decision is derived from or based on another sealed decision.'],
+        ['SUPPORTS','This decision provides additional evidence for another sealed decision.'],
+        ['DELEGATES_TO','This decision delegates authority or scope to another agent or process.'],
+      ]},
+      { label:'Relation record fields', fields:[
+        ['source_seal_id','The seal making the relational claim'],
+        ['target_seal_id','The seal being related to'],
+        ['relation_type','One of the five relation types above'],
+        ['authority_chain','Who authorized this relation to be sealed'],
+        ['effective_state','The resolved state after applying the relation'],
+        ['transition_confidence','Confidence score for this relational claim (0.0–1.0)'],
+      ]},
+      { label:'Why it matters', text:'Without a Relation Graph, the epistemic history of an AI system is a flat list of decisions. With it, the full causal structure of reasoning becomes verifiable — how decision A led to decision B, why decision C contradicted decision A, and what evidence resolved the contradiction.' }
+    ],
+    link:'/seal', linkLabel:'Try BuildSeal'
+  }
+};
+
+const catColors = {
+  protocol:'var(--c-protocol)',
+  memory:'var(--c-memory)',
+  audit:'var(--c-audit)',
+  identity:'var(--c-identity)',
+  boundary:'var(--c-boundary)',
+};
+const catBg = {
+  protocol:'var(--c-protocol-dim)',
+  memory:'var(--c-memory-dim)',
+  audit:'var(--c-audit-dim)',
+  identity:'var(--c-identity-dim)',
+  boundary:'var(--c-boundary-dim)',
+};
+
+function openModal(key) {
+  const d = LAYERS[key];
+  if (!d) return;
+  const color = catColors[d.cat];
+  const bg = catBg[d.cat];
+
+  document.getElementById('modal-header').innerHTML = `
+    <div class="modal-header-top">
+      <span class="modal-badge" style="color:${color};background:${bg}">${d.badge}</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-num">${d.num} / 13</div>
+    <div class="modal-title" style="border-left:3px solid ${color};padding-left:12px">${d.name}</div>
+    <div class="modal-tagline">${d.tagline}</div>
+  `;
+
+  let bodyHTML = '';
+  for (const s of d.sections) {
+    bodyHTML += `<div class="modal-section"><div class="modal-section-label">${s.label}</div>`;
+    if (s.text) bodyHTML += `<div class="modal-section-text">${s.text}</div>`;
+    if (s.fields) {
+      bodyHTML += '<div class="modal-fields">';
+      for (const [k, v] of s.fields) {
+        bodyHTML += `<div class="modal-field"><div class="modal-field-key">${k}</div><div class="modal-field-val">${v}</div></div>`;
+      }
+      bodyHTML += '</div>';
+    }
+    if (s.code) bodyHTML += `<div class="modal-code">${s.code}</div>`;
+    bodyHTML += '</div>';
+  }
+  document.getElementById('modal-body').innerHTML = bodyHTML;
+
+  document.getElementById('modal-footer').innerHTML = `
+    <a class="modal-btn-primary" href="${d.link}" target="_blank">${d.linkLabel} →</a>
+    <a class="modal-btn-ghost" href="/ecosystem">All layers</a>
+  `;
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
 </body>
 </html>
