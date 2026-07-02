@@ -165,7 +165,7 @@
     </div>
     <div class="actions">
       <a class="btn" id="verifyBtn" href="#" target="_blank" rel="noopener noreferrer">Verify File</a>
-      <button class="btn secondary" id="downloadBtn" type="button" onclick="downloadSealSummary()">&#11015; Download Proof Receipt</button>
+      <button class="btn secondary" id="downloadBtn" type="button" onclick="downloadIscPack()">&#11015; Download Proof File (.isc)</button>
     </div>
     <div id="summaryText" style="display:none"></div>
     <div id="verifyUrl" style="display:none"></div>
@@ -356,6 +356,21 @@ async function handleFile(file) {
   }
 
 
+async function downloadIscPack() {
+  if (!sealData || !sealData.seal_id) return;
+  try {
+    const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/pack/' + sealData.seal_id);
+    const pack = await r.json();
+    const blob = new Blob([JSON.stringify(pack, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = sealData.seal_id + '.isc';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  } catch(e) { alert('Download failed: ' + e.message); }
+}
+
 function downloadSealSummary() {
   if (!sealData) return;
   const blob = new Blob([JSON.stringify(sealData, null, 2)], {type: 'application/json'});
@@ -447,7 +462,7 @@ async function verifyByFile(file) {
   try {
     const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify-by-hash', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'x-api-key': '03a4b87ac559e7ae8298ddc441400a671ebd0b66'},
       body: JSON.stringify({ artifact_hash: hash })
     });
     const d = await r.json();
@@ -560,7 +575,7 @@ async function verifyByFile(file) {
   try {
     const r = await fetch('https://buildseal-api-production-3ca5.up.railway.app/verify-by-hash', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'x-api-key': '03a4b87ac559e7ae8298ddc441400a671ebd0b66'},
       body: JSON.stringify({ artifact_hash: hash })
     });
     const d = await r.json();

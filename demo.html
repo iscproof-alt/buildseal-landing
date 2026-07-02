@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildSeal · Live Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--green:#00e87a;--green-dim:#00996b;--dark:#060e09;--mono:"IBM Plex Mono",monospace;--serif:"Instrument Serif",serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#060e09;color:#c8e6c9;font-family:var(--mono)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,14,9,.95);border-bottom:1px solid #1a3a22;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(8px)}
+.nav-logo{color:var(--green);font-size:11px;font-weight:600;letter-spacing:.2em;text-decoration:none}
+.nav-link{color:#4a7c59;font-size:9px;letter-spacing:.12em;text-decoration:none}
+.nav-link:hover{color:var(--green)}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:120px 32px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 60%,rgba(0,232,122,.04) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-size:9px;letter-spacing:.25em;color:var(--green-dim);text-transform:uppercase;margin-bottom:32px;border:1px solid #1a3a22;padding:6px 16px;animation:fadeup .6s ease both}
+.hero-claim{font-family:var(--serif);font-size:clamp(28px,5vw,52px);color:#e2e8f0;line-height:1.2;max-width:700px;margin-bottom:20px;animation:fadeup .6s .1s ease both}
+.hero-claim em{color:var(--green);font-style:italic}
+.hero-sub{font-size:11px;color:#4a7c59;line-height:1.8;max-width:500px;margin-bottom:48px;animation:fadeup .6s .2s ease both}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fadeup .6s .3s ease both}
+.btn-primary{background:var(--green);color:#060e09;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;padding:12px 24px;text-decoration:none;border:none;cursor:pointer;transition:opacity .2s}
+.btn-primary:hover{opacity:.85}
+.btn-secondary{background:transparent;color:var(--green);font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:12px 24px;text-decoration:none;border:1px solid #1a3a22;transition:border-color .2s}
+.btn-secondary:hover{border-color:var(--green)}
+@keyframes fadeup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.section{padding:100px 32px;max-width:860px;margin:0 auto}
+.section-label{font-size:8px;letter-spacing:.2em;color:var(--green-dim);text-transform:uppercase;margin-bottom:12px}
+.section-title{font-family:var(--serif);font-size:clamp(22px,3vw,36px);color:#e2e8f0;line-height:1.3;margin-bottom:16px}
+.section-sub{font-size:11px;color:#4a7c59;line-height:1.8;max-width:560px}
+.divider{border:none;border-top:1px solid #1a3a22;margin:0}
+.steps{display:flex;flex-direction:column;gap:2px;margin-top:48px}
+.step{display:grid;grid-template-columns:48px 1fr;gap:0;position:relative}
+.step-left{display:flex;flex-direction:column;align-items:center}
+.step-num{width:32px;height:32px;border-radius:50%;border:1px solid #1a3a22;background:#060e09;display:flex;align-items:center;justify-content:center;font-size:9px;color:#4a7c59;flex-shrink:0}
+.step.active .step-num{border-color:var(--green);color:var(--green);background:#0a2a14;box-shadow:0 0 12px rgba(0,232,122,.2)}
+.step-line{flex:1;width:1px;background:#1a3a22;margin:4px 0}
+.step:last-child .step-line{display:none}
+.step-right{padding:0 0 32px 16px}
+.step-tag{font-size:8px;letter-spacing:.15em;color:#4a7c59;text-transform:uppercase;margin-bottom:6px;padding-top:6px}
+.step.active .step-tag{color:var(--green-dim)}
+.step-title{font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:8px}
+.step-desc{font-size:10px;color:#94a3b8;line-height:1.7;margin-bottom:12px}
+.exchange-box{background:#0a1f14;border:1px solid #1a3a22;padding:16px 20px;margin-top:8px}
+.exchange-q{font-size:10px;color:#4a7c59;margin-bottom:8px}
+.exchange-q span{color:#60a5fa}
+.exchange-a{font-size:10px;color:#c8e6c9;line-height:1.7}
+.exchange-a span{color:var(--green)}
+.exchange-meta{margin-top:12px;padding-top:10px;border-top:1px solid #0d1f14;display:flex;gap:16px;flex-wrap:wrap}
+.exchange-badge{font-size:8px;color:#4a7c59;letter-spacing:.08em;display:flex;align-items:center;gap:4px}
+.exchange-badge.confirmed{color:var(--green-dim)}
+.verify-box{background:#0a1f14;border:1px solid #1a3a22;padding:20px;margin-top:8px}
+.verify-status{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.verify-label{font-size:14px;font-weight:600;color:#4ade80}
+.verify-sub{font-size:9px;color:#4a7c59;margin-top:2px}
+.verify-checks{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.verify-check{font-size:9px;color:#c8e6c9;display:flex;align-items:center;gap:6px}
+.verify-check::before{content:"\2713";color:var(--green);font-size:10px}
+.verify-link{display:inline-block;margin-top:14px;font-size:9px;color:var(--green);text-decoration:none;border:1px solid #1a3a22;padding:5px 12px;transition:border-color .2s}
+.verify-link:hover{border-color:var(--green)}
+.forensic-box{background:#060e09;border:1px solid #1a3a22;margin-top:8px;overflow:hidden}
+.forensic-header{background:#0a1f14;border-bottom:1px solid #1a3a22;padding:10px 16px;font-size:9px;color:#4a7c59;letter-spacing:.1em;display:flex;justify-content:space-between}
+.forensic-events{padding:12px 16px;display:flex;flex-direction:column;gap:2px}
+.forensic-event{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid #0d1f14;font-size:9px}
+.fe-num{color:#4a7c59;min-width:20px}
+.fe-type{font-weight:600;min-width:160px}
+.fe-type.ui{color:#60a5fa}.fe-type.cs{color:#a78bfa}.fe-type.pr{color:#34d399}.fe-type.db{color:#fbbf24}.fe-type.fa{color:var(--green)}
+.fe-hash{color:#4a7c59;font-size:8px;flex:1}
+.forensic-root{margin:0 16px 12px;padding:10px 12px;background:#0a2a14;border:1px solid var(--green);display:flex;justify-content:space-between;align-items:center}
+.fr-label{font-size:8px;color:var(--green);letter-spacing:.1em}
+.fr-val{font-size:8px;color:var(--green);word-break:break-all;max-width:70%;text-align:right}
+.forensic-link{display:inline-block;margin:0 16px 14px;font-size:9px;color:var(--green);text-decoration:none;border:1px solid #1a3a22;padding:5px 12px;transition:border-color .2s}
+.forensic-link:hover{border-color:var(--green)}
+.final-section{padding:100px 32px 120px;text-align:center;border-top:1px solid #1a3a22}
+.final-claim{font-family:var(--serif);font-size:clamp(20px,3vw,36px);color:#e2e8f0;line-height:1.4;max-width:600px;margin:0 auto 8px}
+.final-sub{font-size:11px;color:#4a7c59;margin-bottom:40px;font-style:italic}
+.final-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
+@media(max-width:600px){
+.hero{padding:80px 20px 60px}
+.section{padding:60px 20px}
+.steps{margin-top:32px}
+.step{grid-template-columns:36px 1fr}
+.step-right{padding:0 0 24px 12px}
+.fe-hash{display:none}
+.forensic-root{flex-direction:column;gap:6px}
+.fr-val{max-width:100%;text-align:left;font-size:7px}
+.exchange-meta{gap:6px}
+.final-section{padding:60px 20px 80px}
+.final-links{flex-direction:column;align-items:center}
+.btn-primary,.btn-secondary{width:100%;text-align:center;padding:14px 24px}
+.hero-cta{flex-direction:column;align-items:center;width:100%}
+.hero-cta .btn-primary,.hero-cta .btn-secondary{width:100%;text-align:center}
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<nav>
+  <a href="https://buildseal.io" class="nav-logo">&#9643; BUILDSEAL</a>
+  <a href="https://nym.iscproof.io" class="nav-link">Try Nym &#8594;</a>
+</nav>
+<section class="hero">
+  <div class="hero-eyebrow">Live Demo &#183; Cryptographic AI Evidence</div>
+  <h1 class="hero-claim">"The AI said this."<br><em>Now prove it.</em></h1>
+  <p class="hero-sub">This demo shows how a disputed AI answer can be verified through a sealed decision record.<br><br>This is not a screenshot. This is cryptographic proof.</p>
+  <div class="hero-cta">
+    <a href="#demo" class="btn-primary">Open the forensic record</a>
+    <a href="https://nym.iscproof.io" class="btn-secondary">Try live &#8594;</a>
+  </div>
+</section>
+<hr class="divider">
+<section class="section" id="demo">
+  <div class="section-label">Forensic Demo &#183; May 2026</div>
+  <h2 class="section-title">A single question.<br>An immutable record.</h2>
+  <p class="section-sub">Follow the evidence chain from input to cryptographic proof.</p>
+  <div class="steps">
+    <div class="step active reveal">
+      <div class="step-left"><div class="step-num">01</div><div class="step-line"></div></div>
+      <div class="step-right">
+        <div class="step-tag">The question</div>
+        <div class="step-title">A question was asked.</div>
+        <div class="step-desc">The input was received by Nym and immediately committed to the forensic event chain.</div>
+        <div class="exchange-box">
+          <div class="exchange-q"><span>USER &#8594;</span> What makes a BuildSeal record different from a regular AI chat log?</div>
+        </div>
+      </div>
+    </div>
+    <div class="step active reveal">
+      <div class="step-left"><div class="step-num">02</div><div class="step-line"></div></div>
+      <div class="step-right">
+        <div class="step-tag">The answer &#183; sealed</div>
+        <div class="step-title">Nym responded. The response was sealed before delivery.</div>
+        <div class="step-desc">Signed with Ed25519, timestamped via RFC 3161, committed to the ISCProof chain before the user received it.</div>
+        <div class="exchange-box">
+          <div class="exchange-a"><span>NYM &#8594;</span> A BuildSeal record is cryptographically sealed at generation &#8212; making it tamper-evident and independently verifiable through ISCProof. Regular chat logs can be edited, fabricated, or disputed without detection. BuildSeal records anchor decisions to immutable evidence chains for audit and compliance.</div>
+          <div class="exchange-meta">
+            <div class="exchange-badge confirmed">&#9643; CONFIRMED</div>
+            <div class="exchange-badge" title="The unique identifier for this sealed record">seal_1779463478745_pmdaa3wc <span style="color:#4a7c59;font-size:7px">&#183; record ID</span></div>
+            <div class="exchange-badge">Ed25519 &#183; RFC3161</div><div class="exchange-badge" style="color:var(--green);border:1px solid #1a3a22;padding:2px 6px">&#9632; SEALED BEFORE DELIVERY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="step active reveal">
+      <div class="step-left"><div class="step-num">03</div><div class="step-line"></div></div>
+      <div class="step-right">
+        <div class="step-tag">The verification</div>
+        <div class="step-title">Anyone can verify this record, independently.</div>
+        <div class="step-desc">The verify endpoint returns signature status, root hash match, and timestamp proof. Offline verification is also possible via the ISC pack.</div>
+        <div class="verify-box">
+          <div class="verify-status">
+            <div style="font-size:18px">&#9989;</div>
+            <div><div class="verify-label">VERIFIED</div><div class="verify-sub">This decision matches the original sealed record.</div></div>
+          </div>
+          <div class="verify-checks">
+            <div class="verify-check">This exchange existed at the recorded time.</div>
+            <div class="verify-check">The content has not changed since sealing.</div>
+            <div class="verify-check">The response was cryptographically signed before delivery.</div>
+            <div class="verify-check">The decision chain can be independently audited.</div>
+          </div>
+          <a href="https://buildseal.io/verify?id=seal_1779463478745_pmdaa3wc" target="_blank" class="verify-link">&#8599; Open live verification record</a>
+        </div>
+      </div>
+    </div>
+    <div class="step active reveal">
+      <div class="step-left"><div class="step-num">04</div><div class="step-line"></div></div>
+      <div class="step-right">
+        <div class="step-tag">The forensic trace</div>
+        <div class="step-title">Every step of the decision process was recorded.</div>
+        <div class="step-desc">Not just the answer &#8212; the full decision chain: what context the model received, which policies were enforced, why the response was allowed.</div>
+        <div class="forensic-box">
+          <div class="forensic-header"><span>FORENSIC DECISION TRACE</span><span style="color:var(--green)">5 events &#183; Merkle-linked</span></div>
+          <div class="forensic-events">
+            <div class="forensic-event"><span class="fe-num">01</span><span class="fe-type ui">USER INPUT</span><span class="fe-hash">a9292443a40a514fbba6a210c446fc363aefc880...</span></div>
+            <div class="forensic-event"><span class="fe-num">02</span><span class="fe-type cs">CONTEXT SNAPSHOT</span><span class="fe-hash">82732940013012402bfde5202418a1cf8b1412f6...</span></div>
+            <div class="forensic-event"><span class="fe-num">03</span><span class="fe-type pr">PROVIDER RESPONSE</span><span class="fe-hash">3ca9abfabf94be5f52e9c9cffc3c4f9970a60586...</span></div>
+            <div class="forensic-event"><span class="fe-num">04</span><span class="fe-type db">DECISION BASIS</span><span class="fe-hash">3bd49706e6260eb74f808af9288579ec78327442...</span></div>
+            <div class="forensic-event"><span class="fe-num">05</span><span class="fe-type fa">FINAL ANSWER</span><span class="fe-hash">1c7510fcf2e4b6470e824e89213b10e4ce42920a...</span></div>
+          </div>
+          <div class="forensic-root"><div style="display:flex;flex-direction:column;gap:4px;width:100%"><div style="display:flex;justify-content:space-between;align-items:center"><span class="fr-label">MERKLE ROOT</span><span class="fr-val">cfbaef92a39feabfbf4b507b3a9f47704eb31d562e573ed93325f68731c33061</span></div><div style="font-size:8px;color:#4a7c59;margin-top:4px">The integrity fingerprint of the full event chain. If any event was altered, this value changes.</div><div style="font-size:9px;color:#94a3b8;margin-top:6px;font-family:var(--sans)">This chain proves the decision process was not modified after sealing.</div></div></div>
+          <a href="https://buildseal.io/forensic/graph/6f8cb567-563f-4cfb-ae3d-cad848946ace" target="_blank" class="forensic-link">&#9654; Open interactive forensic trace</a>
+        </div>
+      </div>
+    </div>
+    <div class="step active reveal">
+      <div class="step-left"><div class="step-num">05</div></div>
+      <div class="step-right">
+        <div class="step-tag">The claim</div>
+        <div class="step-title">"The AI said this."</div>
+        <div class="step-desc">The claim may be disputed.<br>The evidence cannot be rewritten.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+<section class="final-section">
+  <p class="final-claim">The conversation may be disputed.<br><em style="color:var(--green)">The evidence cannot be rewritten.</em></p>
+  <p class="final-sub">Cryptographic evidence for AI decisions.</p><p style="font-size:9px;color:#4a7c59;margin-bottom:32px;font-style:normal">BuildSeal &#183; ISCProof &#183; Level 2 Production</p>
+  <div class="final-links">
+    <a href="https://nym.iscproof.io" class="btn-primary">Generate a verifiable AI decision</a>
+    <a href="https://buildseal.io/verify?id=seal_1779463478745_pmdaa3wc" target="_blank" class="btn-secondary">Inspect the live record</a>
+    <a href="https://buildseal.io/forensic/graph/6f8cb567-563f-4cfb-ae3d-cad848946ace" target="_blank" class="btn-secondary">View forensic trace</a>
+  </div>
+</section>
+<script>
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible")})},{threshold:.1});
+document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

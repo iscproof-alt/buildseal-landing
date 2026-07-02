@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forensic Decision Trace · BuildSeal</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+:root{--green:#00e87a;--green-dim:#00996b;--mono:"IBM Plex Mono",monospace;--sans:"IBM Plex Sans",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#060e09;color:#c8e6c9;font-family:var(--mono);min-height:100vh}
+.header{background:#060e09;border-bottom:1px solid #1a3a22;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:12px}
+.header-logo{color:var(--green);font-size:11px;font-weight:600;letter-spacing:.15em}
+.header-title{color:#94a3b8;font-size:10px;letter-spacing:.1em}
+.header-badge{background:#0a2a14;border:1px solid var(--green);color:var(--green);font-size:9px;padding:3px 10px;letter-spacing:.1em}
+.merkle-bar{background:#0a1f14;border-bottom:1px solid #1a3a22;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.merkle-label{color:#4a7c59;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+.merkle-value{color:var(--green);font-size:10px}
+.main{max-width:720px;margin:0 auto;padding:32px 24px 80px}
+.intro{background:#0a1f14;border:1px solid #1a3a22;padding:20px 24px;margin-bottom:32px;font-family:var(--sans)}
+.intro-title{color:#e2e8f0;font-size:13px;font-weight:600;margin-bottom:8px}
+.intro-sub{color:#94a3b8;font-size:11px;line-height:1.7}
+.timeline{position:relative}
+.timeline::before{content:"";position:absolute;left:19px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--green) 0%,#1a3a22 100%)}
+.event-node{position:relative;margin-bottom:4px;padding-left:48px}
+.event-dot{position:absolute;left:12px;top:16px;width:14px;height:14px;border-radius:50%;border:2px solid #1a3a22;background:#060e09;transition:all .2s}
+.event-node.active .event-dot{border-color:var(--green);background:#0a2a14;box-shadow:0 0 8px rgba(0,232,122,.3)}
+.event-connector{position:absolute;left:18px;top:30px;bottom:-4px;width:1px;background:#1a3a22}
+.event-node:last-child .event-connector{display:none}
+.event-card{background:#0a1f14;border:1px solid #1a3a22;cursor:pointer;transition:border-color .2s;overflow:hidden}
+.event-card:hover{border-color:#2a5a3a}.event-card:hover .event-chevron{color:var(--green)}.event-card:hover .event-type{opacity:.85}
+.event-node.active .event-card{border-color:var(--green)}
+.event-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.event-left{display:flex;align-items:center;gap:10px}
+.event-seq{color:#4a7c59;font-size:9px;min-width:16px}
+.event-type{font-size:11px;font-weight:600;letter-spacing:.05em}
+.user_input{color:#60a5fa}.CONTEXT_SNAPSHOT{color:#a78bfa}.PROVIDER_RESPONSE{color:#34d399}.DECISION_BASIS{color:#fbbf24}.final_answer{color:var(--green)}
+.event-origin{font-size:8px;color:#4a7c59;background:#060e09;padding:2px 6px;border:1px solid #1a3a22}
+.event-right{display:flex;align-items:center;gap:8px}
+.event-time{color:#4a7c59;font-size:8px}
+.event-chevron{color:#4a7c59;font-size:10px;transition:transform .2s}
+.event-node.active .event-chevron{transform:rotate(180deg);color:var(--green)}
+.event-body{display:none;padding:0 16px 16px;border-top:1px solid #1a3a22}
+.event-node.active .event-body{display:block}
+.event-body-section{margin-top:12px}
+.event-body-label{font-size:8px;color:#4a7c59;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.event-hash{font-size:9px;color:#34d399;word-break:break-all;line-height:1.6}
+.event-payload{background:#060e09;border:1px solid #1a3a22;padding:10px 12px;font-size:9px;color:#94a3b8;line-height:1.8;max-height:200px;overflow-y:auto}
+.basis-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #0d1f14;font-size:10px;color:#c8e6c9;font-family:var(--sans);line-height:1.5}
+.basis-item:last-child{border-bottom:none}
+.basis-check{color:var(--green);flex-shrink:0}
+.trigger-pill{display:inline-block;font-size:8px;padding:2px 6px;border:1px solid #1a3a22;color:#4a7c59;margin:2px}
+.trigger-pill.matched{border-color:#f87171;color:#f87171}
+.history-item{padding:8px 0;border-bottom:1px solid #0d1f14;font-family:var(--sans);font-size:10px;line-height:1.6}
+.history-item:last-child{border-bottom:none}
+.history-role{color:#4a7c59;font-size:8px;margin-bottom:3px;text-transform:uppercase}
+.history-content{color:#c8e6c9}
+.merkle-proof{margin-top:24px;background:#0a1f14;border:1px solid #1a3a22;padding:16px}
+.merkle-proof-title{font-size:9px;color:#4a7c59;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.merkle-leaf{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:9px}
+.merkle-leaf-seq{color:#4a7c59;min-width:20px}
+.merkle-leaf-hash{color:#34d399;word-break:break-all;flex:1}
+.merkle-leaf-type{color:#94a3b8;font-size:8px;min-width:140px}
+.merkle-arrow{color:#1a3a22;text-align:center;padding:2px 0;font-size:10px}
+.merkle-root-final{margin-top:8px;padding:10px 12px;background:#060e09;border:1px solid var(--green);display:flex;align-items:center;gap:8px}
+.merkle-root-label{color:var(--green);font-size:9px;min-width:80px}
+.merkle-root-val{color:var(--green);font-size:9px;word-break:break-all}
+.loading{text-align:center;padding:80px 24px;color:#4a7c59;font-size:11px}
+.loading-dot{animation:blink 1s infinite}
+.loading-dot:nth-child(2){animation-delay:.2s}
+.loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+@media(max-width:600px){
+.main{padding:16px 12px 60px}
+.event-header{flex-wrap:wrap;gap:6px}
+.fe-hash{display:none}
+.merkle-leaf{flex-wrap:wrap}
+.merkle-leaf-hash{font-size:7px;word-break:break-all;min-width:0;flex:1 1 100%}
+.merkle-leaf-type{min-width:0;font-size:7px}
+.fr-val{font-size:7px;max-width:60%}
+.event-payload{font-size:8px}
+.forensic-root{flex-direction:column;gap:6px}
+.fr-val{max-width:100%;text-align:left}
+.header{padding:12px 16px}
+.merkle-bar{padding:10px 16px;gap:8px}
+}
+.error{text-align:center;padding:80px 24px;color:#f87171;font-size:11px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">&#9643; BUILDSEAL</div>
+    <span style="color:#1a3a22">&#183;</span>
+    <div class="header-title">FORENSIC DECISION TRACE</div>
+  </div>
+  <div class="header-badge" id="header-status">LOADING</div>
+</div>
+<div class="merkle-bar" id="merkle-bar" style="display:none">
+  <span class="merkle-label">Merkle Root</span>
+  <span class="merkle-value" id="merkle-root-val">-</span>
+  <span style="color:#1a3a22">&#183;</span>
+  <span style="color:#94a3b8;font-size:9px" id="merkle-count">- events</span>
+  <span style="color:#1a3a22">&#183;</span>
+  <span style="color:#94a3b8;font-size:9px" id="merkle-sealed">sealed -</span>
+</div>
+<div class="main">
+  <div id="loading" class="loading">Retrieving forensic record<span class="loading-dot">.</span><span class="loading-dot">.</span><span class="loading-dot">.</span></div>
+  <div id="error" class="error" style="display:none">Graph not found or unavailable.</div>
+  <div id="content" style="display:none">
+    <div class="intro">
+      <div class="intro-title">Forensic Decision Trace</div>
+      <div class="intro-sub">Every step of the AI decision process, from input receipt to final sealing. Each event is cryptographically linked. The Merkle root binds all events into a single verifiable proof.</div>
+    </div>
+    <div class="timeline" id="timeline"></div>
+    <div class="merkle-proof" id="merkle-proof"></div>
+  </div>
+</div>
+<script>
+const API="https://buildseal-api-production-3ca5.up.railway.app";
+const LABELS={user_input:"USER INPUT",CONTEXT_SNAPSHOT:"CONTEXT SNAPSHOT",PROVIDER_RESPONSE:"PROVIDER RESPONSE",DECISION_BASIS:"DECISION BASIS",final_answer:"FINAL ANSWER"};
+const DESCS={user_input:"The user message was received and sealed at this point.",CONTEXT_SNAPSHOT:"The model input context was captured — what the AI was shown before generating.",PROVIDER_RESPONSE:"The raw response from the LLM provider, before any policy filtering.",DECISION_BASIS:"Policy enforcement record — which rules were checked and why this response was allowed.",final_answer:"The final delivered response, sealed with its cryptographic hash."};
+function rPayload(e){const p=e.payload;if(!p)return'<div class="event-payload">No payload.</div>';if(e.event_type==="user_input")return`<div class="event-payload">${p.q||"-"}</div>`;if(e.event_type==="CONTEXT_SNAPSHOT"){const s=p.history_snapshot||[];if(!s.length)return'<div class="event-payload">No prior context. First exchange in session.</div>';return`<div class="event-payload">${s.map(m=>`<div class="history-item"><div class="history-role">${m.role}</div><div class="history-content">${m.content||"-"}</div></div>`).join("")}</div>`;}if(e.event_type==="PROVIDER_RESPONSE")return`<div class="event-payload"><div style="margin-bottom:8px"><span style="color:#4a7c59">model:</span> ${p.model||"-"}</div><div style="margin-bottom:8px"><span style="color:#4a7c59">scope:</span> <span style="color:${p.scope==="CONFIRMED"?"#34d399":"#f87171"}">${p.scope||"-"}</span></div><div><span style="color:#4a7c59">response:</span> ${p.answer?p.answer.slice(0,400)+(p.answer.length>400?"...":""):"-"}</div></div>`;if(e.event_type==="DECISION_BASIS"){const b=p.basis||[];const ch=p.boundary_triggers_checked||[];const ma=p.triggers_matched||[];return`<div style="margin-bottom:10px">${b.map(x=>`<div class="basis-item"><span class="basis-check">&#10003;</span><span>${x}</span></div>`).join("")}</div><div class="event-body-label">Boundary triggers checked</div><div style="margin-bottom:4px">${ch.map(t=>`<span class="trigger-pill ${ma.includes(t)?"matched":""}">${t}</span>`).join("")}</div><div style="margin-top:8px;font-size:9px;color:${p.hard_boundary_hit?"#f87171":"#34d399"}">${p.hard_boundary_hit?"&#9888; Hard boundary triggered":"&#10003; No hard boundary triggered"} &#183; Policy: ${p.policy_version||"-"}</div>`;}if(e.event_type==="final_answer")return`<div class="event-payload"><div style="margin-bottom:8px"><span style="color:#4a7c59">scope:</span> <span style="color:${p.scope==="CONFIRMED"?"#34d399":"#f87171"}">${p.scope||"-"}</span></div><div style="margin-bottom:8px"><span style="color:#4a7c59">preview:</span> ${p.answer_preview||"-"}</div><div style="word-break:break-all"><span style="color:#4a7c59">answer_hash:</span> <span style="color:#34d399">${p.answer_hash||"-"}</span></div></div>`;return`<div class="event-payload"><pre style="white-space:pre-wrap;font-size:8px">${JSON.stringify(p,null,2)}</pre></div>`;}
+function rEvent(e,i,total){const tc=e.event_type.replace(/[^a-zA-Z_]/g,"");const label=LABELS[e.event_type]||e.event_type;const desc=DESCS[e.event_type]||"";const isLast=i===total-1;return`<div class="event-node" id="node-${i}"><div class="event-dot"></div>${!isLast?"<div class=\"event-connector\"></div>":""}<div class="event-card" onclick="toggle(${i})"><div class="event-header"><div class="event-left"><span class="event-seq">${String(e.seq||i+1).padStart(2,"0")}</span><span class="event-type ${tc}">${label}</span><span class="event-origin">${e.origin||"system"}</span></div><div class="event-right"><span class="event-time">${e.created_at?new Date(e.created_at).toISOString().slice(11,19)+" UTC":"-"}</span><span class="event-chevron">&#9660;</span></div></div><div class="event-body"><div class="event-body-section"><div class="event-body-label">What this event records</div><div style="font-family:var(--sans);font-size:10px;color:#94a3b8;line-height:1.6;margin-bottom:12px">${desc}</div></div><div class="event-body-section"><div class="event-body-label">Payload</div>${rPayload(e)}</div><div class="event-body-section" style="margin-top:12px"><div class="event-body-label">Event hash</div><div class="event-hash">${e.event_hash||"-"}</div></div>${e.prev_hash?`<div class="event-body-section"><div class="event-body-label">Previous hash</div><div class="event-hash" style="color:#4a7c59">${e.prev_hash}</div></div>`:""}</div></div></div>`;}
+function rMerkle(evs,root){let h='<div class="merkle-proof-title">Merkle Root Construction</div>';evs.forEach((e,i)=>{h+=`<div class="merkle-leaf"><span class="merkle-leaf-seq">${String(e.seq||i+1).padStart(2,"0")}</span><span class="merkle-leaf-type">${LABELS[e.event_type]||e.event_type}</span><span class="merkle-leaf-hash">${e.event_hash||"-"}</span></div>`;if(i<evs.length-1)h+='<div class="merkle-arrow">&#8595; hash(prev || current)</div>';});h+=`<div class="merkle-root-final"><span class="merkle-root-label">MERKLE ROOT</span><span class="merkle-root-val">${root}</span></div>`;return h;}
+function toggle(i){const n=document.getElementById("node-"+i);const a=n.classList.contains("active");document.querySelectorAll(".event-node").forEach(x=>x.classList.remove("active"));if(!a)n.classList.add("active");}
+async function load(){const parts=window.location.pathname.split("/");const gid=parts[parts.length-1]||new URLSearchParams(window.location.search).get("id");if(!gid||gid==="forensic-graph.html"){document.getElementById("loading").style.display="none";document.getElementById("error").style.display="block";return;}try{const r=await fetch(`${API}/forensic/graph/${gid}`);if(!r.ok)throw new Error();const d=await r.json();document.getElementById("loading").style.display="none";document.getElementById("header-status").textContent="&#10003; VERIFIED";document.getElementById("merkle-bar").style.display="flex";document.getElementById("merkle-root-val").textContent=d.merkle_root?d.merkle_root.slice(0,16)+"..."+d.merkle_root.slice(-8):"-";document.getElementById("merkle-count").textContent=`${d.event_count} events`;document.getElementById("merkle-sealed").textContent=`sealed ${d.sealed_at?new Date(d.sealed_at).toISOString().slice(0,10):"-"}`;const evs=d.events||[];document.getElementById("timeline").innerHTML=evs.map((e,i)=>rEvent(e,i,evs.length)).join("");document.getElementById("merkle-proof").innerHTML=rMerkle(evs,d.merkle_root);document.getElementById("content").style.display="block";if(evs.length)toggle(0);}catch(ex){document.getElementById("loading").style.display="none";document.getElementById("error").style.display="block";document.getElementById("header-status").textContent="ERROR";document.getElementById("header-status").style.color="#f87171";}}
+load();
+</script>
+</body>
+</html>
