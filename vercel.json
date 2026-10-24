@@ -24,5 +24,10 @@
       "source": "/ecosystem",
       "destination": "/ecosystem.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/seal-decision.js": {
+      "maxDuration": 30
+    }
+  }
 }

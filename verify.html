@@ -1,348 +1,183 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>BuildSeal — Verify</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg:#080c10;--bg2:#0d1117;--bg3:#111820;--border:#1e2d3d;--border2:#243040;
-    --green:#00e676;--green-dim:rgba(0,230,118,0.08);--green-dim2:rgba(0,230,118,0.15);
-    --red:#ff5252;--yellow:#ffd740;
-    --text:#e8f0fe;--text2:#8899aa;--text3:#556677;
-    --mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10132a"><title>BuildSeal — Verify a record</title><meta name="description" content="Inspect a service-reported BuildSeal record and its individual verification checks."><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+
+/* Layout: compact dark header carrying the title, then two tool cards on a light page. Seal is the larger card, Verify sits beside it and stacks under it on phones. Colours match the new buildseal.io page: teal means a match, rose a mismatch, amber a preview notice. */
+:root {
+  --bg: #f5f6fb;
+  --surface: #ffffff;
+  --ink: #12152b;
+  --muted: #50567a;
+  --line: #d3d8ee;
+  --btn-bg: #12152b;
+  --btn-fg: #f5f6fb;
+  --res: #2d5be3; --res-t: #e4eaff;
+  --ver: #0d8a73; --ver-t: #d9f4ed;
+  --syn: #8f5600; --syn-t: #fcefd3;
+  --rev: #c63a54; --rev-t: #fde2e7;
+  --hero-bg: #10132a;
+  --hero-ink: #f1f2ff;
+  --hero-muted: #a7acd8;
+  --hero-line: rgba(255,255,255,0.16);
+  --h-res: #7da2ff; --h-ver: #3fd6b8; --h-syn: #f6bd55;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0e1f; --surface: #141831; --ink: #e9ebff; --muted: #a0a6d0; --line: #272c52;
+    --btn-bg: #e9ebff; --btn-fg: #0b0e1f;
+    --res: #7da2ff; --res-t: #1a2552; --ver: #3fd6b8; --ver-t: #0f3430;
+    --syn: #f6bd55; --syn-t: #3a2b0c; --rev: #ff8396; --rev-t: #3d1822;
+    color-scheme: dark;
   }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
-  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,230,118,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,230,118,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,12,16,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-  .nav-logo{font-family:var(--mono);font-size:1em;color:var(--green);text-decoration:none}
-  .nav-logo span{color:var(--text2)}
-  .nav-right{display:flex;align-items:center;gap:20px}
-  .nav-link{color:var(--text3);text-decoration:none;font-size:0.85em;transition:color 0.2s}
-  .nav-link:hover{color:var(--text2)}
-  .nav-badge{font-family:var(--mono);font-size:0.68em;color:var(--green);border:1px solid rgba(0,230,118,0.3);padding:3px 9px;border-radius:20px}
-  main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px}
-  .loading{display:flex;flex-direction:column;align-items:center;gap:16px}
-  .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading-text{font-family:var(--mono);font-size:0.78em;color:var(--text3);letter-spacing:1px}
-  .card{width:100%;max-width:640px;opacity:0;animation:fadeUp 0.5s ease forwards}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-  .verdict-header{background:var(--bg2);border:1px solid var(--border);border-radius:14px 14px 0 0;padding:36px 32px 28px;text-align:center;position:relative;overflow:hidden}
-  .verdict-header::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.4s}
-  .verdict-header.valid::before{background:radial-gradient(ellipse at 50% 0%,rgba(0,230,118,0.09) 0%,transparent 70%);opacity:1}
-  .verdict-header.invalid::before{background:radial-gradient(ellipse at 50% 0%,rgba(255,82,82,0.09) 0%,transparent 70%);opacity:1}
-  .verdict-icon{font-size:2.6em;margin-bottom:10px;display:block}
-  .verdict-label{font-family:var(--mono);font-size:1.3em;font-weight:700;letter-spacing:3px;margin-bottom:5px}
-  .verdict-label.valid{color:var(--green)}
-  .verdict-label.invalid{color:var(--red)}
-  .verdict-label.pending{color:var(--yellow)}
-  .verdict-sub{color:var(--text2);font-size:0.88em;font-weight:300;margin-bottom:12px}
-  .seal-id-chip{display:inline-block;font-family:var(--mono);font-size:0.68em;color:var(--text3);background:var(--bg3);border:1px solid var(--border2);padding:4px 12px;border-radius:20px;word-break:break-all}
-  .seal-info{background:var(--bg2);border:1px solid var(--border);border-top:none;padding:0 32px}
-  .info-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);gap:16px}
-  .info-row:last-child{border-bottom:none}
-  .info-label{font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0}
-  .info-value{font-family:var(--mono);font-size:0.78em;color:var(--text);text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
-  .info-value.green{color:var(--green)}
-  .info-value.muted{color:var(--text2)}
-  .hash-display{word-break:break-all}
-  .copy-btn{flex-shrink:0;background:var(--bg3);border:1px solid var(--border2);color:var(--text3);border-radius:4px;padding:3px 8px;font-size:0.65em;cursor:pointer;font-family:var(--mono);transition:all 0.2s;white-space:nowrap}
-  .copy-btn:hover{color:var(--green);border-color:rgba(0,230,118,0.3);background:var(--green-dim)}
-  .steps-section{background:var(--bg2);border:1px solid var(--border);border-top:none;padding:20px 32px}
-  .steps-label{font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
-  .steps-grid{display:flex;flex-direction:column;gap:8px}
-  .step{display:flex;align-items:center;gap:12px;font-size:0.84em;padding:6px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border)}
-  .step-tick{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75em;flex-shrink:0;font-weight:700}
-  .step.ok .step-tick{background:rgba(0,230,118,0.15);color:var(--green);border:1px solid rgba(0,230,118,0.3)}
-  .step.fail .step-tick{background:rgba(255,82,82,0.15);color:var(--red);border:1px solid rgba(255,82,82,0.3)}
-  .step.warn .step-tick{background:rgba(255,215,64,0.1);color:var(--yellow);border:1px solid rgba(255,215,64,0.25)}
-  .step.ok{color:var(--text)}
-  .step.fail{color:var(--red)}
-  .step.warn{color:var(--text2)}
-  .step-detail{margin-left:auto;font-family:var(--mono);font-size:0.72em;color:var(--text3)}
-  .actions-section{background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;padding:20px 32px;display:flex;gap:10px;flex-wrap:wrap}
-  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;font-family:var(--sans);font-size:0.85em;font-weight:600;cursor:pointer;text-decoration:none;border:none;transition:all 0.2s}
-  .btn-primary{background:var(--green-dim2);color:var(--green);border:1px solid rgba(0,230,118,0.25)}
-  .btn-primary:hover{background:rgba(0,230,118,0.25)}
-  .btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
-  .btn-secondary:hover{color:var(--text);border-color:var(--text3)}
-  .not-found{text-align:center;padding:60px 24px}
-  .not-found-icon{font-size:3em;margin-bottom:16px}
-  .not-found h2{font-family:var(--mono);font-size:1.1em;color:var(--red);margin-bottom:8px;letter-spacing:1px}
-  .not-found p{color:var(--text3);font-size:0.9em;font-weight:300}
-  @media(max-width:600px){nav{padding:14px 20px}.verdict-header,.seal-info,.steps-section,.actions-section{padding-left:20px;padding-right:20px}}
-</style>
-</head>
-<body>
-<nav>
-  <a class="nav-logo" href="https://buildseal.io">Build<span>Seal</span></a>
-  <div class="nav-right">
-    <a class="nav-link" href="https://buildseal.io">Seal a document</a>
-    <span class="nav-badge">ISCProof v5</span>
+}
+:root[data-theme="dark"] {
+  --bg: #0b0e1f; --surface: #141831; --ink: #e9ebff; --muted: #a0a6d0; --line: #272c52;
+  --btn-bg: #e9ebff; --btn-fg: #0b0e1f;
+  --res: #7da2ff; --res-t: #1a2552; --ver: #3fd6b8; --ver-t: #0f3430;
+  --syn: #f6bd55; --syn-t: #3a2b0c; --rev: #ff8396; --rev-t: #3d1822;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6; margin: 0; }
+a { color: inherit; }
+button, input { font: inherit; color: inherit; }
+p { margin: 0; }
+:focus-visible { outline: 2px solid var(--res); outline-offset: 3px; }
+.head :focus-visible { outline-color: var(--h-syn); }
+
+.wrap { max-width: 1040px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* header */
+.head { background: var(--hero-bg); color: var(--hero-ink); }
+.top { padding-block: 20px; }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em; }
+.top nav { display: flex; align-items: center; gap: 18px; font-size: 14px; }
+.top nav a { text-decoration: none; color: var(--hero-muted); }
+.top nav a:hover { color: var(--hero-ink); }
+.top nav a.pill { color: var(--hero-ink); border: 1px solid var(--hero-line); border-radius: 6px; padding: 8px 14px; font-weight: 500; }
+.top nav a.pill:hover { background: rgba(255,255,255,0.08); }
+.intro { padding-block: 40px 56px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--h-ver); margin: 0 0 14px; }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; line-height: 1.08; margin: 0; }
+h1 { font-size: clamp(2.1rem, 5.2vw, 3.4rem); font-weight: 700; letter-spacing: -0.03em; max-width: 16ch; }
+h2 { font-size: 1.5rem; font-weight: 650; letter-spacing: -0.015em; }
+.lede { margin-top: 18px; max-width: 54ch; color: var(--hero-muted); font-size: 1.08rem; }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 0; padding: 0; list-style: none; }
+.badges li { font-family: var(--font-mono); font-size: 12px; padding: 6px 10px; border: 1px solid var(--hero-line); border-radius: 999px; color: var(--hero-muted); }
+
+/* preview notice */
+.notice { margin-top: 28px; background: var(--syn-t); border-radius: 8px; padding: 14px 18px; font-size: 14.5px; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: baseline; }
+.notice b { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--syn); }
+
+/* cards */
+.tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 20px; padding-block: 24px 64px; align-items: start; }
+.tools > * { min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 26px; display: grid; gap: 20px; }
+.card .sub { color: var(--muted); font-size: 15px; margin-top: 6px; }
+
+.drop { display: grid; gap: 6px; justify-items: center; text-align: center; padding: 34px 20px; border: 2px dashed var(--line); border-radius: 10px; cursor: pointer; background: var(--bg); position: relative; transition: border-color .15s, background .15s; }
+.drop:hover, .drop.over, .drop:focus-within { border-color: var(--res); background: var(--res-t); }
+.drop input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.drop .big { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
+.drop .small { font-size: 13.5px; color: var(--muted); }
+.drop svg { color: var(--res); margin-bottom: 4px; }
+.drop.compact { padding: 24px 20px; }
+
+.btn { display: inline-block; font: 600 14.5px/1 var(--font-body); padding: 13px 18px; border-radius: 6px; text-decoration: none; border: 1.5px solid var(--btn-bg); background: var(--btn-bg); color: var(--btn-fg); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.ghost:hover { background: var(--bg); }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.tag { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 8px; }
+.gives { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; font-size: 15px; }
+.gives li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; }
+.gives li::before { content: ""; width: 9px; height: 9px; margin-top: 8px; border-radius: 50%; background: var(--ver); }
+
+/* results */
+.out { display: grid; gap: 14px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; width: fit-content; }
+.chip i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.chip.ok { background: var(--ver-t); color: var(--ver); }
+.chip.bad { background: var(--rev-t); color: var(--rev); }
+.chip.wait { background: var(--res-t); color: var(--res); }
+.res { border: 1px solid var(--line); border-radius: 8px; padding: 18px; display: grid; gap: 12px; }
+.res.ok { border-color: var(--ver); } .res.bad { border-color: var(--rev); }
+dl { margin: 0; }
+.kv { display: grid; grid-template-columns: minmax(110px, 34%) 1fr; gap: 2px 14px; padding-block: 8px; border-bottom: 1px dashed var(--line); font-size: 14.5px; }
+.kv:last-child { border-bottom: 0; }
+.kv dt { color: var(--muted); font-size: 13.5px; }
+.kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.kv dd.mono, .mono { font-family: var(--font-mono); font-size: 13px; }
+.kv dd.na { color: var(--muted); }
+details { border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; }
+summary { cursor: pointer; font-weight: 500; font-size: 14.5px; }
+details[open] summary { margin-bottom: 8px; }
+.note { font-size: 13.5px; color: var(--muted); }
+.or { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 14px; font-weight: 500; }
+.field .inline { display: flex; flex-wrap: wrap; gap: 10px; }
+.field input[type="text"] { flex: 1 1 200px; min-width: 0; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 6px; background: var(--bg); font-family: var(--font-mono); font-size: 14px; }
+.field input[type="text"]:focus-visible { border-color: var(--res); outline: none; box-shadow: 0 0 0 3px var(--res-t); }
+
+.foot { padding-block: 24px 40px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; }
+.foot nav { display: flex; flex-wrap: wrap; gap: 6px 20px; }
+
+@media (max-width: 560px) {
+  .card { padding: 20px; }
+  .btn { flex: 1 1 100%; text-align: center; }
+  .intro { padding-block: 28px 40px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .drop { transition: none; } }
+
+[hidden]{display:none!important}.skip{position:absolute;left:-10000px}.skip:focus{left:12px;top:12px;background:#fff;padding:12px;z-index:20}
+.verify-wrap{padding-block:32px 64px}.lookup-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.45fr);gap:24px;align-items:start}.lookup-description,.verification-card{min-width:0;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:28px}
+.outline-tag{display:inline-block;font:12px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--res);margin-bottom:18px}.lookup-description h3{font-family:var(--font-display);font-size:1.7rem;line-height:1.15;margin:0 0 18px}.lookup-description>p{color:var(--muted);font-size:15px}.lookup-form{margin-top:28px}.lookup-form label{display:block;font-weight:600;margin-bottom:8px}.input-row{display:flex;gap:10px;flex-wrap:wrap}.input-row input{flex:1 1 170px;min-width:0;width:100%;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);padding:13px;font:14px var(--font-mono)}.button{border-radius:6px;padding:13px 18px;font:600 14px var(--font-body);cursor:pointer;border:1px solid var(--btn-bg);background:var(--btn-bg);color:var(--btn-fg)}.button:disabled{opacity:.6;cursor:wait}.text-button{background:none;border:0;text-decoration:underline;text-underline-offset:4px;cursor:pointer;color:var(--res);font-size:14px;padding:18px 0}.lookup-scope{border-top:1px solid var(--line);padding-top:18px;margin-top:16px;font-size:13px!important}.form-error{color:var(--rev);margin-top:10px;font-size:13px}
+.verification-top{display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;gap:12px}.small-cap{font:11px var(--font-mono);text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}.result-status{display:inline-flex;border-radius:999px;padding:6px 10px;background:var(--res-t);color:var(--res);font:12px var(--font-mono)}.result-status[data-state=valid]{color:var(--ver);background:var(--ver-t)}.result-status[data-state=invalid],.result-status[data-state=error]{color:var(--rev);background:var(--rev-t)}.result-status[data-state=incomplete]{color:var(--syn);background:var(--syn-t)}.result-description{font-size:14px;color:var(--muted);margin-top:18px}.record-fields{margin:24px 0}.record-fields>div{display:grid;grid-template-columns:minmax(100px,.8fr) minmax(0,1.2fr);gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}.record-fields dt{font-size:13px;color:var(--muted)}.record-fields dd{font:13px/1.6 var(--font-mono);margin:0;overflow-wrap:anywhere;min-width:0}.check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.check-grid>div{border:1px solid var(--line);border-top:3px solid var(--res);padding:14px;border-radius:6px;display:grid;gap:9px;font-size:13px}.check-grid>div:nth-child(2){border-top-color:var(--ver)}.check-grid>div:nth-child(3){border-top-color:var(--syn)}.check-grid>div:nth-child(4){border-top-color:var(--rev)}.check-grid strong{font:12px var(--font-mono);color:var(--muted)}.check-grid strong[data-state=pass]{color:var(--ver)}.check-grid strong[data-state=fail]{color:var(--rev)}.technical-details{margin-top:24px}.technical-details p{margin-top:14px;font-size:13px;color:var(--muted)}.mono{overflow-wrap:anywhere}.technical-details pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0c0f22;color:#dde1ff;padding:16px;border-radius:6px;font:12px/1.6 var(--font-mono);margin-top:16px}.verify-boundary{padding:22px 0;max-width:80ch;font-size:13px;color:var(--muted)}
+@media(max-width:800px){.lookup-grid{grid-template-columns:minmax(0,1fr)}}@media(max-width:420px){.lookup-description,.verification-card{padding:20px}.record-fields>div{grid-template-columns:1fr;gap:4px}.check-grid{gap:8px}.check-grid>div{padding:11px}.top nav{flex-wrap:wrap}}
+</style><script type="module" src="/buildseal.js"></script></head><body data-page="verify"><a class="skip" href="#main">Skip to content</a><div class="head">
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="/" aria-label="BuildSeal home">
+        <svg width="34" height="22" viewBox="0 0 34 22" aria-hidden="true"><path d="M5 11h24" stroke="#a7acd8" stroke-width="2"/><circle cx="5" cy="11" r="4.5" fill="#7da2ff"/><circle cx="17" cy="11" r="4.5" fill="#3fd6b8"/><circle cx="29" cy="11" r="4.5" fill="#f6bd55"/></svg>
+        BuildSeal
+      </a>
+      <nav aria-label="Main">
+        <a href="/">Home</a>
+        <a class="pill" href="/seal">Seal a file</a>
+      </nav>
+    </div>
+  </header>
+  <div class="wrap intro"><p class="eyebrow">Verify / hosted record lookup</p><h1>Inspect the evidence.<br>Read the actual checks.</h1><p class="lede">Enter a Proof ID to inspect what the service reports about the record. No package is independently verified by this browser.</p><ul class="badges"><li>Root match</li><li>Signature</li><li>Timestamp</li><li>Payload binding</li></ul></div></div><main class="wrap verify-wrap" id="main"><section id="record">  <div class="lookup-grid"><div class="lookup-description"><span class="outline-tag">Record lookup</span><h3>One record.<br>Reported checks and verification scope.</h3><p>Enter a Proof ID or load the public example. The result identifies the recorded outcome and separates the service’s integrity, signature, timestamp and payload-binding checks from content-file and strict verification.</p>
+    <form class="lookup-form" action="/verify" method="get"><label for="proof-id">Proof ID</label><div class="input-row"><input id="proof-id" name="id" type="text" placeholder="seal_…" maxlength="200" autocomplete="off" spellcheck="false" required><button class="button primary" type="submit">Check record <span aria-hidden="true">→</span></button></div><p class="form-error" id="lookup-error" role="alert" hidden></p></form>
+    <button class="text-button" type="button" data-load-example>Load the public example <span aria-hidden="true">↗</span></button>
+    <p class="lookup-scope"><strong>Hosted lookup, not browser verification.</strong> This page reads a service response. A timestamp being present is not the same as a timestamp being verified.</p>
   </div>
-</nav>
-<main id="main">
-  <div class="loading"><div class="spinner"></div><div class="loading-text">VERIFYING SEAL...</div></div>
-</main>
-<script>
-const API='https://buildseal-api-production-3ca5.up.railway.app';
+  <article class="verification-card" id="verification-card" aria-busy="false"><div class="verification-top"><span class="small-cap">Hosted verification result</span><span class="result-status" id="result-status" data-state="idle" role="status" aria-live="polite">Not checked yet</span></div><p id="result-description" class="result-description">Load a record to see the result returned by the service.</p>
+    <dl class="record-fields"><div><dt>Proof ID</dt><dd id="record-id">—</dd></div><div><dt>Recorded decision</dt><dd id="record-decision">—</dd></div><div><dt>Recorded policy version</dt><dd id="record-policy">—</dd></div><div><dt>Record date</dt><dd id="record-date">—</dd></div></dl>
+    <div class="check-grid" aria-label="Checks reported by the service"><div><span>Root match</span><strong id="check-root" data-state="idle">Not reported</strong></div><div><span>Signature check</span><strong id="check-signature" data-state="idle">Not reported</strong></div><div><span>TSA verification</span><strong id="check-tsa" data-state="idle">Not reported</strong></div><div><span>Payload binding</span><strong id="check-payload" data-state="idle">Not reported</strong></div>
+<div><span>Content-file hash</span><strong id="check-content" data-state="idle">Not reported</strong><small>Not compared means the verifier was not given the content file; a hash mismatch causes verification to fail.</small></div>
+<div><span>Strict verification</span><strong id="check-strict" data-state="idle">Not reported</strong><small>Requires matching content, a trusted signer and verified TSA.</small></div></div>
+    <details class="technical-details"><summary>Inspect reported verification fields</summary><p>These fields are service-reported checks, not a new cryptographic verification performed by this page. Signature validity alone does not establish issuer trust. The record date alone is not independently verified time. Only selected verification metadata is displayed; personal input details and raw payloads are omitted from this view.</p><p id="result-source" class="mono"></p><p class="mono">Root hash: <span id="record-root">—</span></p><pre id="result-json">No result loaded.</pre></details>
+  </article></div>
+</section><p class="verify-boundary">A passing service result does not establish that the decision was correct, the inputs were true or the signer’s identity is independently certified. A date field alone is not trusted time. <a href="/#scope">Read the scope →</a></p></main><footer class="foot">
+  <div class="wrap">
+    <p>BuildSeal · Inspect the applicable record checks.</p>
+    <nav aria-label="Footer">
+      <a href="/verify">Verify online</a>
+      <a href="https://iscproof.io">ISCProof</a>
+      <a href="https://github.com/iscproof-alt/buildseal-landing">GitHub</a><span>&copy; 2026 BuildSeal</span>
+    </nav>
+  </div>
+</footer>
 
-function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-function humanTime(iso){
-  if(!iso)return null;
-  try{return new Date(iso).toLocaleString('en-GB',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' UTC';}catch(e){return iso;}
-}
-
-function shortHash(h,n=8){
-  if(!h)return'';
-  if(h.length<=n*2+1)return'<span class="hash-display">'+esc(h)+'</span>';
-  return'<span class="hash-display">'+esc(h.slice(0,n))+'&hellip;'+esc(h.slice(-n))+'</span>';
-}
-
-function copyText(text,btn){
-  navigator.clipboard.writeText(text).then(()=>{
-    const orig=btn.textContent;btn.textContent='✓ copied';btn.style.color='var(--green)';
-    setTimeout(()=>{btn.textContent=orig;btn.style.color='';},1500);
-  });
-}
-
-function step(cls,label,detail){
-  const tick=cls==='ok'?'✓':cls==='fail'?'✗':'!';
-  return'<div class="step '+cls+'"><div class="step-tick">'+tick+'</div>'+esc(label)+(detail?'<span class="step-detail">'+esc(detail)+'</span>':'')+'</div>';
-}
-
-const id=new URLSearchParams(window.location.search).get('id')||window.location.pathname.split('/').filter(Boolean).pop();
-
-if(!id||id==='release'||id==='verify.html'){
-  document.getElementById('main').innerHTML='<div class="not-found"><div class="not-found-icon">🔍</div><h2>NO SEAL ID</h2><p>No seal ID provided in the URL.</p></div>';
-}else{
-  fetch(API+'/verify/'+encodeURIComponent(id))
-    .then(r=>{if(!r.ok)throw new Error('not_found');return r.json();})
-    .then(d=>{
-      const verdict=d.verdict||'PENDING';
-      const isValid=verdict==='VALID',isInvalid=verdict==='INVALID';
-      const verdictClass=isValid?'valid':isInvalid?'invalid':'pending';
-      const verdictIcon=isValid?'✅':isInvalid?'❌':'⏳';
-      const verdictLabel=isValid?'VERIFIED':isInvalid?'INVALID':'PENDING';
-      const verdictSub=isValid?'This decision matches the original sealed record.':isInvalid?'Verification failed':'Processing';
-
-      const tsa=d.tsa||null;
-      const tsaPresent=!!(tsa&&tsa.present===true);
-      const tsaTime=tsaPresent&&tsa.time?humanTime(tsa.time):null;
-      const tsaProvider=esc((tsa&&tsa.provider?tsa.provider:'')||'freetsa.org');
-
-      const vd=d.verify_detail||{};
-      const rootMatch=vd.root_match===true;
-      const sigValid=vd.sig_valid===true;
-      const tsaVerified=vd.tsa_verified===true;
-      const packVerNum=Number((vd&&vd.pack_version)||5)||5;
-
-      const sealedAt=d.created_at?humanTime(d.created_at):'—';
-      const root=(vd&&vd.root)||d.root||d.pack_hash||null;
-      const artifactHash=d.artifact_hash||null;
-      const fingerprint=(vd.fields&&vd.fields.fingerprint)||null;
-      const evidenceUrl='https://buildseal-api-production-3ca5.up.railway.app/pack/'+esc(d.seal_id||id);
-
-      const tsaRow=tsaPresent&&tsaTime
-        ?'✅ '+esc(tsaTime)+' &middot; '+tsaProvider
-        :'⚠️ No trusted timestamp — document integrity intact, time not anchored';
-
-      let html='<div class="card">';
-
-      // Verdict header
-      html+='<div class="verdict-header '+verdictClass+'">';
-      html+='<span class="verdict-icon">'+verdictIcon+'</span>';
-      html+='<div class="verdict-label '+verdictClass+'">'+verdictLabel+'</div>';
-      html+='<div class="verdict-sub">'+verdictSub+'</div>';
-      html+='<div class="seal-id-chip">'+esc(d.seal_id||id)+'</div>';
-      html+='</div>';
-
-      if(isValid){
-        const sealDate=d.created_at?new Date(d.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'';
-        html+='<div style="background:#061410;border:1px solid #1a3a22;border-top:none;padding:20px 32px;text-align:left;font-family:var(--sans)">';
-        html+='<div style="color:#e2e8f0;font-size:1em;line-height:1.8;margin-bottom:16px">';
-        html+='This exchange was cryptographically sealed at the moment it was generated.<br>';
-        html+='<span style="color:#94a3b8;font-size:0.9em">The content below has not been modified since creation. The seal, signature, and timestamp were recorded before delivery — not after.</span>';
-        html+='</div>';
-        html+='<div style="border-top:1px solid #1a3a22;padding-top:16px">';
-        html+='<div style="font-family:var(--mono);font-size:9px;color:#00996b;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px">What was verified</div>';
-        html+='<div style="color:#e2e8f0;font-size:0.9em;line-height:2">&#10003; This exchange existed at the recorded time.<br>&#10003; The content has not changed since sealing.<br>&#10003; The response was cryptographically signed before delivery.<br>&#10003; The decision chain can be independently audited.</div>';
-        html+='</div>';
-        html+='</div>';
-        html+='<div style="background:#0d1f14;border:1px solid #1a3a22;border-top:none;padding:24px 32px;text-align:center">';
-        html+='<div style="display:flex;justify-content:center;gap:20px;margin-bottom:14px;flex-wrap:wrap">';
-        html+='<span style="color:#4ade80;font-weight:600">&#10003; Authentic</span>';
-        html+='<span style="color:#4ade80;font-weight:600">&#10003; Unchanged</span>';
-        html+='<span style="color:#4ade80;font-weight:600">&#10003; Time Proven</span>';
-        html+='</div>';
-        html+='<div style="color:#e2e8f0;font-size:0.93em;line-height:1.7;margin-bottom:16px">This decision was sealed at the moment it was made.<br><span style="color:#94a3b8">Timestamped on <strong style="color:#fff">'+sealDate+'</strong> · Independently verifiable.</span></div>';
-        if(d.decision_summary) {
-          const ds = d.decision_summary;
-          const decVerdict = ds.decision || '-';
-          const decType = ds.decision_type || '-';
-          const reasons = ds.reasons || [];
-          const counterfactuals = ds.counterfactuals || [];
-          html+='<div style="background:#0a1628;border:1px solid #1a3a22;border-top:none;padding:20px 32px;text-align:left">';
-          html+='<div style="font-family:var(--mono);font-size:1.1em;font-weight:700;color:#f87171;letter-spacing:1px;margin-bottom:4px">Decision: '+esc(decVerdict)+' <span style="font-size:0.75em;color:#94a3b8;font-weight:400">('+esc(decType.replace(/_/g,' ').replace(/(?:^|\s)\w/g,c=>c.toUpperCase()))+')</span></div>';
-          if(reasons.length > 0) {
-            html+='<div style="margin-bottom:14px">';
-            html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Why this decision</div>';
-            if (d.graph_id) {
-              html+='<div style="color:#94a3b8;font-size:0.85em;line-height:1.8;margin-bottom:12px">The request remained within the active decision scope. No boundary or escalation trigger was matched. The response was allowed to proceed to final sealing.</div>';
-              html+='<a href="https://buildseal.io/forensic/graph/'+esc(d.graph_id)+'" target="_blank" style="font-family:var(--mono);font-size:9px;color:#00e87a;text-decoration:none;border:1px solid #1a3a22;padding:4px 10px;">&#128202; View Full Decision Trace</a>';
-            }
-            reasons.forEach(r => {
-              html+='<div style="font-family:var(--mono);font-size:0.82em;color:#e2e8f0;padding:5px 0;border-bottom:1px solid #1e2d3d">→ '+esc(r)+'</div>';
-            });
-            html+='</div>';
-          }
-          if(counterfactuals.length > 0) {
-            html+='<div style="margin-bottom:14px">';
-            html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">What would change it</div>';
-            counterfactuals.forEach(c => {
-              const cText = typeof c === 'object' ? esc(c.change||'')+' → '+esc(c.result||'') : esc(c);
-              html+='<div style="font-family:var(--mono);font-size:0.82em;color:#f59e0b;padding:5px 0;border-bottom:1px solid #1e2d3d">⟳ '+cText+'</div>';
-            });
-            html+='</div>';
-          }
-          if(ds.policy) {
-            const pol = ds.policy;
-            html+='<div style="margin-bottom:14px;padding:10px 14px;background:#0d1f14;border:1px solid #1a3a22;border-radius:6px">';
-            html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Policy Applied</div>';
-            html+='<div style="font-family:var(--mono);font-size:0.78em;color:#4ade80;margin-bottom:2px">'+esc(pol.id||'')+'</div>';
-            if(pol.rule) html+='<div style="font-family:var(--mono);font-size:0.75em;color:#e2e8f0">Rule: '+esc(pol.rule)+'</div>';
-            html+='</div>';
-          }
-          if(ds.epistemic) {
-            const ep = ds.epistemic;
-            html+='<div style="margin-bottom:14px;padding:10px 14px;background:#0a1628;border:1px solid #1e3a5f;border-radius:6px">';
-            html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Epistemic State</div>';
-            if(ep.confidence!==undefined) html+='<div style="font-family:var(--mono);font-size:0.78em;color:#60a5fa;margin-bottom:2px">Confidence: '+ep.confidence+' <span style="color:#94a3b8">['+(ep.uncertainty_band||[])[0]+' – '+(ep.uncertainty_band||[])[1]+']</span></div>';
-            if(ep.unknowns&&ep.unknowns.length>0) html+='<div style="font-family:var(--mono);font-size:0.72em;color:#f87171;margin-top:4px">Missing: '+ep.unknowns.map(u=>esc(u)).join(', ')+'</div>';
-            html+='</div>';
-          }
-          html+='</div>';
-        }
-        html+='<button onclick="var t=document.getElementById(String.fromCharCode(116,100));t.style.display=t.style.display===String.fromCharCode(110,111,110,101)?String.fromCharCode():String.fromCharCode(110,111,110,101);this.textContent=t.style.display?String.fromCharCode(83,104,111,119,32,84,101,99,104,110,105,99,97,108,32,68,101,116,97,105,108,115):String.fromCharCode(72,105,100,101,32,84,101,99,104,110,105,99,97,108,32,68,101,116,97,105,108,115)" style="background:transparent;border:1px solid #2a3a4a;color:#94a3b8;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:0.8em">Show Technical Details</button>';
-        html+='</div>';
-        html+='<div id="td" style="display:none">';
-      }
-
-      // Info rows
-      html+='<div class="seal-info">';
-      html+='<div class="info-row"><div class="info-label">Seal Date</div><div class="info-value muted">'+sealedAt+'</div></div>';
-      html+='<div class="info-row"><div class="info-label">Trusted Time Proof</div><div class="info-value">'+tsaRow+'</div></div>';
-      html+='<div class="info-row"><div class="info-label">Security Layer</div><div class="info-value muted"><a href="https://iscproof.dev/spec/v5" target="_blank" style="color:var(--text2);text-decoration:none">ISCProof v'+packVerNum+' ↗</a></div></div>';
-      if(root)html+='<div class="info-row"><div class="info-label">Integrity Proof</div><div class="info-value">'+shortHash(root)+'<button class="copy-btn" onclick="copyText(\''+root.replace(/'/g,"\\'")+'\'  ,this)">copy</button></div></div>';
-      if(artifactHash)html+='<div class="info-row"><div class="info-label">File Fingerprint</div><div class="info-value">'+shortHash(artifactHash)+'<button class="copy-btn" onclick="copyText(\''+artifactHash.replace(/'/g,"\\'")+'\'  ,this)">copy</button></div></div>';
-      if(fingerprint)html+='<div class="info-row"><div class="info-label">Signing Identity</div><div class="info-value muted"><a href="https://buildseal.io/keys/'+esc(fingerprint)+'" target="_blank" style="color:var(--text2);text-decoration:none">'+esc(fingerprint)+' ↗</a></div></div>';
-      html+='</div>';
-
-      // Validation Results
-      html+='<div class="steps-section"><div class="steps-label">Validation Results</div><div class="steps-grid">';
-      html+=step('ok','Evidence readable','valid');
-      html+=step(packVerNum>=5?'ok':'warn','Format recognized','v'+packVerNum);
-      html+=step(rootMatch?'ok':'fail','Integrity confirmed',rootMatch?'passed':'MISMATCH');
-      html+=step(sigValid?'ok':'fail','Signature',sigValid?'valid':'INVALID');
-      html+=step(tsaVerified?'ok':'warn','Trusted timestamp',tsaVerified?'cryptographically verified':tsaPresent?'present':'not found');
-      html+='</div>';
-      if(isValid) html+='</div>'; // close td
-      html+='</div>';
-
-      // Evidence Timeline
-      const events = [];
-      // EVALUATED
-      if(d.decision_summary && d.decision_summary.event_time) {
-        events.push({type:'EVALUATED', time:d.decision_summary.event_time, label:'Agent produced decision payload', proof:d.decision_summary.evaluate_hash ? 'payload hash: '+esc(d.decision_summary.evaluate_hash.slice(0,16)) : '', evidenced:true});
-      }
-      // COMMITTED or ABANDONED
-      if(d.decision_summary) {
-        if(d.decision_summary.inaction===true) {
-          events.push({type:'ABANDONED', time:d.sealed_at||'', label:'No action taken', proof:d.decision_summary.abandon_reason||'No commit issued', evidenced:true});
-        } else if(d.decision_summary.inaction===false || d.decision_summary.decision) {
-          events.push({type:'COMMITTED', time:d.sealed_at||d.created_at||'', label:'Decision bound into seal', proof:'seal_id: '+esc(d.seal_id||''), evidenced:true});
-        }
-      }
-      // SEALED
-      if(d.sealed_at) {
-        events.push({type:'SEALED', time:d.sealed_at||d.created_at, label:'Cryptographically sealed', proof:'ISCProof v'+(d.verify_detail&&d.verify_detail.pack_version||'5'), evidenced:true});
-      }
-      // TIMESTAMPED
-      if(d.tsa && d.tsa.present && d.tsa.time) {
-        events.push({type:'TIMESTAMPED', time:d.tsa.time, label:'Trusted timestamp', proof:'freetsa.org', evidenced:true});
-      }
-      // VERIFIED shown separately, not in chain
-
-      if(events.length > 0) {
-        html+='<div style="background:var(--bg2);border:1px solid var(--border);border-top:none;padding:20px 32px">';
-        html+='<div style="font-family:var(--mono);font-size:0.63em;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px">Evidence Timeline</div>';
-        html+='<div style="display:flex;flex-direction:column;gap:0">';
-        const typeColors = {EVALUATED:'#40c4ff',COMMITTED:'#00e676',ABANDONED:'#ff5252',SEALED:'#00e676',TIMESTAMPED:'#ffd740',WITNESSED:'#b388ff',VERIFIED:'#00e676',UNVERIFIED:'#ff5252'};
-        const filteredEvents = events.filter(ev => ev.time && ev.time !== 'null' && ev.time !== '');
-        filteredEvents.forEach((ev, i) => {
-          const color = typeColors[ev.type] || '#8899aa';
-          const opacity = ev.evidenced ? '1' : '0.5';
-          html+='<div style="display:flex;gap:16px;align-items:flex-start;opacity:'+opacity+'">';
-          html+='<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">';
-          html+='<div style="width:10px;height:10px;border-radius:50%;background:'+color+';margin-top:4px;flex-shrink:0'+(ev.evidenced?';box-shadow:0 0 6px '+color:'')+'""></div>';
-          if(i < filteredEvents.length-1) html+='<div style="width:1px;flex:1;min-height:24px;background:var(--border2);margin:4px 0"></div>';
-          html+='</div>';
-          html+='<div style="padding-bottom:16px">';
-          html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">';
-          html+='<span style="font-family:var(--mono);font-size:0.72em;color:'+color+';font-weight:700">'+esc(ev.type)+'</span>';
-          if(!ev.evidenced) html+='<span style="font-family:var(--mono);font-size:0.6em;color:var(--text3);border:1px solid var(--border2);padding:1px 5px;border-radius:3px">derived</span>';
-          html+='</div>';
-          html+='<div style="font-family:var(--sans);font-size:0.8em;color:var(--text2);margin-bottom:2px">'+esc(ev.label)+'</div>';
-          html+='<div style="font-family:var(--mono);font-size:0.68em;color:var(--text3)">'+humanTime(ev.time)+'</div>';
-          html+='<div style="font-family:var(--mono);font-size:0.65em;color:var(--text3);margin-top:2px">'+esc(ev.proof)+'</div>';
-          html+='</div>';
-      if(isValid) html+='</div>'; // close td
-      html+='</div>';
-        });
-        html+='</div>';
-      if(isValid) html+='</div>'; // close td
-      html+='</div>';
-      }
-
-      html+='<div class="actions-section">';
-      html+='<a class="btn btn-primary" href="https://buildseal-api-production-3ca5.up.railway.app/seal/'+esc(d.seal_id||id)+'/evidence-package" download>&#11015; Download Proof File</a>';
-      html+='<a class="btn btn-secondary" href="'+evidenceUrl+'" target="_blank">&#128196; Technical Proof Data</a>';
-      html+='<a class="btn btn-secondary" href="https://buildseal.io">&#128274; Seal Your File</a>';
-      html+='<a class="btn btn-secondary" href="https://buildseal-api-production-3ca5.up.railway.app/evidence/'+esc(d.seal_id||id)+'" target="_blank">&#128196; Share Proof</a>';
-      html+='<button class="btn btn-secondary" onclick="copyText(window.location.href,this)">&#128279; Copy link</button>';
-      html+='</div>';
-      if(isValid) html+='</div>'; // close td
-      html+='</div>';
-
-      document.getElementById('main').innerHTML=html;
-    })
-    .catch((err)=>{ console.error('fetch error:', err);
-      document.getElementById('main').innerHTML='<div class="not-found"><div class="not-found-icon">🔍</div><h2>SEAL NOT FOUND</h2><p>No record found for <code style="color:var(--text2);font-family:var(--mono)">'+esc(id)+'</code></p></div>';
-    });
-}
-window.onerror=function(msg,src,line,col,err){
-  document.getElementById('main').innerHTML='<div class="not-found"><div class="not-found-icon">⚠️</div><h2>JS ERROR</h2><p>'+msg+' (line '+line+')</p></div>';
-  return true;
-};
-</script>
-
-<script>
-async function copyProofLink() {
-  const sealId = window.location.pathname.split("/").filter(Boolean).pop();
-  const proofUrl = `https://buildseal.io/release/${sealId}`;
-  try {
-    await navigator.clipboard.writeText(proofUrl);
-    alert("Proof link copied.");
-  } catch(e) {
-    prompt("Copy this link:", proofUrl);
-  }
-}
-</script>
-
-</body>
-</html>
+</body></html>
