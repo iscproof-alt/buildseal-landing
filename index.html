@@ -255,7 +255,7 @@ pre .k { color: var(--h-syn); }
         BuildSeal
       </a>
       <nav class="nav" aria-label="Main">
-        <a href="#relay">Agent relay</a>
+        <a href="#system-map">The system</a><a href="#developer-guide">Developers</a><a href="#relay">Relay simulation</a>
         <a href="#how">How it works</a>
         <a href="#scope">Scope</a>
         <a href="#pricing">Integration</a>
@@ -268,11 +268,11 @@ pre .k { color: var(--h-syn); }
   <div class="wrap hero-grid" id="top">
     <div>
       <p class="eyebrow">Records for AI systems and agent teams</p>
-      <h1>Every agent decision, sealed and in order.</h1>
-      <p class="lede">Connect agent decisions through recorded context, commitment outcomes and evidence assessments. VEDM, A9 and A10 describe these distinct roles; signed records make the captured evidence inspectable.</p>
+      <h1>Give AI decisions a verifiable record.</h1>
+      <p class="lede">BuildSeal records the decision your application submits, binds it to signed evidence and returns a verification link. ISCProof defines the evidence format and verification rules. NYM applies recorded evidence to conversational continuity.</p>
       <div class="actions">
-        <a class="btn" href="#relay">Try the agent relay</a>
-        <a class="btn ghost" href="/seal">Get started</a>
+        <a class="btn" href="#integration-live">Create a real record</a>
+        <a class="btn ghost" href="#system-map">Explore the system</a>
       </div>
       <ul class="pills">
         <li>Ed25519 signature</li>
@@ -302,6 +302,140 @@ pre .k { color: var(--h-syn); }
 </div>
 
 <main>
+
+<section class="section" id="system-map">
+  <div class="wrap">
+    <p class="eyebrow">One stack · Three roles</p>
+    <h2>Protocol. Evidence service. Conversational witness.</h2>
+    <p class="copy" style="margin-top:20px">
+      Follow the evidence from an application decision to a signed record,
+      then explore how recorded context is used in NYM.
+    </p>
+
+    <div class="plans">
+      <article class="plan">
+        <p class="eyebrow">01 · ISCProof</p>
+        <h3>The open protocol and verification tools.</h3>
+        <p>Defines evidence structures and profile-specific verification rules.
+        Canonical JSON, hashes, signatures and timestamp evidence support
+        checks of the captured record.</p>
+        <p class="fineprint">Package and verifier compatibility depends on the
+        profile. The ISCProof v0.2.0 demo and hosted v5.1 packages are separate profiles.</p>
+        <a class="btn ghost" href="https://iscproof.io/">Explore ISCProof</a>
+      </article>
+
+      <article class="plan">
+        <p class="eyebrow">02 · BuildSeal</p>
+        <h3>The evidence service your application calls.</h3>
+        <p>Receives a decision record, creates a signed evidence package and
+        returns its ID and verification link. The public lookup reports
+        selected checks without exposing the decision payload.</p>
+        <a class="btn" href="#integration-live">Send a real decision</a>
+        <a href="/verify?id=seal_1792885317460_721780635bdd">Inspect a recorded service result →</a>
+      </article>
+
+      <article class="plan">
+        <p class="eyebrow">03 · NYM</p>
+        <h3>Recorded evidence in a conversation.</h3>
+        <p>Connects responses with evidence references and classifications.
+        Copy Link carries a continuation capability into a later session;
+        continuity must be explicitly restored.</p>
+        <p class="fineprint">NYM memory processing needs access to content.
+        Customer-side encrypted witness mode is not yet available.</p>
+        <a class="btn ghost" href="https://nym.iscproof.io/">Open NYM</a>
+      </article>
+    </div>
+
+    <div class="two">
+      <article class="panel">
+        <h3>Inspect the cryptographic record</h3>
+        <p class="copy" style="margin-top:14px">
+          Create a fictional decision below, open its verification link and
+          inspect each reported check. Content-file hash, payload binding,
+          signer trust and strict mode are separate results.
+        </p>
+        <div class="actions"><a class="btn ghost" href="#integration-live">Try the live flow</a></div>
+      </article>
+      <article class="panel">
+        <h3>Inspect conversational continuity</h3>
+        <p class="copy" style="margin-top:14px">
+          In NYM, record a fictional project detail, copy its continuation
+          link and open it in a new session. Ask about that detail and inspect
+          the response and available source-record references.
+        </p>
+        <div class="actions"><a class="btn ghost" href="https://nym.iscproof.io/">Try Copy Link continuity</a></div>
+      </article>
+    </div>
+
+    <details class="arch-detail">
+      <summary>Where VEDM, A9 and A10 fit</summary>
+      <p><strong>VEDM:</strong> recorded context, evidence references and decision history.</p>
+      <p><strong>A9:</strong> commitment outcomes and evidence finalization are tracked separately.</p>
+      <p><strong>A10:</strong> evidence sufficiency is assessed against specified requirements.</p>
+      <p>These mechanisms answer different questions. A signature does not
+      establish evidence sufficiency, and an evidence assessment does not
+      establish that the recorded decision was correct.</p>
+      <p><a href="#architecture">Read the architecture explanation →</a>
+      The relay below illustrates these ideas; it is not an A9/A10 conformance test.</p>
+    </details>
+  </div>
+</section>
+
+<section class="section band" id="developer-guide">
+  <div class="wrap">
+    <p class="eyebrow">Developer entry point</p>
+    <h2>Start at the API. Inspect the resulting evidence.</h2>
+    <div class="two">
+      <article class="panel">
+        <h3>What you send</h3>
+        <p class="copy" style="margin-top:14px">
+          POST /seal/decision from your server using an x-api-key header.
+          Required fields are actor, decision_type and decision.
+          reasons is an array; input_ref identifies the input you want recorded.
+        </p>
+        <pre style="margin-top:18px;white-space:pre-wrap;overflow-wrap:anywhere"><code>{
+  "actor": "your-app",
+  "decision_type": "review",
+  "decision": "REJECT",
+  "reason_code": "MISSING_DOCUMENT",
+  "reasons": ["A required fictional document is missing."],
+  "input_ref": "demo-document-001",
+  "policy_version": "demo-policy-v1"
+}</code></pre>
+        <p class="fineprint" style="margin-top:16px">
+          Use fictional data in the public demo. It sends plaintext to our
+          server. Keep API keys in your own server environment.
+        </p>
+      </article>
+      <article class="panel">
+        <h3>What you receive</h3>
+        <p class="copy" style="margin-top:14px">
+          A successful response contains seal_id, artifact_hash, root_hash,
+          verify_url and timestamp information. Failure responses include an error
+          code. A timeout is an uncertain outcome, not proof that no record exists.
+        </p>
+        <ul class="marks" style="margin-top:18px">
+          <li>Public verification: selected integrity, signature, TSA and payload-binding results.</li>
+          <li>Content-file verification: reported separately from payload binding.</li>
+          <li>Private evidence and packages: authenticated access limited to the record owner.</li>
+          <li>Signer trust and strict verification: explicit results, never implied by VALID.</li>
+        </ul>
+        <div class="actions"><a class="btn" href="#integration-live">Use the interactive curl example</a></div>
+        <p class="fineprint" style="margin-top:16px">
+          Pilot access is arranged directly. Self-service accounts, key issuance
+          and short-lived auditor download links are not yet available.
+          Forensic graph browsing is temporarily unavailable while scoped access is completed.
+        </p>
+      </article>
+    </div>
+    <p class="fineprint" style="margin-top:24px">
+      BuildSeal records what the application reports. It does not observe model
+      internals or prove that an external action happened. Server-side access
+      controls do not mean BuildSeal cannot read the stored plaintext.
+    </p>
+  </div>
+</section>
+
   <section class="section" id="relay">
     <div class="wrap">
       <p class="eyebrow">Agent relay</p>
@@ -343,7 +477,7 @@ pre .k { color: var(--h-syn); }
           <ol class="seq">
             <li><div><h3>Your application decides</h3><p>A KYC rejection, a credit denial or a fraud flag. Any decision you may need to explain later.</p></div></li>
             <li><div><h3>BuildSeal seals the record</h3><p>Your application sends the decision, a reason code and input references. The payload is canonicalized, hashed, signed with Ed25519 and submitted for the service’s evidence workflow. Inspect timestamp verification separately.</p></div></li>
-            <li><div><h3>A reviewer verifies it</h3><p>Share the verify link or the evidence package. The reviewer checks that the files still match the signed record.</p></div></li>
+            <li><div><h3>A reviewer inspects the evidence</h3><p>The public link shows service-reported checks. An authenticated record owner can obtain the private package and share it for compatible offline verification.</p></div></li>
           </ol>
           <p class="fineprint" style="margin-top:20px">BuildSeal seals what your application reports. It does not observe the model itself.</p>
         </div>
@@ -414,7 +548,7 @@ pre .k { color: var(--h-syn); }
       <article class="plan">
         <p class="eyebrow">01 · Explore</p>
         <h3>Inspect a real record.</h3>
-        <p>Open a public example to see the recorded information and the verification results reported by the service.</p>
+        <p>Open a public example to inspect selected verification checks. Private decision content is omitted from the public response.</p>
         <a class="btn ghost" href="/verify?id=seal_1791376574481_7dd1b36d671b">View example record</a>
       </article>
 
