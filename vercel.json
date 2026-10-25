@@ -28,6 +28,9 @@
   "functions": {
     "api/seal-decision.js": {
       "maxDuration": 30
+    },
+    "api/procurement.js": {
+      "maxDuration": 60
     }
   }
 }
